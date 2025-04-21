@@ -157,7 +157,7 @@ class SentienceController extends Controller
                 ->exists();
 
             if ($alreadyApplied) {
-                Stdio::printFLn('Migration: %s already applied', $filename);
+                Stdio::printFLn('Migration %s already applied', $filename);
                 continue;
             }
 
@@ -167,7 +167,7 @@ class SentienceController extends Controller
                 $migration->up($database);
             });
 
-            Stdio::printFLn('Migration: %s applied', $filename);
+            Stdio::printFLn('Migration %s applied', $filename);
 
             $migrationModel = new Migration($database);
             $migrationModel->batch = $nextBatch;
@@ -230,7 +230,7 @@ class SentienceController extends Controller
             $filepath = file_path($migrationsDir, $filename);
 
             if (!file_exists($filepath)) {
-                throw new MigrationException('unable to find migration', $filename);
+                throw new MigrationException('unable to find migration %s', $filename);
             }
 
             $migration = include $filepath;
@@ -239,7 +239,7 @@ class SentienceController extends Controller
                 $migration->down($database);
             });
 
-            Stdio::printFLn('Migration: %s rolled back', $filename);
+            Stdio::printFLn('Migration %s rolled back', $filename);
 
             $database->delete()
                 ->table(Migration::getTable())
@@ -248,7 +248,7 @@ class SentienceController extends Controller
         }
     }
 
-    public function createMigration(Database $database, array $words, array $flags): void
+    public function createMigration(array $words, array $flags): void
     {
         $name = $flags['name'] ?? $words[0] ?? '';
 
