@@ -2,7 +2,7 @@
 
 namespace src\utils;
 
-use JsonException;
+use src\exceptions\JsonException;
 
 class Json
 {
