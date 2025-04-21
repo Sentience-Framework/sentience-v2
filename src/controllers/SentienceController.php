@@ -311,7 +311,7 @@ class SentienceController extends Controller
         $migration = include $migrationFilePath;
 
         $database->transactionInCallback(function (Database $database) use ($migration): void {
-            $migration->down($database);
+            $migration->up($database);
         });
 
         $highestBatch = $database->select()
@@ -376,7 +376,7 @@ class SentienceController extends Controller
         $migration = include $migrationFilePath;
 
         $database->transactionInCallback(function (Database $database) use ($migration): void {
-            $migration->down($database);
+            $migration->up($database);
         });
 
         $highestBatch = $database->select()
