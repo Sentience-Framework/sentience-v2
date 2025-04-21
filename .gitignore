@@ -1,0 +1,12 @@
+.env
+/vendor/
+
+/sqlite/*.sqlite
+/sqlite/*.sqlite3
+/sqlite/*.db
+/sqlite/*.db3
+/sqlite/*.s3db
+/sqlite/*.sl3
+
+.vscode
+.DS_Store
