@@ -68,12 +68,12 @@ class DotEnv
 
     protected static function parseDotEnvString(string $string): array
     {
-        $lines = preg_split("/(\r\n|\n|\r)/", $string) ?? [$string];
+        $lines = preg_split('/(\r\n|\n|\r)/', $string) ?? [$string];
 
         $variables = [];
 
         foreach ($lines as $line) {
-            $dotEnvRegex = "/(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*\"(?:\\\"|[^\"])*\"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/";
+            $dotEnvRegex = '/(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*\'(?:\\\'|[^\'])*\'|\s*"(?:(?:\\")|[^"])*"|`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/';
             $isMatch = preg_match($dotEnvRegex, $line, $matches);
             if (!$isMatch) {
                 continue;
