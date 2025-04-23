@@ -1,5 +1,11 @@
 <?php
 
+use src\database\Database;
+
+/**
+ * @var Database $database;
+ */
+
 $database->alterTable()
     ->table('table_1')
     ->addColumn('column3', 'BIGINT')

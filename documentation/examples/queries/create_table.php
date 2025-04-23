@@ -1,5 +1,12 @@
 <?php
 
+use src\database\queries\definitions\Column;
+use src\database\Database;
+
+/**
+ * @var Database $database;
+ */
+
 $database->createTable()
     ->ifNotExists()
     ->table('table_1')
@@ -9,6 +16,6 @@ $database->createTable()
         new Column('column2', 'DATETIME', true, 'now()'),
     ])
     ->uniqueConstraint(['column1', 'column2'], 'UQ_table_1')
-    ->foreighKeyConstraint('column1', 'table1', 'column1')
+    ->foreignKeyConstraint('column1', 'table1', 'column1')
     ->primaryKeys(['id'])
     ->execute();

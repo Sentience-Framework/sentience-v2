@@ -1,5 +1,12 @@
 <?php
 
+use src\database\queries\Query;
+use src\database\Database;
+
+/**
+ * @var Database $database;
+ */
+
 $database->insert()
     ->table(Query::alias('table_1', 'table1'))
     ->values([

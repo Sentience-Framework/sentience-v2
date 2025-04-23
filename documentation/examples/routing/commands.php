@@ -1,15 +1,27 @@
 <?php
 
+use src\controllers\SentienceController;
+use src\routers\Command;
+use src\sentience\Stdio;
+
 [
     Command::create('migrations:init')
-        ->setCallback([MigrationsController::class, 'initMigrations'])
+        ->setCallback([SentienceController::class, 'initMigrations'])
         ->setMiddleware([
-            [AdminMiddleware::class, 'isAuthenticated']
+            function (array $words): void {
+                if (count($words) == 0) {
+                    Stdio::errorLn('no $words provided');
+                }
+            }
         ]),
 
     Command::create('migrations:apply')
-        ->setCallback([MigrationsController::class, 'applyMigrations'])
+        ->setCallback([SentienceController::class, 'applyMigrations'])
         ->setMiddleware([
-            [AdminMiddleware::class, 'isAuthenticated']
+            function (array $flags): void {
+                if (count($flags) == 0) {
+                    Stdio::errorLn('no $flags provided');
+                }
+            }
         ]),
 ];

@@ -1,5 +1,12 @@
 <?php
 
+use src\database\queries\Query;
+use src\database\Database;
+
+/**
+ * @var Database $database;
+ */
+
 $database->select()
     ->table(Query::alias(['public', 'table_1'], 'table1'))
     ->distinct()
@@ -34,7 +41,7 @@ $database->select()
         'table1',
         't1Column'
     )
-    ->rawJoin('LEFT JOIN (RAW)table2 jt ON jt.column1 = table1 AND jt.column2 = table2')
+    ->join('LEFT JOIN (RAW)table2 jt ON jt.column1 = table1 AND jt.column2 = table2')
     ->whereEquals('column1', 10)
     ->whereGroup(function ($group) {
         return $group->whereGreaterThanOrEquals('column2', 20)
