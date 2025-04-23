@@ -222,7 +222,7 @@ abstract class Model
             $query->ifNotExists();
         }
 
-        foreach ($this->columns as $property => $name) {
+        foreach ($this->columns as $property => $column) {
             $reflectionProperty = new ReflectionProperty($this, $property);
 
             $propertyType = $reflectionProperty->getType()->getName();
@@ -239,7 +239,7 @@ abstract class Model
             );
 
             $query->column(
-                $name,
+                $column,
                 $columnType,
                 !$propertyAllowsNull,
                 $propertyHasDefaultValue ? $propertyDefaultValue : null,
