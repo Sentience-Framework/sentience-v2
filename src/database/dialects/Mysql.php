@@ -3,6 +3,7 @@
 namespace src\database\dialects;
 
 use src\database\queries\containers\Raw;
+use src\database\queries\definitions\AddColumn;
 use src\database\queries\definitions\AlterColumn;
 use src\database\queries\definitions\Column;
 use src\database\queries\Query;
@@ -71,6 +72,17 @@ class Mysql extends Sql implements DialectInterface
         }
 
         return $stringifiedColumn;
+    }
+
+    public function stringifyAlterTableAddColumn(AddColumn $addColumn): string
+    {
+        $stringifiedAddColumn = parent::stringifyAlterTableAddColumn($addColumn);
+
+        if ($addColumn->autoIncrement && str_contains(strtolower($addColumn->type), 'int')) {
+            $stringifiedAddColumn .= ' AUTO_INCREMENT';
+        }
+
+        return $stringifiedAddColumn;
     }
 
     public function stringifyAlterTableAlterColumn(AlterColumn $alterColumn): string

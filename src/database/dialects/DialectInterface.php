@@ -5,6 +5,7 @@ namespace src\database\dialects;
 use DateTime;
 use src\database\queries\containers\Alias;
 use src\database\queries\containers\Raw;
+use src\database\queries\definitions\AddColumn;
 use src\database\queries\definitions\AlterColumn;
 use src\database\queries\definitions\Column;
 use src\database\queries\definitions\DropColumn;
@@ -26,7 +27,7 @@ interface DialectInterface
     public function stringifyColumnDefinition(Column $column): string;
     public function stringifyUniqueConstraintDefinition(UniqueConstraint $uniqueConstraint): string;
     public function stringifyForeignKeyConstraintDefinition(ForeignKeyConstraint $foreignKeyConstraint): string;
-    public function stringifyAlterTableAddColumn(Column $column): string;
+    public function stringifyAlterTableAddColumn(AddColumn $addColumn): string;
     public function stringifyAlterTableAlterColumn(AlterColumn $alterColumn): string;
     public function stringifyAlterTableRenameColumn(RenameColumn $renameColumn): string;
     public function stringifyAlterTableDropColumn(DropColumn $dropColumn): string;

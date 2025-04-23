@@ -6,7 +6,6 @@ use PDO;
 use ReflectionProperty;
 use src\database\dialects\DialectFactory;
 use src\database\dialects\DialectInterface;
-use src\database\queries\definitions\Column;
 use src\database\queries\Insert;
 use src\database\Database;
 use src\exceptions\ModelException;
@@ -215,7 +214,13 @@ abstract class Model
 
     public function createTable(bool $ifNotExists = false, ?callable $modifyQuery = null): string
     {
-        $columns = [];
+        $query = $this->database->createTable()
+            ->table($this->table)
+            ->primaryKeys($this->getColumnByProperty($this->primaryKey));
+
+        if ($ifNotExists) {
+            $query->ifNotExists();
+        }
 
         foreach ($this->columns as $property => $name) {
             $reflectionProperty = new ReflectionProperty($this, $property);
@@ -233,24 +238,13 @@ abstract class Model
                 in_array($property, $this->unique)
             );
 
-            $column = new Column(
+            $query->column(
                 $name,
                 $columnType,
                 !$propertyAllowsNull,
                 $propertyHasDefaultValue ? $propertyDefaultValue : null,
                 $propertyIsPrimaryKey ? $this->primaryKeyAutoIncrement : false
             );
-
-            $columns[] = $column;
-        }
-
-        $query = $this->database->createTable()
-            ->table($this->table)
-            ->columns($columns)
-            ->primaryKeys($this->getColumnByProperty($this->primaryKey));
-
-        if ($ifNotExists) {
-            $query->ifNotExists();
         }
 
         if (!empty($this->unique)) {

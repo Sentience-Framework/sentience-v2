@@ -2,9 +2,8 @@
 
 namespace src\database\queries;
 
-use src\database\queries\containers\Raw;
+use src\database\queries\definitions\AddColumn;
 use src\database\queries\definitions\AlterColumn;
-use src\database\queries\definitions\Column;
 use src\database\queries\definitions\DropColumn;
 use src\database\queries\definitions\RenameColumn;
 use src\database\queries\traits\Table;
@@ -23,11 +22,7 @@ class AlterTable extends Query implements QueryInterface
         $queries = [];
 
         foreach ($this->alters as $alter) {
-            if ($alter instanceof Raw) {
-                $queries[] = $alter->expression;
-            }
-
-            if ($alter instanceof Column) {
+            if ($alter instanceof AddColumn) {
                 $queries[] = $this->buildAlterTableQuery(
                     $this->dialect->stringifyAlterTableAddColumn($alter)
                 );
@@ -70,16 +65,9 @@ class AlterTable extends Query implements QueryInterface
         return $query;
     }
 
-    public function alter(string $expression): static
-    {
-        $this->alters[] = new Raw($expression);
-
-        return $this;
-    }
-
     public function addColumn(string $name, string $type, bool $notNull = false, mixed $defaultValue = null, bool $autoIncrement = false): static
     {
-        $this->alters[] = new Column($name, $type, $notNull, $defaultValue, $autoIncrement);
+        $this->alters[] = new AddColumn($name, $type, $notNull, $defaultValue, $autoIncrement);
 
         return $this;
     }

@@ -9,6 +9,7 @@ use src\database\queries\containers\OrderBy;
 use src\database\queries\containers\Raw;
 use src\database\queries\containers\Condition;
 use src\database\queries\containers\ConditionGroup;
+use src\database\queries\definitions\AddColumn;
 use src\database\queries\definitions\AlterColumn;
 use src\database\queries\definitions\Column;
 use src\database\queries\definitions\DropColumn;
@@ -353,22 +354,22 @@ class Sql implements DialectInterface
         return $stringifiedForeignKeyConstraint;
     }
 
-    public function stringifyAlterTableAddColumn(Column $column): string
+    public function stringifyAlterTableAddColumn(AddColumn $addColumn): string
     {
         $stringifiedColumn = sprintf(
             'ADD COLUMN %s %s',
-            $this->escapeTableOrColumn($column->name),
-            $column->type
+            $this->escapeTableOrColumn($addColumn->name),
+            $addColumn->type
         );
 
-        if ($column->notNull) {
+        if ($addColumn->notNull) {
             $stringifiedColumn .= ' NOT NULL';
         }
 
-        if ($column->defaultValue && !$column->autoIncrement) {
-            $defaultValue = preg_match('/^.*\(.*\)$/', $column->defaultValue)
-                ? $column->defaultValue
-                : $this->escapeString($column->defaultValue);
+        if ($addColumn->defaultValue && !$addColumn->autoIncrement) {
+            $defaultValue = preg_match('/^.*\(.*\)$/', $addColumn->defaultValue)
+                ? $addColumn->defaultValue
+                : $this->escapeString($addColumn->defaultValue);
 
             $stringifiedColumn .= ' DEFAULT ' . $defaultValue;
         }

@@ -3,18 +3,18 @@
 namespace src\database\queries;
 
 use src\database\queries\containers\Raw;
-use src\database\queries\traits\Columns;
+use src\database\queries\definitions\Column;
 use src\database\queries\traits\Constraints;
 use src\database\queries\traits\IfNotExists;
 use src\database\queries\traits\Table;
 
 class CreateTable extends Query implements QueryInterface
 {
-    use Columns;
     use Constraints;
     use IfNotExists;
     use Table;
 
+    protected array $columns = [];
     protected array $primaryKeys = [];
 
     public function build(): array
@@ -30,23 +30,9 @@ class CreateTable extends Query implements QueryInterface
 
         $this->dialect->addTable($query, $this->table);
 
-        $columnsInConstraints = [];
-
-        foreach ($this->uniqueConstraints as $uniqueConstraint) {
-            array_push($columnsInConstraints, ...$uniqueConstraint->columns);
-        }
-
-        foreach ($this->foreignKeyConstraints as $foreignKeyConstraint) {
-            $columnsInConstraints[] = $foreignKeyConstraint->column;
-        }
-
         $definitions = [];
 
         foreach ($this->columns as $column) {
-            if ($column instanceof Raw) {
-                $definitions[] = $column->expression;
-            }
-
             $definitions[] = $this->dialect->stringifyColumnDefinition($column);
         }
 
@@ -71,14 +57,17 @@ class CreateTable extends Query implements QueryInterface
             $definitions[] = $this->dialect->stringifyForeignKeyConstraintDefinition($foreignKeyConstraint);
         }
 
-        foreach ($this->rawConstraints as $rawConstraint) {
-            $definitions[] = $rawConstraint->expression;
-        }
-
-        $query .= sprintf('(%s)', implode(', ', $definitions));
+        $query .= sprintf(' (%s)', implode(', ', $definitions));
         $query .= ';';
 
         return [$query, $params];
+    }
+
+    public function column(string $name, string $type, bool $notNull = false, mixed $defaultValue = null, bool $autoIncrement = false): static
+    {
+        $this->columns[] = new Column($name, $type, $notNull, $defaultValue, $autoIncrement);
+
+        return $this;
     }
 
     public function primaryKeys(string|array $keys): static
