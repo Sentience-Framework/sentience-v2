@@ -57,9 +57,13 @@ abstract class Query implements QueryInterface
         return new DateTime();
     }
 
-    public static function wildcard(string $string): string
+    public static function wildcard(string $string, bool $escapeBackslash = false): string
     {
         $chars = ['%', '_', '-', '^', '[', ']'];
+
+        if ($escapeBackslash) {
+            $chars[] = '\\';
+        }
 
         return '%' . escape_chars($string, $chars) . '%';
     }
