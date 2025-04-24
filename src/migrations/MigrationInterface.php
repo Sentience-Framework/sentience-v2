@@ -6,6 +6,6 @@ use src\database\Database;
 
 interface MigrationInterface
 {
-    public function up(Database $database): void;
-    public function down(Database $database): void;
+    public function apply(Database $database): void;
+    public function rollback(Database $database): void;
 }

@@ -164,7 +164,7 @@ class SentienceController extends Controller
             $migration = include $filepath;
 
             $database->transactionInCallback(function (Database $database) use ($migration): void {
-                $migration->up($database);
+                $migration->apply($database);
             });
 
             Stdio::printFLn('Migration %s applied', $filename);
@@ -236,7 +236,7 @@ class SentienceController extends Controller
             $migration = include $filepath;
 
             $database->transactionInCallback(function (Database $database) use ($migration): void {
-                $migration->down($database);
+                $migration->rollback($database);
             });
 
             Stdio::printFLn('Migration %s rolled back', $filename);
@@ -316,7 +316,7 @@ class SentienceController extends Controller
         $migration = include $migrationFilePath;
 
         $database->transactionInCallback(function (Database $database) use ($migration): void {
-            $migration->up($database);
+            $migration->apply($database);
         });
 
         $highestBatch = $database->select()
@@ -381,7 +381,7 @@ class SentienceController extends Controller
         $migration = include $migrationFilePath;
 
         $database->transactionInCallback(function (Database $database) use ($migration): void {
-            $migration->up($database);
+            $migration->apply($database);
         });
 
         $highestBatch = $database->select()

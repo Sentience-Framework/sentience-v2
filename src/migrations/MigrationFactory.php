@@ -4,7 +4,7 @@ namespace src\migrations;
 
 class MigrationFactory
 {
-    public static function createMigration(array $up = [], array $down = []): string
+    public static function createMigration(array $apply = [], array $rollback = []): string
     {
         $lines = [];
 
@@ -14,19 +14,19 @@ class MigrationFactory
         $lines[] = 'use src\migrations\MigrationInterface;';
         $lines[] = '';
         $lines[] = 'return new class implements MigrationInterface {';
-        $lines[] = '    public function up(Database $database): void';
+        $lines[] = '    public function apply(Database $database): void';
         $lines[] = '    {';
 
-        foreach ($up as $line) {
+        foreach ($apply as $line) {
             $lines[] = sprintf('        %s', $line);
         }
 
         $lines[] = '    }';
         $lines[] = '';
-        $lines[] = '    public function down(Database $database): void';
+        $lines[] = '    public function rollback(Database $database): void';
         $lines[] = '    {';
 
-        foreach ($down as $line) {
+        foreach ($rollback as $line) {
             $lines[] = sprintf('        %s', $line);
         }
 
