@@ -340,11 +340,23 @@ class Response
             echo Xml::encode(
                 $content,
                 function (string $parent, string $key) use ($statusCode): string {
-                    if (preg_match('/s{1}$/', $parent)) {
+                    $lowercaseParent = strtolower($parent);
+
+                    if (preg_match('/ies$/', $lowercaseParent)) {
+                        $singular = substr($parent, 0, strlen($parent) - 3);
+
+                        return $singular . (preg_match('/[A-Z]{1}$/', $singular) ? 'Y' : 'y');
+                    }
+
+                    if (preg_match('/[^aeiouy]es$/', $lowercaseParent)) {
+                        return substr($parent, 0, strlen($parent) - 2);
+                    }
+
+                    if (preg_match('/s{1}$/', $lowercaseParent)) {
                         return substr($parent, 0, strlen($parent) - 1);
                     }
 
-                    if ($parent == 'trace' && $statusCode == 500) {
+                    if ($lowercaseParent == 'trace' && $statusCode == 500) {
                         return 'frame';
                     }
 
