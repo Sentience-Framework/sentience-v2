@@ -250,7 +250,12 @@ class SentienceController extends Controller
 
     public function createMigration(array $words, array $flags): void
     {
-        $name = $flags['name'] ?? $words[0] ?? '';
+        $name = $flags['name'] ?? $words[0] ?? null;
+
+        if (is_null($name)) {
+            Stdio::errorLn('Please provide a name for the migration');
+            return;
+        }
 
         $timestamp = date('YmdHis');
 
