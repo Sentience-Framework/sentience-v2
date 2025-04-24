@@ -342,6 +342,10 @@ class Response
                 function (string $parent, string $key) use ($statusCode): string {
                     $lowercaseParent = strtolower($parent);
 
+                    if (preg_match('/^.{1}ies$/', $lowercaseParent)) {
+                        return substr($parent, 0, strlen($parent) - 1);
+                    }
+
                     if (preg_match('/ies$/', $lowercaseParent)) {
                         $singular = substr($parent, 0, strlen($parent) - 3);
 
