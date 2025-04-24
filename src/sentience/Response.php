@@ -297,7 +297,7 @@ class Response
     {
         http_response_code($statusCode);
 
-        header(sprintf('Location %s', $url));
+        header(sprintf('Location: %s', $url));
 
         exit;
     }
