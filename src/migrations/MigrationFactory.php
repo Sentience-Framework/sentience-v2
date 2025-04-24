@@ -32,6 +32,7 @@ class MigrationFactory
 
         $lines[] = '    }';
         $lines[] = '};';
+        $lines[] = '';
 
         return implode(PHP_EOL, $lines);
     }
