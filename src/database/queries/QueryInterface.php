@@ -7,6 +7,6 @@ use src\database\Results;
 interface QueryInterface
 {
     public function build(): array;
-    public function execute(): int|Results;
+    public function execute(): ?Results;
     public function rawQuery(): string;
 }

@@ -71,6 +71,8 @@ class Database
 
     public function safe(string $query, array $params = []): Results
     {
+        $rawQuery = $this->dialect->toRawQuery($query, $params);
+
         $startTime = microtime(true);
 
         $pdoStatement = $this->pdo->prepare($query);
@@ -79,8 +81,6 @@ class Database
             $error = implode(' ', $this->pdo->errorInfo());
 
             if ($this->debug) {
-                $rawQuery = $this->dialect->toRawQuery($query, $params);
-
                 ($this->debug)($rawQuery, null, null, $error);
             }
 
@@ -100,8 +100,6 @@ class Database
             $error = implode(' ', $pdoStatement->errorInfo());
 
             if ($this->debug) {
-                $rawQuery = $this->dialect->toRawQuery($query, $params);
-
                 ($this->debug)($rawQuery, null, null, $error);
             }
 
@@ -111,8 +109,6 @@ class Database
         $endTime = microtime(true);
 
         if ($this->debug) {
-            $rawQuery = $this->dialect->toRawQuery($query, $params);
-
             ($this->debug)($rawQuery, $startTime, $endTime, null);
         }
 
@@ -120,8 +116,7 @@ class Database
             $this,
             $this->dialect,
             $pdoStatement,
-            $query,
-            $params
+            $rawQuery,
         );
     }
 

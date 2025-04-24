@@ -22,12 +22,14 @@ abstract class Query implements QueryInterface
         $this->dialect = $dialect;
     }
 
-    public function execute(): int|Results
+    public function execute(): ?Results
     {
         [$query, $params] = $this->build();
 
         if (preg_match('/^CREATE|ALTER|DROP/', $query)) {
-            return $this->database->unsafe($query);
+            $this->database->unsafe($query);
+
+            return null;
         }
 
         return $this->database->safe($query, $params);
@@ -57,7 +59,7 @@ abstract class Query implements QueryInterface
 
     public static function wildcard(string $string): string
     {
-        $chars = ['%', '_', '[', '-'];
+        $chars = ['%', '_', '-', '^', '[', ']'];
 
         return '%' . escape_chars($string, $chars) . '%';
     }

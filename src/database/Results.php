@@ -12,15 +12,13 @@ class Results
     protected DialectInterface $dialect;
     protected PDOStatement $pdoStatement;
     public string $query;
-    public array $params;
 
-    public function __construct(Database $database, DialectInterface $dialect, PDOStatement $pdoStatement, string $query, array $params)
+    public function __construct(Database $database, DialectInterface $dialect, PDOStatement $pdoStatement, string $query)
     {
         $this->database = $database;
         $this->dialect = $dialect;
         $this->pdoStatement = $pdoStatement;
         $this->query = $query;
-        $this->params = $params;
     }
 
     public function countRows(): int
