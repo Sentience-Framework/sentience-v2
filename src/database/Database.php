@@ -127,8 +127,17 @@ class Database
         }
     }
 
+    public function inTransaction(): bool
+    {
+        return $this->pdo->inTransaction();
+    }
+
     public function commitTransaction(): void
     {
+        if (!$this->inTransaction()) {
+            return;
+        }
+
         if (!$this->pdo->commit()) {
             throw new SqlException(implode(' ', $this->pdo->errorInfo()));
         }
@@ -136,6 +145,10 @@ class Database
 
     public function rollbackTransaction(): void
     {
+        if (!$this->inTransaction()) {
+            return;
+        }
+
         if (!$this->pdo->rollBack()) {
             throw new SqlException(implode(' ', $this->pdo->errorInfo()));
         }
