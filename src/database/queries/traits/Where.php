@@ -66,14 +66,14 @@ trait Where
         return $this->greaterThanOrEquals($column, $value, WhereOperator::AND);
     }
 
-    public function whereBetween(string|array $column, int|float|string|DateTime $bottom, int|float|string|DateTime $top): static
+    public function whereBetween(string|array $column, int|float|string|DateTime $min, int|float|string|DateTime $max): static
     {
-        return $this->between($column, $bottom, $top, WhereOperator::AND);
+        return $this->between($column, $min, $max, WhereOperator::AND);
     }
 
-    public function whereNotBetween(string|array $column, int|float|string|DateTime $bottom, int|float|string|DateTime $top): static
+    public function whereNotBetween(string|array $column, int|float|string|DateTime $min, int|float|string|DateTime $max): static
     {
-        return $this->notBetween($column, $bottom, $top, WhereOperator::AND);
+        return $this->notBetween($column, $min, $max, WhereOperator::AND);
     }
 
     public function whereIsNull(string|array $column): static
@@ -146,14 +146,14 @@ trait Where
         return $this->greaterThanOrEquals($column, $value, WhereOperator::OR);
     }
 
-    public function orWhereBetween(string|array $column, int|float|string|DateTime $bottom, int|float|string|DateTime $top): static
+    public function orWhereBetween(string|array $column, int|float|string|DateTime $min, int|float|string|DateTime $max): static
     {
-        return $this->between($column, $bottom, $top, WhereOperator::OR);
+        return $this->between($column, $min, $max, WhereOperator::OR);
     }
 
-    public function orWhereNotBetween(string|array $column, int|float|string|DateTime $bottom, int|float|string|DateTime $top): static
+    public function orWhereNotBetween(string|array $column, int|float|string|DateTime $min, int|float|string|DateTime $max): static
     {
-        return $this->notBetween($column, $bottom, $top, WhereOperator::OR);
+        return $this->notBetween($column, $min, $max, WhereOperator::OR);
     }
 
     public function orWhereIsNull(string|array $column): static
@@ -254,16 +254,16 @@ trait Where
         return $this;
     }
 
-    protected function between(string|array $column, int|float|string|DateTime $bottom, int|float|string|DateTime $top, WhereOperator $chain): static
+    protected function between(string|array $column, int|float|string|DateTime $min, int|float|string|DateTime $max, WhereOperator $chain): static
     {
-        $this->addCondition(WhereOperator::BETWEEN, $column, [$bottom, $top], $chain);
+        $this->addCondition(WhereOperator::BETWEEN, $column, [$min, $max], $chain);
 
         return $this;
     }
 
-    protected function notBetween(string|array $column, int|float|string|DateTime $bottom, int|float|string|DateTime $top, WhereOperator $chain): static
+    protected function notBetween(string|array $column, int|float|string|DateTime $min, int|float|string|DateTime $max, WhereOperator $chain): static
     {
-        $this->addCondition(WhereOperator::NOT_BETWEEN, $column, [$bottom, $top], $chain);
+        $this->addCondition(WhereOperator::NOT_BETWEEN, $column, [$min, $max], $chain);
 
         return $this;
     }

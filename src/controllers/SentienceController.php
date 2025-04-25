@@ -361,7 +361,7 @@ class SentienceController extends Controller
         $model = new $class($database);
 
         $migrationName = sprintf(
-            '%s_create_%s_table.php',
+            '%s_reset_%s_table.php',
             date('YmdHis'),
             $model::getTable()
         );
