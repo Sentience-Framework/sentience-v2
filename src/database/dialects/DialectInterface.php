@@ -19,11 +19,12 @@ interface DialectInterface
     public function addJoins(string &$query, array $joins): void;
     public function addWhere(string &$query, array &$params, array $where): void;
     public function addGroupBy(string &$query, array $groupBy): void;
+    public function addHaving(string &$query, array &$params, ?string $having, array $values);
     public function addOrderBy(string &$query, array $orderBy): void;
     public function addLimit(string &$query, ?int $limit): void;
     public function addOffset(string &$query, ?int $limit, ?int $offset): void;
-    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, array $values, ?string $primaryKey): void;
-    public function addReturning(string &$query, ?array $columns): void;
+    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, array $insertValues, ?string $primaryKey): void;
+    public function addReturning(string &$query, ?array $returning): void;
     public function stringifyColumnDefinition(Column $column): string;
     public function stringifyUniqueConstraintDefinition(UniqueConstraint $uniqueConstraint): string;
     public function stringifyForeignKeyConstraintDefinition(ForeignKeyConstraint $foreignKeyConstraint): string;
@@ -32,7 +33,7 @@ interface DialectInterface
     public function stringifyAlterTableRenameColumn(RenameColumn $renameColumn): string;
     public function stringifyAlterTableDropColumn(DropColumn $dropColumn): string;
     public function phpTypeToColumnType(string $type, bool $isAutoIncrement, bool $isPrimaryKey, bool $inConstraint): string;
-    public function escapeTableOrColumn(string|array|Raw $references, ?string $alias = null): string;
+    public function escapeTableOrColumn(string|array|Raw $reference, ?string $alias = null): string;
     public function escapeString(string $string): string;
     public function castToDriver(mixed $value): mixed;
     public function castToQuery(mixed $value): mixed;

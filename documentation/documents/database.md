@@ -94,6 +94,7 @@ Select::orWhereIsNotNull();
 Select::orWhereGroup();
 Select::orWhere();
 Select::groupBy();
+Select::having();
 Select::orderByAsc();
 Select::orderByDesc();
 Select::limit();

@@ -207,6 +207,17 @@ class Sql implements DialectInterface
         );
     }
 
+    public function addHaving(string &$query, array &$params, ?string $having, array $values): void
+    {
+        if (is_null($having)) {
+            return;
+        }
+
+        $query .= ' HAVING ' . $having;
+
+        array_push($params, ...$values);
+    }
+
     public function addOrderBy(string &$query, array $orderBy): void
     {
         if (count($orderBy) == 0) {
@@ -255,7 +266,7 @@ class Sql implements DialectInterface
         $query .= ' OFFSET ' . $offset;
     }
 
-    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, array $values, ?string $primaryKey): void
+    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, array $insertValues, ?string $primaryKey): void
     {
         /**
          * The official SQL standard does not define a clear way to handle conflicts
@@ -264,13 +275,13 @@ class Sql implements DialectInterface
         return;
     }
 
-    public function addReturning(string &$query, ?array $columns): void
+    public function addReturning(string &$query, ?array $returning): void
     {
-        if (is_null($columns)) {
+        if (is_null($returning)) {
             return;
         }
 
-        $columns = empty($columns)
+        $columns = empty($returning)
             ? '*'
             : implode(
                 ', ',
@@ -278,7 +289,7 @@ class Sql implements DialectInterface
                     function (string $column): string {
                         return $this->escapeTableOrColumn($column);
                     },
-                    $columns
+                    $returning
                 )
             );
 

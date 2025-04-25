@@ -56,6 +56,7 @@ $database->select()
         ['table', 'column'],
         'column2'
     ])
+    ->having('COUNT(*) > ?', 10)
     ->orderByAsc('column4')
     ->orderByDesc('column5')
     ->limit(1)

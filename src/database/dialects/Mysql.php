@@ -12,7 +12,7 @@ class Mysql extends Sql implements DialectInterface
 {
     public const TABLE_OR_COLUMN_ESCAPE = '`';
 
-    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, array $values, ?string $primaryKey): void
+    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, array $insertValues, ?string $primaryKey): void
     {
         if (is_null($conflict)) {
             return;
@@ -23,7 +23,7 @@ class Mysql extends Sql implements DialectInterface
             return;
         }
 
-        $updates = !empty($conflictUpdates) ? $conflictUpdates : $values;
+        $updates = !empty($conflictUpdates) ? $conflictUpdates : $insertValues;
 
         if ($primaryKey) {
             $lastInsertId = Query::raw(sprintf('LAST_INSERT_ID(%s)', $this->escapeTableOrColumn($primaryKey)));
@@ -58,7 +58,7 @@ class Mysql extends Sql implements DialectInterface
         );
     }
 
-    public function addReturning(string &$query, ?array $columns): void
+    public function addReturning(string &$query, ?array $returning): void
     {
         return;
     }

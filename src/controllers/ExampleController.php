@@ -107,6 +107,7 @@ class ExampleController extends Controller
                 'column2',
                 Query::raw('rawColumn')
             ])
+            ->having('COUNT(*) > ?', 10)
             ->orderByAsc('column4')
             ->orderByDesc('column5')
             ->orderByAsc(Query::raw('column6'))

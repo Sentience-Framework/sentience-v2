@@ -9,7 +9,7 @@ class Pgsql extends Sql implements DialectInterface
 {
     public const DATETIME_FORMAT = 'Y-m-d H:i:s.u';
 
-    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, array $values, ?string $primaryKey): void
+    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, array $insertValues, ?string $primaryKey): void
     {
         if (is_null($conflict)) {
             return;
@@ -35,7 +35,7 @@ class Pgsql extends Sql implements DialectInterface
             return;
         }
 
-        $updates = !empty($conflictUpdates) ? $conflictUpdates : $values;
+        $updates = !empty($conflictUpdates) ? $conflictUpdates : $insertValues;
 
         $query .= sprintf(
             ' ON CONFLICT %s DO UPDATE SET %s',

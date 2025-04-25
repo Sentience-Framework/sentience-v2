@@ -7,6 +7,7 @@ use src\database\queries\containers\Raw;
 use src\database\queries\traits\Columns;
 use src\database\queries\traits\Distinct;
 use src\database\queries\traits\GroupBy;
+use src\database\queries\traits\Having;
 use src\database\queries\traits\Joins;
 use src\database\queries\traits\Limit;
 use src\database\queries\traits\Offset;
@@ -19,6 +20,7 @@ class Select extends Query implements QueryInterface
     use Columns;
     use Distinct;
     use GroupBy;
+    use Having;
     use Joins;
     use Limit;
     use Offset;
@@ -68,6 +70,7 @@ class Select extends Query implements QueryInterface
         $this->dialect->addJoins($query, $this->joins);
         $this->dialect->addWhere($query, $params, $this->where);
         $this->dialect->addGroupBy($query, $this->groupBy);
+        $this->dialect->addHaving($query, $params, $this->having, $this->havingValues);
         $this->dialect->addOrderBy($query, $this->orderBy);
         $this->dialect->addLimit($query, $this->limit);
         $this->dialect->addOffset($query, $this->limit, $this->offset);
@@ -89,23 +92,23 @@ class Select extends Query implements QueryInterface
             : '*';
 
         $this->columns([
-            static::alias(
-                static::raw(
+            Query::alias(
+                Query::raw(
                     sprintf(
                         'COUNT(%s)',
-                        $countExpression
+                        ($previousDistinct ? 'DISTINCT ' : '') . $countExpression
                     )
                 ),
                 'count'
             )
         ]);
 
-        $row = $this->execute()->fetch();
+        $count = (int) $this->execute()->fetch()->count;
 
         $this->columns = $previousColumns;
         $this->distinct = $previousDistinct;
 
-        return (int) $row->count;
+        return $count;
     }
 
     public function exists(): bool

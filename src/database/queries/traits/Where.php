@@ -91,7 +91,7 @@ trait Where
         return $this->group($callback, WhereOperator::AND);
     }
 
-    public function where(string $expression, array $values = []): static
+    public function where(string $expression, bool|int|float|string|DateTime ...$values): static
     {
         return $this->rawExpression($expression, $values, WhereOperator::AND);
     }
@@ -171,7 +171,7 @@ trait Where
         return $this->group($callback, WhereOperator::OR);
     }
 
-    public function orWhere(string $expression, array $values = []): static
+    public function orWhere(string $expression, bool|int|float|string|DateTime ...$values): static
     {
         return $this->rawExpression($expression, $values, WhereOperator::OR);
     }
