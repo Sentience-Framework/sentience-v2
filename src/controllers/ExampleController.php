@@ -151,7 +151,6 @@ class ExampleController extends Controller
             ->returning(['id'])
             ->rawQuery();
 
-
         foreach ($queries as $query) {
             Stdio::printLn($query);
             Stdio::printLn('');
