@@ -35,7 +35,7 @@ class Results
     {
         $object = $this->pdoStatement->fetchObject($class);
 
-        if (!$object) {
+        if (is_bool($object)) {
             return null;
         }
 
@@ -45,6 +45,22 @@ class Results
     public function fetchAll(string $class = 'stdClass'): array
     {
         return $this->pdoStatement->fetchAll(PDO::FETCH_CLASS, $class);
+    }
+
+    public function fetchAssoc(): ?object
+    {
+        $assoc = $this->pdoStatement->fetch(PDO::FETCH_ASSOC);
+
+        if (is_bool($assoc)) {
+            return null;
+        }
+
+        return $assoc;
+    }
+
+    public function fetchAllAssoc(): array
+    {
+        return $this->pdoStatement->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function lastInsertId(?string $sequence = null): ?string

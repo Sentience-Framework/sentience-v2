@@ -65,7 +65,7 @@ class Insert extends Query implements QueryInterface
             )
         );
 
-        $this->dialect->addConflict($query, $params, $this->conflict, $this->conflictUpdates, $this->values, $this->conflictPrimaryKey);
+        $this->dialect->addConflict($query, $params, $this->conflict, $this->conflictUpdates, $this->conflictPrimaryKey, $this->values);
         $this->dialect->addReturning($query, $this->returning);
 
         $query .= ';';

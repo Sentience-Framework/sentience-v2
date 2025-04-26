@@ -23,7 +23,7 @@ interface DialectInterface
     public function addOrderBy(string &$query, array $orderBy): void;
     public function addLimit(string &$query, ?int $limit): void;
     public function addOffset(string &$query, ?int $limit, ?int $offset): void;
-    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, array $insertValues, ?string $primaryKey): void;
+    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void;
     public function addReturning(string &$query, ?array $returning): void;
     public function stringifyColumnDefinition(Column $column): string;
     public function stringifyUniqueConstraintDefinition(UniqueConstraint $uniqueConstraint): string;

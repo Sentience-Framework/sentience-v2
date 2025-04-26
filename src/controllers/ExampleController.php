@@ -69,29 +69,29 @@ class ExampleController extends Controller
                 ),
             ])
             ->leftJoin(
-                Query::alias('(ALIAS)table2', 'jt'),
+                Query::alias('table2', 'jt'),
                 'joinColumn',
                 ['public', 't1'],
                 't1Column'
             )
             ->rightJoin(
-                Query::raw('(RAW)table2'),
+                Query::raw('table2'),
                 'joinColumn',
                 Query::raw('t1'),
                 't1Column'
             )->innerJoin(
-                ['(ARRAY)public', 'table3'],
+                ['public', 'table3'],
                 'joinColumn',
                 ['public', 'table1'],
                 't1Column'
             )
             ->innerJoin(
-                '(STRING)table4',
+                'table4',
                 'joinColumn',
                 'table1',
                 't1Column'
             )
-            ->join('LEFT JOIN (RAW)table2 jt ON jt.column1 = table1 AND jt.column2 = table2')
+            ->join('RIGHT JOIN table2 jt ON jt.column1 = table1.column1 AND jt.column2 = table2.column2')
             ->whereEquals('column1', 10)
             ->whereGroup(function ($group) {
                 return $group->whereGreaterThanOrEquals('column2', 20)

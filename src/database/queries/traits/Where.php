@@ -206,10 +206,6 @@ trait Where
 
     protected function in(string|array $column, array $values, WhereOperator $chain): static
     {
-        if (count($values) == 0) {
-            return $this;
-        }
-
         $this->addCondition(WhereOperator::IN, $column, $values, $chain);
 
         return $this;
@@ -217,10 +213,6 @@ trait Where
 
     protected function notIn(string|array $column, array $values, WhereOperator $chain): static
     {
-        if (count($values) == 0) {
-            return $this;
-        }
-
         $this->addCondition(WhereOperator::NOT_IN, $column, $values, $chain);
 
         return $this;

@@ -266,7 +266,7 @@ class Sql implements DialectInterface
         $query .= ' OFFSET ' . $offset;
     }
 
-    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, array $insertValues, ?string $primaryKey): void
+    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void
     {
         /**
          * The official SQL standard does not define a clear way to handle conflicts
