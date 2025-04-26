@@ -102,6 +102,10 @@ class ExampleController extends Controller
                 return $group->whereIn('column4', [1, 2, 3, 4])
                     ->whereNotEquals('column5', 'test string');
             })
+            ->whereGroup(function ($group) {
+                return $group;
+            })
+            ->whereIn('column2', [])
             ->groupBy([
                 ['table', 'column'],
                 'column2',

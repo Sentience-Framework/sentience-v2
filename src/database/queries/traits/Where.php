@@ -36,14 +36,14 @@ trait Where
         return $this->notLike($column, $value, WhereOperator::AND);
     }
 
-    public function whereIn(string|array $column, array $values): static
+    public function whereIn(string|array $column, array $values, bool $preventSqlSyntaxError = true): static
     {
-        return $this->in($column, $values, WhereOperator::AND);
+        return $this->in($column, $values, $preventSqlSyntaxError, WhereOperator::AND);
     }
 
-    public function whereNotIn(string|array $column, array $values): static
+    public function whereNotIn(string|array $column, array $values, bool $preventSqlSyntaxError = true): static
     {
-        return $this->notIn($column, $values, WhereOperator::AND);
+        return $this->notIn($column, $values, $preventSqlSyntaxError, WhereOperator::AND);
     }
 
     public function whereLessThan(string|array $column, int|float|string|DateTime $value): static
@@ -86,9 +86,9 @@ trait Where
         return $this->isNotNull($column, WhereOperator::AND);
     }
 
-    public function whereGroup(callable $callback): static
+    public function whereGroup(callable $callback, bool $preventSqlSyntaxError = true): static
     {
-        return $this->group($callback, WhereOperator::AND);
+        return $this->group($callback, $preventSqlSyntaxError, WhereOperator::AND);
     }
 
     public function where(string $expression, bool|int|float|string|DateTime ...$values): static
@@ -116,14 +116,14 @@ trait Where
         return $this->notLike($column, $value, WhereOperator::OR);
     }
 
-    public function orWhereIn(string|array $column, array $values): static
+    public function orWhereIn(string|array $column, array $values, bool $preventSqlSyntaxError = true): static
     {
-        return $this->in($column, $values, WhereOperator::OR);
+        return $this->in($column, $values, $preventSqlSyntaxError, WhereOperator::OR);
     }
 
-    public function orWhereNotIn(string|array $column, array $values): static
+    public function orWhereNotIn(string|array $column, array $values, bool $preventSqlSyntaxError = true): static
     {
-        return $this->notIn($column, $values, WhereOperator::OR);
+        return $this->notIn($column, $values, $preventSqlSyntaxError, WhereOperator::OR);
     }
 
     public function orWhereLessThan(string|array $column, int|float|string|DateTime $value): static
@@ -166,9 +166,9 @@ trait Where
         return $this->isNotNull($column, WhereOperator::OR);
     }
 
-    public function orWhereGroup(callable $callback): static
+    public function orWhereGroup(callable $callback, bool $preventSqlSyntaxError = true): static
     {
-        return $this->group($callback, WhereOperator::OR);
+        return $this->group($callback, $preventSqlSyntaxError, WhereOperator::OR);
     }
 
     public function orWhere(string $expression, bool|int|float|string|DateTime ...$values): static
@@ -204,15 +204,23 @@ trait Where
         return $this;
     }
 
-    protected function in(string|array $column, array $values, WhereOperator $chain): static
+    protected function in(string|array $column, array $values, bool $preventSqlSyntaxError, WhereOperator $chain): static
     {
+        if ($preventSqlSyntaxError && count($values) == 0) {
+            return $this;
+        }
+
         $this->addCondition(WhereOperator::IN, $column, $values, $chain);
 
         return $this;
     }
 
-    protected function notIn(string|array $column, array $values, WhereOperator $chain): static
+    protected function notIn(string|array $column, array $values, bool $preventSqlSyntaxError, WhereOperator $chain): static
     {
+        if ($preventSqlSyntaxError && count($values) == 0) {
+            return $this;
+        }
+
         $this->addCondition(WhereOperator::NOT_IN, $column, $values, $chain);
 
         return $this;
@@ -274,7 +282,7 @@ trait Where
         return $this;
     }
 
-    protected function group(callable $callback, WhereOperator $chain): static
+    protected function group(callable $callback, bool $preventSqlSyntaxError, WhereOperator $chain): static
     {
         $conditionGroup = new ConditionGroup($chain);
 
@@ -284,7 +292,7 @@ trait Where
             throw new QueryException('callback must return %s', Reflector::getShortName(ConditionGroup::class));
         }
 
-        if (count($conditionGroup->getConditions()) == 0) {
+        if ($preventSqlSyntaxError && count($conditionGroup->getConditions()) == 0) {
             return $this;
         }
 
