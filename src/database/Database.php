@@ -154,17 +154,16 @@ class Database
         }
     }
 
-    public function transactionInCallback(callable $callback): void
+    public function transactionInCallback(callable $callback): mixed
     {
         $this->beginTransaction();
 
         try {
-            $callback($this);
-
+            $result = $callback($this);
             $this->commitTransaction();
+            return $result;
         } catch (Throwable $exception) {
             $this->rollbackTransaction();
-
             throw $exception;
         }
     }
