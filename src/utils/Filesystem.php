@@ -12,16 +12,28 @@ class Filesystem
             throw new FilesystemException('directory %s does not exist', $path);
         }
 
+        $items = scandir($path);
+
+        if (is_bool($items)) {
+            return [];
+        }
+
+        $items = array_filter(
+            $items,
+            function (string $item): bool {
+                return !in_array($item, ['.', '..']);
+            }
+        );
+
+        if (count($items) == 0) {
+            return [];
+        }
+
         $items = array_map(
             function (string $item) use ($path): string {
                 return file_path($path, $item);
             },
-            array_filter(
-                scandir($path),
-                function (string $item): bool {
-                    return !in_array($item, ['.', '..']);
-                }
-            )
+            $items
         );
 
         sort($items);
