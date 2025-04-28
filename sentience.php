@@ -10,8 +10,8 @@ define('SENTIENCE_DIR', __DIR__);
 DotEnv::loadEnv(false, false);
 
 DotEnv::loadFile(
-    file_path(SENTIENCE_DIR, '.env'),
-    file_path(SENTIENCE_DIR, '.env.example'),
+    path(SENTIENCE_DIR, '.env'),
+    path(SENTIENCE_DIR, '.env.example'),
     [
         'SENTIENCE_DIR' => SENTIENCE_DIR,
         ...$_ENV
@@ -20,7 +20,7 @@ DotEnv::loadFile(
 
 $sentience = new Sentience();
 
-require_once __DIR__ . '/commands.php';
-require_once __DIR__ . '/routes.php';
+require_once path(SENTIENCE_DIR, 'commands.php');
+require_once path(SENTIENCE_DIR, 'routes.php');
 
 $sentience->execute();

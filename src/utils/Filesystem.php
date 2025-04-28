@@ -31,7 +31,7 @@ class Filesystem
 
         $items = array_map(
             function (string $item) use ($path): string {
-                return file_path($path, $item);
+                return path($path, $item);
             },
             $items
         );

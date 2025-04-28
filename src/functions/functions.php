@@ -14,7 +14,7 @@ function is_cli(): bool
     return empty($_SERVER['REMOTE_ADDR']) && !isset($_SERVER['HTTP_USER_AGENT']) && count($_SERVER['argv']) > 0;
 }
 
-function file_path(string $dir, ?string ...$components): string
+function path(string $dir, ?string ...$components): string
 {
     if (!$components) {
         return $dir;
