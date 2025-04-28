@@ -3,7 +3,7 @@
 use src\dotenv\DotEnv;
 use src\sentience\Sentience;
 
-require_once 'vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 define('SENTIENCE_DIR', __DIR__);
 
@@ -20,7 +20,7 @@ DotEnv::loadFile(
 
 $sentience = new Sentience();
 
-require_once 'commands.php';
-require_once 'routes.php';
+require_once __DIR__ . '/commands.php';
+require_once __DIR__ . '/routes.php';
 
 $sentience->execute();

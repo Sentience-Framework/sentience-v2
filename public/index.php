@@ -1,3 +1,3 @@
 <?php
 
-require '../sentience.php';
+require __DIR__ . '/../sentience.php';
