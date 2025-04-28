@@ -4,6 +4,7 @@ namespace src\models;
 
 use PDO;
 use ReflectionProperty;
+use ReflectionUnionType;
 use src\database\dialects\DialectFactory;
 use src\database\dialects\DialectInterface;
 use src\database\queries\Insert;
@@ -224,9 +225,14 @@ abstract class Model
 
         foreach ($this->columns as $property => $column) {
             $reflectionProperty = new ReflectionProperty($this, $property);
+            $reflectionType = $reflectionProperty->getType();
 
-            $propertyType = $reflectionProperty->getType()->getName();
-            $propertyAllowsNull = $reflectionProperty->getType()->allowsNull();
+            if ($reflectionType instanceof ReflectionUnionType) {
+                throw new ModelException('union types are not allowed as model properties');
+            }
+
+            $propertyType = $reflectionType->getName();
+            $propertyAllowsNull = $reflectionType->allowsNull();
             $propertyHasDefaultValue = $reflectionProperty->hasDefaultValue();
             $propertyDefaultValue = $reflectionProperty->getDefaultValue();
             $propertyIsPrimaryKey = $property == $this->primaryKey;
