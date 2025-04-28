@@ -4,7 +4,7 @@ namespace src\utils;
 
 class Terminal
 {
-    public static function exec(string $command, &$stdout, &$stderr): int
+    public static function exec(string $command, &$stdout = null, &$stderr = null): int
     {
         $pipes = [];
 
