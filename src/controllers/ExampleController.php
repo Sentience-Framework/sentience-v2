@@ -165,12 +165,12 @@ class ExampleController extends Controller
         $queries[] = $database->alterTable()
             ->table('table_1')
             ->addColumn('column3', 'INT')
-            ->alterColumn('column3', 'TEXT')
+            // ->alterColumn('column3', 'TEXT')
             ->renameColumn('column3', 'column4')
             ->dropColumn('column4')
-            ->addUniqueConstraint(['column1', 'column2'], 'unique_constraint')
-            ->addForeignKeyConstraint('column4', 'reference_table', 'reference_column')
-            ->dropConstraint('unique_constraint')
+            // ->addUniqueConstraint(['column1', 'column2'], 'unique_constraint')
+            // ->addForeignKeyConstraint('column4', 'reference_table', 'reference_column')
+            // ->dropConstraint('unique_constraint')
             ->rawQuery();
 
         $queries[] = $database->dropTable()

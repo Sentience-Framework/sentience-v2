@@ -2,7 +2,6 @@
 
 namespace src\database\queries;
 
-use src\database\dialects\Mysql;
 use src\database\queries\containers\Raw;
 use src\database\queries\traits\Columns;
 use src\database\queries\traits\Distinct;
@@ -14,7 +13,6 @@ use src\database\queries\traits\Offset;
 use src\database\queries\traits\OrderBy;
 use src\database\queries\traits\Table;
 use src\database\queries\traits\Where;
-use src\database\Results;
 
 class Select extends Query implements QueryInterface
 {
