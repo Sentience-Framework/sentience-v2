@@ -220,11 +220,11 @@ The create table query class has the following methods:
 ```
 CreateTable::table();
 CreateTable::ifNotExists();
-CreateTable::columns();
+CreateTable::column();
+CreateTable::primaryKeys();
 CreateTable::uniqueConstraint();
 CreateTable::foreignKeyConstraint();
 CreateTable::constraint();
-CreateTable::primaryKeys();
 ```
 
 ### 4.6 Alter table
@@ -240,6 +240,9 @@ AlterTable::addColumn();
 AlterTable::alterColumn(); // Not supported in SQLite
 AlterTable::renameColumn();
 AlterTable::dropColumn();
+AlterTable::addUniqueConstraint();
+AlterTable::addForeignKeyConstraint();
+AlterTable::dropConstraint();
 ```
 
 ### 4.7 Drop table

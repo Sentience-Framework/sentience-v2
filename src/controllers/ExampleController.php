@@ -151,6 +151,33 @@ class ExampleController extends Controller
             ->returning(['id'])
             ->rawQuery();
 
+        $queries[] = $database->createTable()
+            ->ifNotExists()
+            ->table('table_1')
+            ->column('primary_key', 'int', true, null, true)
+            ->column('column1', 'bigint', true)
+            ->column('column2', 'varchar(255)')
+            ->primaryKeys(['primary_key'])
+            ->uniqueConstraint(['column1', 'column2'])
+            ->foreignKeyConstraint('column1', 'table_2', 'reference_column', 'fk_table_1')
+            ->rawQuery();
+
+        $queries[] = $database->alterTable()
+            ->table('table_1')
+            ->addColumn('column3', 'INT')
+            ->alterColumn('column3', 'TEXT')
+            ->renameColumn('column3', 'column4')
+            ->dropColumn('column4')
+            ->addUniqueConstraint(['column1', 'column2'], 'unique_constraint')
+            ->addForeignKeyConstraint('column4', 'reference_table', 'reference_column')
+            ->dropConstraint('unique_constraint')
+            ->rawQuery();
+
+        $queries[] = $database->dropTable()
+            ->table('table_1')
+            ->ifExists()
+            ->rawQuery();
+
         foreach ($queries as $query) {
             Stdio::printLn($query);
             Stdio::printLn('');

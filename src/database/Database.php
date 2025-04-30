@@ -5,6 +5,8 @@ namespace src\database;
 use Closure;
 use PDO;
 use Throwable;
+use src\database\queries\containers\Alias;
+use src\database\queries\containers\Raw;
 use src\database\dialects\DialectFactory;
 use src\database\dialects\DialectInterface;
 use src\database\queries\AlterTable;
@@ -114,7 +116,6 @@ class Database
 
         return new Results(
             $this,
-            $this->dialect,
             $pdoStatement,
             $rawQuery,
         );
@@ -190,38 +191,80 @@ class Database
         return $this->pdo->setAttribute($attribute, $value);
     }
 
-    public function select(): Select
+    public function select(null|string|array|Alias|Raw $table = null): Select
     {
-        return new Select($this, $this->dialect);
+        $query = new Select($this, $this->dialect);
+
+        if (!is_null($table)) {
+            $query->table($table);
+        }
+
+        return $query;
     }
 
-    public function insert(): Insert
+    public function insert(null|string|array|Alias|Raw $table = null): Insert
     {
-        return new Insert($this, $this->dialect);
+        $query = new Insert($this, $this->dialect);
+
+        if (!is_null($table)) {
+            $query->table($table);
+        }
+
+        return $query;
     }
 
-    public function update(): Update
+    public function update(null|string|array|Alias|Raw $table = null): Update
     {
-        return new Update($this, $this->dialect);
+        $query = new Update($this, $this->dialect);
+
+        if (!is_null($table)) {
+            $query->table($table);
+        }
+
+        return $query;
     }
 
-    public function delete(): Delete
+    public function delete(null|string|array|Alias|Raw $table = null): Delete
     {
-        return new Delete($this, $this->dialect);
+        $query = new Delete($this, $this->dialect);
+
+        if (!is_null($table)) {
+            $query->table($table);
+        }
+
+        return $query;
     }
 
-    public function createTable(): CreateTable
+    public function createTable(null|string|array|Alias|Raw $table = null): CreateTable
     {
-        return new CreateTable($this, $this->dialect);
+        $query = new CreateTable($this, $this->dialect);
+
+        if (!is_null($table)) {
+            $query->table($table);
+        }
+
+        return $query;
     }
 
-    public function alterTable(): AlterTable
+    public function alterTable(null|string|array|Alias|Raw $table = null): AlterTable
     {
-        return new AlterTable($this, $this->dialect);
+        $query = new AlterTable($this, $this->dialect);
+
+        if (!is_null($table)) {
+            $query->table($table);
+        }
+
+        return $query;
     }
 
-    public function dropTable(): DropTable
+    public function dropTable(null|string|array|Alias|Raw $table = null): DropTable
     {
-        return new DropTable($this, $this->dialect);
+        $query = new DropTable($this, $this->dialect);
+
+        if (!is_null($table)) {
+            $query->table($table);
+        }
+
+        return $query;
     }
 }

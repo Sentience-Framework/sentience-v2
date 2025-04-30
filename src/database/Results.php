@@ -13,10 +13,9 @@ class Results
     protected PDOStatement $pdoStatement;
     public string $query;
 
-    public function __construct(Database $database, DialectInterface $dialect, PDOStatement $pdoStatement, string $query)
+    public function __construct(Database $database, PDOStatement $pdoStatement, string $query)
     {
         $this->database = $database;
-        $this->dialect = $dialect;
         $this->pdoStatement = $pdoStatement;
         $this->query = $query;
     }
@@ -71,5 +70,10 @@ class Results
     public function getPDOStatementAttribute(int $attribute): mixed
     {
         return $this->pdoStatement->getAttribute($attribute);
+    }
+
+    public function setPDOStatementAttribute(int $attribute, mixed $value): mixed
+    {
+        return $this->pdoStatement->setAttribute($attribute, $value);
     }
 }

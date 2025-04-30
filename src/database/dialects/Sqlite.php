@@ -3,7 +3,10 @@
 namespace src\database\dialects;
 
 use src\database\queries\containers\Raw;
+use src\database\queries\definitions\AddForeignKeyConstraint;
+use src\database\queries\definitions\AddUniqueConstraint;
 use src\database\queries\definitions\AlterColumn;
+use src\database\queries\definitions\DropConstraint;
 use src\exceptions\QueryException;
 
 class Sqlite extends Sql implements DialectInterface
@@ -26,7 +29,7 @@ class Sqlite extends Sql implements DialectInterface
                 ', ',
                 array_map(
                     function (string $column): string {
-                        return $this->escapeTableOrColumn($column);
+                        return $this->escapeIdentifier($column);
                     },
                     $conflict
                 )
@@ -50,14 +53,14 @@ class Sqlite extends Sql implements DialectInterface
                         if ($value instanceof Raw) {
                             return sprintf(
                                 '%s = %s',
-                                $this->escapeTableOrColumn($key),
+                                $this->escapeIdentifier($key),
                                 $value->expression
                             );
                         }
 
                         $params[] = $value;
 
-                        return sprintf('%s = ?', $this->escapeTableOrColumn($key));
+                        return sprintf('%s = ?', $this->escapeIdentifier($key));
                     },
                     $updates,
                     array_keys($updates)
@@ -69,6 +72,21 @@ class Sqlite extends Sql implements DialectInterface
     public function stringifyAlterTableAlterColumn(AlterColumn $alterColumn): string
     {
         throw new QueryException('SQLite does not support altering columns');
+    }
+
+    protected function stringifyAlterTableAddUniqueConstraint(AddUniqueConstraint $addUniqueConstraint): string
+    {
+        throw new QueryException('SQLite does not support adding constraints by altering the table');
+    }
+
+    protected function stringifyAlterTableAddForeignKeyConstraint(AddForeignKeyConstraint $addForeignKeyConstraint): string
+    {
+        throw new QueryException('SQLite does not support adding constraints by altering the table');
+    }
+
+    protected function stringifyAlterTableDropConstraint(DropConstraint $dropConstraint): string
+    {
+        throw new QueryException('SQLite does not support dropping constraints by altering the table');
     }
 
     public function phpTypeToColumnType(string $type, bool $isAutoIncrement, bool $isPrimaryKey, bool $inConstraint): string

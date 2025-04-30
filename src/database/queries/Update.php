@@ -19,42 +19,12 @@ class Update extends Query implements QueryInterface
 
     public function build(): array
     {
-        $query = '';
-        $params = [];
-
-        $query .= 'UPDATE';
-
-        $this->dialect->addTable($query, $this->table);
-
-        $query .= ' SET ';
-
-        $query .= implode(
-            ', ',
-            array_map(
-                function (mixed $value, string $key) use (&$params): string {
-                    if ($value instanceof Raw) {
-                        return sprintf(
-                            '%s = %s',
-                            $this->dialect->escapeTableOrColumn($key),
-                            $value->expression
-                        );
-                    }
-
-                    $params[] = $value;
-
-                    return sprintf('%s = ?', $this->dialect->escapeTableOrColumn($key));
-                },
-                $this->values,
-                array_keys($this->values)
-            )
-        );
-
-        $this->dialect->addWhere($query, $params, $this->where);
-        $this->dialect->addLimit($query, $this->limit);
-        $this->dialect->addReturning($query, $this->returning);
-
-        $query .= ';';
-
-        return [$query, $params];
+        return $this->dialect->update([
+            'table' => $this->table,
+            'values' => $this->values,
+            'where' => $this->where,
+            'limit' => $this->limit,
+            'returning' => $this->returning
+        ]);
     }
 }

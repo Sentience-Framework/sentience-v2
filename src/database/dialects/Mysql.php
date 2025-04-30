@@ -6,11 +6,13 @@ use src\database\queries\containers\Raw;
 use src\database\queries\definitions\AddColumn;
 use src\database\queries\definitions\AlterColumn;
 use src\database\queries\definitions\Column;
+use src\database\queries\definitions\DropConstraint;
 use src\database\queries\Query;
 
 class Mysql extends Sql implements DialectInterface
 {
     public const TABLE_OR_COLUMN_ESCAPE = '`';
+    public const STRING_ESCAPE = '"';
 
     public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void
     {
@@ -26,7 +28,7 @@ class Mysql extends Sql implements DialectInterface
         $updates = !empty($conflictUpdates) ? $conflictUpdates : $insertValues;
 
         if ($primaryKey) {
-            $lastInsertId = Query::raw(sprintf('LAST_INSERT_ID(%s)', $this->escapeTableOrColumn($primaryKey)));
+            $lastInsertId = Query::raw(sprintf('LAST_INSERT_ID(%s)', $this->escapeIdentifier($primaryKey)));
 
             $updates = is_null($conflictUpdates)
                 ? [$primaryKey => $lastInsertId]
@@ -42,14 +44,14 @@ class Mysql extends Sql implements DialectInterface
                         if ($value instanceof Raw) {
                             return sprintf(
                                 '%s = %s',
-                                $this->escapeTableOrColumn($key),
+                                $this->escapeIdentifier($key),
                                 $value->expression
                             );
                         }
 
                         $params[] = $value;
 
-                        return sprintf('%s = ?', $this->escapeTableOrColumn($key));
+                        return sprintf('%s = ?', $this->escapeIdentifier($key));
                     },
                     $updates,
                     array_keys($updates)
@@ -92,6 +94,13 @@ class Mysql extends Sql implements DialectInterface
         return substr_replace($stringifiedAlterColumn, 'MODIFY', 0, 5);
     }
 
+    public function stringifyAlterTableDropConstraint(DropConstraint $dropConstraint): string
+    {
+        $stringifiedDropConstraint = parent::stringifyAlterTableDropConstraint($dropConstraint);
+
+        return substr_replace($stringifiedDropConstraint, 'INDEX', 5, 10);
+    }
+
     public function phpTypeToColumnType(string $type, bool $isAutoIncrement, bool $isPrimaryKey, bool $inConstraint): string
     {
         if ($isPrimaryKey && $type == 'string') {
@@ -107,7 +116,7 @@ class Mysql extends Sql implements DialectInterface
             'int' => 'INT',
             'float' => 'FLOAT',
             'string' => 'LONGTEXT',
-            'DateTime' => 'DATETIME',
+            'DateTime' => 'DATETIME(6)',
         ][$type];
     }
 }

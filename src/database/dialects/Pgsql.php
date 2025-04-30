@@ -16,14 +16,14 @@ class Pgsql extends Sql implements DialectInterface
         }
 
         $expression = is_string($conflict)
-            ? sprintf('ON CONSTRAINT %s', $this->escapeTableOrColumn($conflict))
+            ? sprintf('ON CONSTRAINT %s', $this->escapeIdentifier($conflict))
             : sprintf(
                 '(%s)',
                 implode(
                     ', ',
                     array_map(
                         function (string $column): string {
-                            return $this->escapeTableOrColumn($column);
+                            return $this->escapeIdentifier($column);
                         },
                         $conflict
                     )
@@ -47,14 +47,14 @@ class Pgsql extends Sql implements DialectInterface
                         if ($value instanceof Raw) {
                             return sprintf(
                                 '%s = %s',
-                                $this->escapeTableOrColumn($key),
+                                $this->escapeIdentifier($key),
                                 $value->expression
                             );
                         }
 
                         $params[] = $value;
 
-                        return sprintf('%s = ?', $this->escapeTableOrColumn($key));
+                        return sprintf('%s = ?', $this->escapeIdentifier($key));
                     },
                     $updates,
                     array_keys($updates)

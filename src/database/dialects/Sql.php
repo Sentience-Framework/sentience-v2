@@ -10,9 +10,12 @@ use src\database\queries\containers\Raw;
 use src\database\queries\containers\Condition;
 use src\database\queries\containers\ConditionGroup;
 use src\database\queries\definitions\AddColumn;
+use src\database\queries\definitions\AddForeignKeyConstraint;
+use src\database\queries\definitions\AddUniqueConstraint;
 use src\database\queries\definitions\AlterColumn;
 use src\database\queries\definitions\Column;
 use src\database\queries\definitions\DropColumn;
+use src\database\queries\definitions\DropConstraint;
 use src\database\queries\definitions\ForeignKeyConstraint;
 use src\database\queries\definitions\RenameColumn;
 use src\database\queries\definitions\UniqueConstraint;
@@ -23,14 +26,322 @@ class Sql implements DialectInterface
 {
     public const TABLE_OR_COLUMN_ESCAPE = '"';
     public const STRING_ESCAPE = "'";
-    public const DATETIME_FORMAT = 'Y-m-d H:i:s';
+    public const DATETIME_FORMAT = 'Y-m-d H:i:s.u';
 
-    public function addTable(string &$query, string|array|Alias|Raw $table, bool $allowAlias = false): void
+    public function select(array $config): array
+    {
+        $query = '';
+        $params = [];
+
+        $query .= 'SELECT';
+
+        if ($config['distinct']) {
+            $query .= ' DISTINCT';
+        }
+
+        $query .= ' ';
+        $query .= count($config['columns']) > 0
+            ? implode(
+                ', ',
+                array_map(
+                    function (string|array|Alias|Raw $column): string {
+                        if (is_array($column)) {
+                            return $this->escapeIdentifier($column);
+                        }
+
+                        if ($column instanceof Alias) {
+                            return $this->escapeIdentifier($column->name, $column->alias);
+                        }
+
+                        if ($column instanceof Raw) {
+                            return $column->expression;
+                        }
+
+                        return $this->escapeIdentifier($column);
+                    },
+                    $config['columns']
+                )
+            )
+            : '*';
+
+        $query .= ' FROM';
+
+        $this->addTable($query, $config['table']);
+        $this->addJoins($query, $config['joins']);
+        $this->addWhere($query, $params, $config['where']);
+        $this->addGroupBy($query, $config['groupBy']);
+        $this->addHaving($query, $params, $config['having']['having'], $config['having']['values']);
+        $this->addOrderBy($query, $config['orderBy']);
+        $this->addLimit($query, $config['limit']);
+        $this->addOffset($query, $config['limit'], $config['offset']);
+
+        $query .= ';';
+
+        return [$query, $params];
+    }
+
+    public function insert(array $config): array
+    {
+        $query = '';
+        $params = [];
+
+        $query .= 'INSERT INTO';
+
+        $this->addTable($query, $config['table']);
+
+        $query .= sprintf(
+            ' (%s)',
+            implode(
+                ', ',
+                array_map(
+                    function (string|array|Alias|Raw $column): string {
+                        if ($column instanceof Raw) {
+                            return $column->expression;
+                        }
+
+                        if ($column instanceof Alias) {
+                            return $this->escapeIdentifier($column->name);
+                        }
+
+                        return $this->escapeIdentifier($column);
+                    },
+                    array_keys($config['values'])
+                )
+            )
+        );
+
+        $query .= sprintf(
+            ' VALUES (%s)',
+            implode(
+                ', ',
+                array_map(
+                    function (mixed $value) use (&$params): string {
+                        if ($value instanceof Raw) {
+                            return $value->expression;
+                        }
+
+                        $params[] = $value;
+
+                        return '?';
+                    },
+                    $config['values']
+                )
+            )
+        );
+
+        $this->addConflict(
+            $query,
+            $params,
+            $config['conflict']['conflict'],
+            $config['conflict']['updates'],
+            $config['conflict']['primaryKey'],
+            $config['values']
+        );
+        $this->addReturning($query, $config['returning']);
+
+        $query .= ';';
+
+        return [$query, $params];
+    }
+
+    public function update(array $config): array
+    {
+        $query = '';
+        $params = [];
+
+        $query .= 'UPDATE';
+
+        $this->addTable($query, $config['table']);
+
+        $query .= ' SET ';
+
+        $query .= implode(
+            ', ',
+            array_map(
+                function (mixed $value, string $key) use (&$params): string {
+                    if ($value instanceof Raw) {
+                        return sprintf(
+                            '%s = %s',
+                            $this->escapeIdentifier($key),
+                            $value->expression
+                        );
+                    }
+
+                    $params[] = $value;
+
+                    return sprintf('%s = ?', $this->escapeIdentifier($key));
+                },
+                $config['values'],
+                array_keys($config['values'])
+            )
+        );
+
+        $this->addWhere($query, $params, $config['where']);
+        $this->addLimit($query, $config['limit']);
+        $this->addReturning($query, $config['returning']);
+
+        $query .= ';';
+
+        return [$query, $params];
+    }
+
+    public function delete(array $config): array
+    {
+        $query = '';
+        $params = [];
+
+        $query .= 'DELETE FROM';
+
+        $this->addTable($query, $config['table']);
+        $this->addWhere($query, $params, $config['where']);
+        $this->addReturning($query, $config['returning']);
+
+        $query .= ';';
+
+        return [$query, $params];
+    }
+
+    public function createTable(array $config): array
+    {
+        $query = '';
+        $params = [];
+
+        $query .= 'CREATE TABLE';
+
+        if ($config['ifNotExists']) {
+            $query .= ' IF NOT EXISTS';
+        }
+
+        $this->addTable($query, $config['table']);
+
+        $definitions = [];
+
+        foreach ($config['columns'] as $column) {
+            $definitions[] = $this->stringifyColumnDefinition($column);
+        }
+
+        $definitions[] = sprintf(
+            'PRIMARY KEY (%s)',
+            implode(
+                ', ',
+                array_map(
+                    function (string|Raw $column): string {
+                        return $this->escapeIdentifier($column);
+                    },
+                    $config['primaryKeys']
+                )
+            )
+        );
+
+        foreach ($config['constraints']['unique'] as $uniqueConstraint) {
+            $definitions[] = $this->stringifyUniqueConstraintDefinition($uniqueConstraint);
+        }
+
+        foreach ($config['constraints']['foreignKey'] as $foreignKeyConstraint) {
+            $definitions[] = $this->stringifyForeignKeyConstraintDefinition($foreignKeyConstraint);
+        }
+
+        $query .= sprintf(' (%s)', implode(', ', $definitions));
+        $query .= ';';
+
+        return [$query, $params];
+    }
+
+    public function alterTable(array $config): array
+    {
+        $query = '';
+        $params = [];
+
+        $alters = [];
+
+        foreach ($config['alters'] as $alter) {
+            if ($alter instanceof AddColumn) {
+                $alters[] = $this->stringifyAlterTableAddColumn($alter);
+
+                continue;
+            }
+
+            if ($alter instanceof AlterColumn) {
+                $alters[] = $this->stringifyAlterTableAlterColumn($alter);
+
+                continue;
+            }
+
+            if ($alter instanceof RenameColumn) {
+                $alters[] = $this->stringifyAlterTableRenameColumn($alter);
+
+                continue;
+            }
+
+            if ($alter instanceof DropColumn) {
+                $alters[] = $this->stringifyAlterTableDropColumn($alter);
+
+                continue;
+            }
+
+            if ($alter instanceof AddUniqueConstraint) {
+                $alters[] = $this->stringifyAlterTableAddUniqueConstraint($alter);
+
+                continue;
+            }
+
+            if ($alter instanceof AddForeignKeyConstraint) {
+                $alters[] = $this->stringifyAlterTableAddForeignKeyConstraint($alter);
+
+                continue;
+            }
+
+            if ($alter instanceof DropConstraint) {
+                $alters[] = $this->stringifyAlterTableDropConstraint($alter);
+
+                continue;
+            }
+        }
+
+        $queries = array_map(
+            function (string $alter) use ($config): string {
+                $query = 'ALTER TABLE';
+
+                $this->addTable($query, $config['table']);
+
+                $query .= ' ';
+                $query .= $alter;
+                $query .= ';';
+
+                return $query;
+            },
+            $alters
+        );
+
+        $query .= implode(' ', $queries);
+
+        return [$query, $params];
+    }
+
+    public function dropTable(array $config): array
+    {
+        $query = '';
+        $params = [];
+
+        $query .= 'DROP TABLE';
+
+        if ($config['ifExists']) {
+            $query .= ' IF EXISTS';
+        }
+
+        $this->addTable($query, $config['table']);
+
+        $query .= ';';
+
+        return [$query, $params];
+    }
+
+    protected function addTable(string &$query, string|array|Alias|Raw $table): void
     {
         $query .= ' ';
 
         if ($table instanceof Alias) {
-            $query .= $this->escapeTableOrColumn($table->name, $allowAlias ? $table->alias : null);
+            $query .= $this->escapeIdentifier($table->name, $table->alias);
             return;
         }
 
@@ -39,10 +350,10 @@ class Sql implements DialectInterface
             return;
         }
 
-        $query .= $this->escapeTableOrColumn($table);
+        $query .= $this->escapeIdentifier($table);
     }
 
-    public function addJoins(string &$query, array $joins): void
+    protected function addJoins(string &$query, array $joins): void
     {
         if (count($joins) == 0) {
             return;
@@ -66,16 +377,16 @@ class Sql implements DialectInterface
             $query .= sprintf(
                 '%s %s ON %s.%s = %s.%s',
                 $join->type->value,
-                $this->escapeTableOrColumn($join->joinTable, $join->joinTableAlias),
-                $this->escapeTableOrColumn($join->joinTableAlias ?? $join->joinTable),
-                $this->escapeTableOrColumn($join->joinTableColumn),
-                $this->escapeTableOrColumn($join->onTable),
-                $this->escapeTableOrColumn($join->onTableColumn),
+                $this->escapeIdentifier($join->joinTable, $join->joinTableAlias),
+                $this->escapeIdentifier($join->joinTableAlias ?? $join->joinTable),
+                $this->escapeIdentifier($join->joinTableColumn),
+                $this->escapeIdentifier($join->onTable),
+                $this->escapeIdentifier($join->onTableColumn),
             );
         }
     }
 
-    public function addWhere(string &$query, array &$params, array $where): void
+    protected function addWhere(string &$query, array &$params, array $where): void
     {
         if (count($where) == 0) {
             return;
@@ -116,7 +427,7 @@ class Sql implements DialectInterface
 
             $query .= sprintf(
                 '(%s %s)',
-                $this->escapeTableOrColumn($condition->expression),
+                $this->escapeIdentifier($condition->expression),
                 $comparator
             );
 
@@ -126,7 +437,7 @@ class Sql implements DialectInterface
         if (in_array($condition->type, [WhereOperator::BETWEEN, WhereOperator::NOT_BETWEEN])) {
             $query .= sprintf(
                 '(%s %s ? AND ?)',
-                $this->escapeTableOrColumn($condition->expression),
+                $this->escapeIdentifier($condition->expression),
                 $condition->type->value,
                 $condition->value[0],
                 $condition->value[1]
@@ -140,7 +451,7 @@ class Sql implements DialectInterface
         if (is_array($condition->value)) {
             $query .= sprintf(
                 '(%s %s (%s))',
-                $this->escapeTableOrColumn($condition->expression),
+                $this->escapeIdentifier($condition->expression),
                 $condition->type->value,
                 implode(', ', array_fill(0, count($condition->value), '?'))
             );
@@ -152,7 +463,7 @@ class Sql implements DialectInterface
 
         $query .= sprintf(
             '(%s %s ?)',
-            $this->escapeTableOrColumn($condition->expression),
+            $this->escapeIdentifier($condition->expression),
             $condition->type->value
         );
 
@@ -185,7 +496,7 @@ class Sql implements DialectInterface
         $query .= ')';
     }
 
-    public function addGroupBy(string &$query, array $groupBy): void
+    protected function addGroupBy(string &$query, array $groupBy): void
     {
         if (count($groupBy) == 0) {
             return;
@@ -199,7 +510,7 @@ class Sql implements DialectInterface
                 ', ',
                 array_map(
                     function (string|array|Raw $column): string {
-                        return $this->escapeTableOrColumn($column);
+                        return $this->escapeIdentifier($column);
                     },
                     $groupBy
                 )
@@ -207,7 +518,7 @@ class Sql implements DialectInterface
         );
     }
 
-    public function addHaving(string &$query, array &$params, ?string $having, array $values): void
+    protected function addHaving(string &$query, array &$params, ?string $having, array $values): void
     {
         if (is_null($having)) {
             return;
@@ -218,7 +529,7 @@ class Sql implements DialectInterface
         array_push($params, ...$values);
     }
 
-    public function addOrderBy(string &$query, array $orderBy): void
+    protected function addOrderBy(string &$query, array $orderBy): void
     {
         if (count($orderBy) == 0) {
             return;
@@ -234,7 +545,7 @@ class Sql implements DialectInterface
                     function (OrderBy $orderBy): string {
                         return sprintf(
                             '%s %s',
-                            $this->escapeTableOrColumn($orderBy->column),
+                            $this->escapeIdentifier($orderBy->column),
                             $orderBy->direction->value
                         );
                     },
@@ -244,7 +555,7 @@ class Sql implements DialectInterface
         );
     }
 
-    public function addLimit(string &$query, ?int $limit): void
+    protected function addLimit(string &$query, ?int $limit): void
     {
         if (!$limit) {
             return;
@@ -253,7 +564,7 @@ class Sql implements DialectInterface
         $query .= ' LIMIT ' . $limit;
     }
 
-    public function addOffset(string &$query, ?int $limit, ?int $offset): void
+    protected function addOffset(string &$query, ?int $limit, ?int $offset): void
     {
         if (!$limit) {
             return;
@@ -266,7 +577,7 @@ class Sql implements DialectInterface
         $query .= ' OFFSET ' . $offset;
     }
 
-    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void
+    protected function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void
     {
         /**
          * The official SQL standard does not define a clear way to handle conflicts
@@ -275,7 +586,7 @@ class Sql implements DialectInterface
         return;
     }
 
-    public function addReturning(string &$query, ?array $returning): void
+    protected function addReturning(string &$query, ?array $returning): void
     {
         if (is_null($returning)) {
             return;
@@ -287,7 +598,7 @@ class Sql implements DialectInterface
                 ', ',
                 array_map(
                     function (string $column): string {
-                        return $this->escapeTableOrColumn($column);
+                        return $this->escapeIdentifier($column);
                     },
                     $returning
                 )
@@ -296,11 +607,11 @@ class Sql implements DialectInterface
         $query .= ' RETURNING ' . $columns;
     }
 
-    public function stringifyColumnDefinition(Column $column): string
+    protected function stringifyColumnDefinition(Column $column): string
     {
         $stringifiedColumn = sprintf(
             '%s %s',
-            $this->escapeTableOrColumn($column->name),
+            $this->escapeIdentifier($column->name),
             $column->type
         );
 
@@ -319,7 +630,7 @@ class Sql implements DialectInterface
         return $stringifiedColumn;
     }
 
-    public function stringifyUniqueConstraintDefinition(UniqueConstraint $uniqueConstraint): string
+    protected function stringifyUniqueConstraintDefinition(UniqueConstraint $uniqueConstraint): string
     {
         $stringifiedUniqueConstraint = sprintf(
             'UNIQUE (%s)',
@@ -327,7 +638,7 @@ class Sql implements DialectInterface
                 ', ',
                 array_map(
                     function (string $column): string {
-                        return $this->escapeTableOrColumn($column);
+                        return $this->escapeIdentifier($column);
                     },
                     $uniqueConstraint->columns
                 )
@@ -337,7 +648,7 @@ class Sql implements DialectInterface
         if ($uniqueConstraint->name) {
             return sprintf(
                 'CONSTRAINT %s %s',
-                $this->escapeTableOrColumn($uniqueConstraint->name),
+                $this->escapeIdentifier($uniqueConstraint->name),
                 $stringifiedUniqueConstraint
             );
         }
@@ -345,10 +656,10 @@ class Sql implements DialectInterface
         return $stringifiedUniqueConstraint;
     }
 
-    public function stringifyForeignKeyConstraintDefinition(ForeignKeyConstraint $foreignKeyConstraint): string
+    protected function stringifyForeignKeyConstraintDefinition(ForeignKeyConstraint $foreignKeyConstraint): string
     {
         $stringifiedForeignKeyConstraint = sprintf(
-            'FOREIGN KEY (%s) REFERENCES %s(%s)',
+            'FOREIGN KEY (%s) REFERENCES %s (%s)',
             $foreignKeyConstraint->column,
             $foreignKeyConstraint->referenceTable,
             $foreignKeyConstraint->referenceColumn
@@ -357,7 +668,7 @@ class Sql implements DialectInterface
         if ($foreignKeyConstraint->name) {
             return sprintf(
                 'CONSTRAINT %s %s',
-                $this->escapeTableOrColumn($foreignKeyConstraint->name),
+                $this->escapeIdentifier($foreignKeyConstraint->name),
                 $stringifiedForeignKeyConstraint
             );
         }
@@ -365,67 +676,65 @@ class Sql implements DialectInterface
         return $stringifiedForeignKeyConstraint;
     }
 
-    public function stringifyAlterTableAddColumn(AddColumn $addColumn): string
+    protected function stringifyAlterTableAddColumn(AddColumn $addColumn): string
     {
-        $stringifiedColumn = sprintf(
-            'ADD COLUMN %s %s',
-            $this->escapeTableOrColumn($addColumn->name),
-            $addColumn->type
+        return sprintf(
+            'ADD COLUMN %s',
+            $this->stringifyColumnDefinition($addColumn)
         );
-
-        if ($addColumn->notNull) {
-            $stringifiedColumn .= ' NOT NULL';
-        }
-
-        if ($addColumn->defaultValue && !$addColumn->autoIncrement) {
-            $defaultValue = preg_match('/^.*\(.*\)$/', $addColumn->defaultValue)
-                ? $addColumn->defaultValue
-                : $this->escapeString($addColumn->defaultValue);
-
-            $stringifiedColumn .= ' DEFAULT ' . $defaultValue;
-        }
-
-        return $stringifiedColumn;
     }
 
-    public function stringifyAlterTableAlterColumn(AlterColumn $alterColumn): string
+    protected function stringifyAlterTableAlterColumn(AlterColumn $alterColumn): string
     {
         return sprintf(
             'ALTER COLUMN %s %s',
-            $this->escapeTableOrColumn($alterColumn->column),
+            $this->escapeIdentifier($alterColumn->column),
             $alterColumn->options
         );
     }
 
-    public function stringifyAlterTableRenameColumn(RenameColumn $renameColumn): string
+    protected function stringifyAlterTableRenameColumn(RenameColumn $renameColumn): string
     {
         return sprintf(
             'RENAME COLUMN %s TO %s',
-            $this->escapeTableOrColumn($renameColumn->oldName),
-            $this->escapeTableOrColumn($renameColumn->newName)
+            $this->escapeIdentifier($renameColumn->oldName),
+            $this->escapeIdentifier($renameColumn->newName)
         );
     }
 
-    public function stringifyAlterTableDropColumn(DropColumn $dropColumn): string
+    protected function stringifyAlterTableDropColumn(DropColumn $dropColumn): string
     {
         return sprintf(
             'DROP COLUMN %s',
-            $this->escapeTableOrColumn($dropColumn->column)
+            $this->escapeIdentifier($dropColumn->column)
         );
     }
 
-    public function phpTypeToColumnType(string $type, bool $isAutoIncrement, bool $isPrimaryKey, bool $inConstraint): string
+    protected function stringifyAlterTableAddUniqueConstraint(AddUniqueConstraint $addUniqueConstraint): string
     {
-        return [
-            'bool' => 'INT',
-            'int' => 'INT',
-            'float' => 'FLOAT',
-            'string' => 'TEXT',
-            'DateTime' => 'DATETIME',
-        ][$type];
+        return sprintf(
+            'ADD %s',
+            $this->stringifyUniqueConstraintDefinition($addUniqueConstraint)
+        );
     }
 
-    public function escapeTableOrColumn(string|array|Raw $reference, ?string $alias = null): string
+    protected function stringifyAlterTableAddForeignKeyConstraint(AddForeignKeyConstraint $addForeignKeyConstraint): string
+    {
+        return sprintf(
+            'ADD %s',
+            $this->stringifyForeignKeyConstraintDefinition($addForeignKeyConstraint)
+        );
+    }
+
+    protected function stringifyAlterTableDropConstraint(DropConstraint $dropConstraint): string
+    {
+        return sprintf(
+            'DROP CONSTRAINT %s',
+            $this->escapeIdentifier($dropConstraint->constraint)
+        );
+    }
+
+    public function escapeIdentifier(string|array|Raw $reference, ?string $alias = null): string
     {
         if ($reference instanceof Raw) {
             return $alias
@@ -438,7 +747,7 @@ class Sql implements DialectInterface
                 '.',
                 array_map(
                     function (string|Raw $reference): string {
-                        return $this->escapeTableOrColumn($reference);
+                        return $this->escapeIdentifier($reference);
                     },
                     $reference
                 )
@@ -542,6 +851,17 @@ class Sql implements DialectInterface
         $dateTime = new DateTime();
 
         return $dateTime->setTimestamp($timestamp);
+    }
+
+    public function phpTypeToColumnType(string $type, bool $isAutoIncrement, bool $isPrimaryKey, bool $inConstraint): string
+    {
+        return [
+            'bool' => 'INT',
+            'int' => 'INT',
+            'float' => 'FLOAT',
+            'string' => 'TEXT',
+            'DateTime' => 'DATETIME',
+        ][$type];
     }
 
     public function toRawQuery(string $query, array $params): string

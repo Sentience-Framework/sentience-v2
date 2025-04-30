@@ -14,17 +14,10 @@ class Delete extends Query implements QueryInterface
 
     public function build(): array
     {
-        $query = '';
-        $params = [];
-
-        $query .= 'DELETE FROM';
-
-        $this->dialect->addTable($query, $this->table);
-        $this->dialect->addWhere($query, $params, $this->where);
-        $this->dialect->addReturning($query, $this->returning);
-
-        $query .= ';';
-
-        return [$query, $params];
+        return $this->dialect->delete([
+            'table' => $this->table,
+            'where' => $this->where,
+            'returning' => $this->returning
+        ]);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace src\database\queries;
 
-use src\database\queries\containers\Alias;
+use src\database\dialects\Mysql;
 use src\database\queries\containers\Raw;
 use src\database\queries\traits\Columns;
 use src\database\queries\traits\Distinct;
@@ -14,6 +14,7 @@ use src\database\queries\traits\Offset;
 use src\database\queries\traits\OrderBy;
 use src\database\queries\traits\Table;
 use src\database\queries\traits\Where;
+use src\database\Results;
 
 class Select extends Query implements QueryInterface
 {
@@ -30,54 +31,21 @@ class Select extends Query implements QueryInterface
 
     public function build(): array
     {
-        $query = '';
-        $params = [];
-
-        $query .= 'SELECT';
-
-        if ($this->distinct) {
-            $query .= ' DISTINCT';
-        }
-
-        $query .= ' ';
-        $query .= count($this->columns) > 0
-            ? implode(
-                ', ',
-                array_map(
-                    function (string|array|Alias|Raw $column): string {
-                        if (is_array($column)) {
-                            return $this->dialect->escapeTableOrColumn($column);
-                        }
-
-                        if ($column instanceof Alias) {
-                            return $this->dialect->escapeTableOrColumn($column->name, $column->alias);
-                        }
-
-                        if ($column instanceof Raw) {
-                            return $column->expression;
-                        }
-
-                        return $this->dialect->escapeTableOrColumn($column);
-                    },
-                    $this->columns
-                )
-            )
-            : '*';
-
-        $query .= ' FROM';
-
-        $this->dialect->addTable($query, $this->table, true);
-        $this->dialect->addJoins($query, $this->joins);
-        $this->dialect->addWhere($query, $params, $this->where);
-        $this->dialect->addGroupBy($query, $this->groupBy);
-        $this->dialect->addHaving($query, $params, $this->having, $this->havingValues);
-        $this->dialect->addOrderBy($query, $this->orderBy);
-        $this->dialect->addLimit($query, $this->limit);
-        $this->dialect->addOffset($query, $this->limit, $this->offset);
-
-        $query .= ';';
-
-        return [$query, $params];
+        return $this->dialect->select([
+            'table' => $this->table,
+            'distinct' => $this->distinct,
+            'columns' => $this->columns,
+            'joins' => $this->joins,
+            'where' => $this->where,
+            'groupBy' => $this->groupBy,
+            'having' => [
+                'having' => $this->having,
+                'values' => $this->havingValues,
+            ],
+            'orderBy' => $this->orderBy,
+            'limit' => $this->limit,
+            'offset' => $this->offset
+        ]);
     }
 
     public function count(null|string|array|Raw $column = null): int
@@ -88,7 +56,7 @@ class Select extends Query implements QueryInterface
         $this->distinct = false;
 
         $countExpression = !is_null($column)
-            ? $this->dialect->escapeTableOrColumn($column)
+            ? $this->dialect->escapeIdentifier($column)
             : '*';
 
         $this->columns([

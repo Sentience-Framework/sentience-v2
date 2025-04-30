@@ -12,19 +12,9 @@ class DropTable extends Query implements QueryInterface
 
     public function build(): array
     {
-        $query = '';
-        $params = [];
-
-        $query .= 'DROP TABLE';
-
-        if ($this->ifExists) {
-            $query .= ' IF EXISTS';
-        }
-
-        $this->dialect->addTable($query, $this->table);
-
-        $query .= ';';
-
-        return [$query, $params];
+        return $this->dialect->dropTable([
+            'table' => $this->table,
+            'ifExists' => $this->ifExists
+        ]);
     }
 }

@@ -15,6 +15,6 @@ $database->update()
         'column3' => false,
         'column4' => Query::raw('column1 + 1'),
     ])
-    ->where('column2 = ?', [false])
+    ->where('column2 = ?', false)
     ->returning(['id'])
     ->execute();
