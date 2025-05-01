@@ -11,8 +11,6 @@ use src\exceptions\QueryException;
 
 class Sqlite extends Sql implements DialectInterface
 {
-    public const DATETIME_FORMAT = 'Y-m-d H:i:s.u';
-
     public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void
     {
         if (is_null($conflict)) {
