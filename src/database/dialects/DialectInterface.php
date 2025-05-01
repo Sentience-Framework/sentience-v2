@@ -14,7 +14,7 @@ interface DialectInterface
     public function createTable(array $config): array;
     public function alterTable(array $config): array;
     public function dropTable(array $config): array;
-    public function escapeIdentifier(string|array|Raw $reference, ?string $alias = null): string;
+    public function escapeIdentifier(string|array|Raw $identifier, ?string $alias = null): string;
     public function escapeString(string $string): string;
     public function castToDriver(mixed $value): mixed;
     public function castToQuery(mixed $value): mixed;

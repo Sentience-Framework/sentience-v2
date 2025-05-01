@@ -734,31 +734,31 @@ class Sql implements DialectInterface
         );
     }
 
-    public function escapeIdentifier(string|array|Raw $reference, ?string $alias = null): string
+    public function escapeIdentifier(string|array|Raw $identifier, ?string $alias = null): string
     {
-        if ($reference instanceof Raw) {
+        if ($identifier instanceof Raw) {
             return $alias
-                ? sprintf('%s %s', $reference->expression, $this->escape($alias, $this::TABLE_OR_COLUMN_ESCAPE))
-                : $reference->expression;
+                ? sprintf('%s %s', $identifier->expression, $this->escape($alias, $this::TABLE_OR_COLUMN_ESCAPE))
+                : $identifier->expression;
         }
 
-        $reference = is_array($reference)
+        $escapedIdentifier = is_array($identifier)
             ? implode(
                 '.',
                 array_map(
-                    function (string|Raw $reference): string {
-                        return $this->escapeIdentifier($reference);
+                    function (string|Raw $identifier): string {
+                        return $this->escapeIdentifier($identifier);
                     },
-                    $reference
+                    $identifier
                 )
             )
-            : $this->escape($reference, $this::TABLE_OR_COLUMN_ESCAPE);
+            : $this->escape($identifier, $this::TABLE_OR_COLUMN_ESCAPE);
 
         if (!$alias) {
-            return $reference;
+            return $escapedIdentifier;
         }
 
-        return sprintf('%s %s', $reference, $this->escape($alias, $this::TABLE_OR_COLUMN_ESCAPE));
+        return sprintf('%s %s', $escapedIdentifier, $this->escape($alias, $this::TABLE_OR_COLUMN_ESCAPE));
     }
 
     public function escapeString(string $string): string
