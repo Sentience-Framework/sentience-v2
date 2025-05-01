@@ -50,7 +50,7 @@ class Sql implements DialectInterface
                         }
 
                         if ($column instanceof Alias) {
-                            return $this->escapeIdentifier($column->name, $column->alias);
+                            return $this->escapeIdentifierWithAlias($column->name, $column->alias);
                         }
 
                         if ($column instanceof Raw) {
@@ -341,7 +341,7 @@ class Sql implements DialectInterface
         $query .= ' ';
 
         if ($table instanceof Alias) {
-            $query .= $this->escapeIdentifier($table->name, $table->alias);
+            $query .= $this->escapeIdentifierWithAlias($table->name, $table->alias);
             return;
         }
 
@@ -377,7 +377,7 @@ class Sql implements DialectInterface
             $query .= sprintf(
                 '%s %s ON %s.%s = %s.%s',
                 $join->type->value,
-                $this->escapeIdentifier($join->joinTable, $join->joinTableAlias),
+                $this->escapeIdentifierWithAlias($join->joinTable, $join->joinTableAlias),
                 $this->escapeIdentifier($join->joinTableAlias ?? $join->joinTable),
                 $this->escapeIdentifier($join->joinTableColumn),
                 $this->escapeIdentifier($join->onTable),
@@ -734,15 +734,24 @@ class Sql implements DialectInterface
         );
     }
 
-    public function escapeIdentifier(string|array|Raw $identifier, ?string $alias = null): string
+    protected function escapeIdentifierWithAlias(string|array|Raw $identifier, ?string $alias): string
     {
-        if ($identifier instanceof Raw) {
-            return $alias
-                ? sprintf('%s %s', $identifier->expression, $this->escape($alias, $this::TABLE_OR_COLUMN_ESCAPE))
-                : $identifier->expression;
+        $escapedIdentifier = $this->escapeIdentifier($identifier);
+
+        if (!$alias) {
+            return $escapedIdentifier;
         }
 
-        $escapedIdentifier = is_array($identifier)
+        return sprintf('%s AS %s', $escapedIdentifier, $this->escapeIdentifier($alias));
+    }
+
+    public function escapeIdentifier(string|array|Raw $identifier): string
+    {
+        if ($identifier instanceof Raw) {
+            return $identifier->expression;
+        }
+
+        return is_array($identifier)
             ? implode(
                 '.',
                 array_map(
@@ -753,12 +762,6 @@ class Sql implements DialectInterface
                 )
             )
             : $this->escape($identifier, $this::TABLE_OR_COLUMN_ESCAPE);
-
-        if (!$alias) {
-            return $escapedIdentifier;
-        }
-
-        return sprintf('%s %s', $escapedIdentifier, $this->escape($alias, $this::TABLE_OR_COLUMN_ESCAPE));
     }
 
     public function escapeString(string $string): string
