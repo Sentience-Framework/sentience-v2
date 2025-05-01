@@ -9,7 +9,7 @@ class BelongsTo extends Relation implements RelationInterface
 {
     protected string $mToRJoinRegex = '/(\w+)\<\-(\w+)/';
 
-    public function retrieve(Database $database, Model $model, callable $modifyQuery = null): ?Model
+    public function retrieve(Database $database, Model $model, ?callable $modifyQuery = null): ?Model
     {
         preg_match($this->mToRJoinRegex, $this->mToRJoin, $matches);
 

@@ -19,7 +19,7 @@ class ManyToMany extends Relation implements RelationInterface
         $this->junctionTable = $junctionTable;
     }
 
-    public function retrieve(Database $database, Model $model, callable $modifyQuery = null): array
+    public function retrieve(Database $database, Model $model, ?callable $modifyQuery = null): array
     {
         preg_match($this->mToRJoinRegex, $this->mToRJoin, $matches);
 
