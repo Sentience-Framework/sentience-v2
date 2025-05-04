@@ -7,20 +7,21 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 define('SENTIENCE_DIR', __DIR__);
 
-DotEnv::loadEnv(false, false);
-
+DotEnv::loadEnv();
 DotEnv::loadFile(
-    path(SENTIENCE_DIR, '.env'),
-    path(SENTIENCE_DIR, '.env.example'),
+    __DIR__ . '/.env',
+    __DIR__ . '/.env.example',
     [
         'SENTIENCE_DIR' => SENTIENCE_DIR,
         ...$_ENV
     ]
 );
 
-$sentience = new Sentience();
+$service = require __DIR__ . '/service.php';
 
-require_once path(SENTIENCE_DIR, 'commands.php');
-require_once path(SENTIENCE_DIR, 'routes.php');
+$sentience = new Sentience($service);
+
+require __DIR__ . '/commands.php';
+require __DIR__ . '/routes.php';
 
 $sentience->execute();

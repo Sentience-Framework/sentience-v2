@@ -14,38 +14,6 @@ function is_cli(): bool
     return empty($_SERVER['REMOTE_ADDR']) && !isset($_SERVER['HTTP_USER_AGENT']) && count($_SERVER['argv']) > 0;
 }
 
-function path(string $dir, ?string ...$components): string
-{
-    if (!$components) {
-        return $dir;
-    }
-
-    $chars = implode('', ['/', '\\']);
-
-    $dir = rtrim($dir, $chars);
-
-    $components = array_filter(
-        array_map(
-            function (?string $component) use ($chars): ?string {
-                if (!$component) {
-                    return null;
-                }
-
-                return trim($component, $chars);
-            },
-            $components
-        )
-    );
-
-    return implode(
-        DIRECTORY_SEPARATOR,
-        [
-            $dir,
-            ...$components
-        ]
-    );
-}
-
 function to_snake_case(string $string): string
 {
     $string = preg_replace('/([a-z])([A-Z])/', '$1 $2', $string);

@@ -4,7 +4,7 @@ namespace src\dotenv;
 
 class DotEnv
 {
-    public static function loadEnv(bool $parseBooleans = true, bool $parseDirectoryArrays = true): void
+    public static function loadEnv(bool $parseBooleans = false, bool $parseDirectoryArrays = false): void
     {
         $env = getenv();
 

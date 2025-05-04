@@ -6,6 +6,38 @@ use src\exceptions\FilesystemException;
 
 class Filesystem
 {
+    public static function path(string $dir, ?string ...$components): string
+    {
+        if (!$components) {
+            return $dir;
+        }
+
+        $chars = implode('', ['/', '\\']);
+
+        $dir = rtrim($dir, $chars);
+
+        $components = array_filter(
+            array_map(
+                function (?string $component) use ($chars): ?string {
+                    if (!$component) {
+                        return null;
+                    }
+
+                    return trim($component, $chars);
+                },
+                $components
+            )
+        );
+
+        return implode(
+            DIRECTORY_SEPARATOR,
+            [
+                $dir,
+                ...$components
+            ]
+        );
+    }
+
     public static function scandir(string $path, int $depth = 0): array
     {
         if (!file_exists($path)) {
@@ -31,7 +63,7 @@ class Filesystem
 
         $items = array_map(
             function (string $item) use ($path): string {
-                return path($path, $item);
+                return static::path($path, $item);
             },
             $items
         );

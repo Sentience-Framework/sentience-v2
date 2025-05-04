@@ -7,7 +7,7 @@ use src\database\queries\containers\Raw;
 
 class Pgsql extends Sql implements DialectInterface
 {
-    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void
+    public function addOnConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void
     {
         if (is_null($conflict)) {
             return;

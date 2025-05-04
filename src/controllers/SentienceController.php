@@ -24,7 +24,7 @@ class SentienceController extends Controller
             throw new TerminalException('terminal width of %s is too small. minimum width of 40 required', $terminalWidth);
         }
 
-        $dir = escapeshellarg(path(SENTIENCE_DIR, 'public'));
+        $dir = escapeshellarg(Filesystem::path(SENTIENCE_DIR, 'public'));
         $bin = escapeshellarg(defined(PHP_BINARY) ? PHP_BINARY : 'php');
         $host = env('SERVER_HOST', 'localhost');
         $port = env('SERVER_PORT', 8000);
@@ -112,7 +112,7 @@ class SentienceController extends Controller
 
     public function applyMigrations(Database $database): void
     {
-        $migrationsDir = path(SENTIENCE_DIR, 'migrations');
+        $migrationsDir = Filesystem::path(SENTIENCE_DIR, 'migrations');
 
         $migrations = array_filter(
             Filesystem::scandir($migrationsDir),
@@ -179,7 +179,7 @@ class SentienceController extends Controller
 
     public function rollbackMigrations(Database $database): void
     {
-        $migrationsDir = path(SENTIENCE_DIR, 'migrations');
+        $migrationsDir = Filesystem::path(SENTIENCE_DIR, 'migrations');
 
         $migrations = array_filter(
             Filesystem::scandir($migrationsDir),
@@ -227,7 +227,7 @@ class SentienceController extends Controller
 
         foreach ($migrationsToRevert as $migrationToRevert) {
             $filename = $migrationToRevert->filename;
-            $filepath = path($migrationsDir, $filename);
+            $filepath = Filesystem::path($migrationsDir, $filename);
 
             if (!file_exists($filepath)) {
                 throw new MigrationException('unable to find migration %s', $filename);
@@ -261,7 +261,7 @@ class SentienceController extends Controller
 
         $migrationFilename = sprintf('%s_%s.php', $timestamp, $name);
 
-        $migrationFilepath = path(
+        $migrationFilepath = Filesystem::path(
             SENTIENCE_DIR,
             'migrations',
             $migrationFilename
@@ -309,7 +309,7 @@ class SentienceController extends Controller
             ]
         );
 
-        $migrationFilepath = path(SENTIENCE_DIR, 'migrations', $migrationName);
+        $migrationFilepath = Filesystem::path(SENTIENCE_DIR, 'migrations', $migrationName);
 
         file_put_contents($migrationFilepath, $migrationfileContents);
 
@@ -374,7 +374,7 @@ class SentienceController extends Controller
             ]
         );
 
-        $migrationFilepath = path(SENTIENCE_DIR, 'migrations', $migrationName);
+        $migrationFilepath = Filesystem::path(SENTIENCE_DIR, 'migrations', $migrationName);
 
         file_put_contents($migrationFilepath, $migrationfileContents);
 
@@ -412,8 +412,8 @@ class SentienceController extends Controller
         $dotEnv = $flags['dot-env'] ?? $words[0] ?? '.env';
         $dotEnvExample = $flags['dot-env-example'] ?? $words[1] ?? '.env.example';
 
-        $dotEnvFilepath = path(SENTIENCE_DIR, $dotEnv);
-        $dotEnvExampleFilepath = path(SENTIENCE_DIR, $dotEnvExample);
+        $dotEnvFilepath = Filesystem::path(SENTIENCE_DIR, $dotEnv);
+        $dotEnvExampleFilepath = Filesystem::path(SENTIENCE_DIR, $dotEnvExample);
 
         $dotEnvVariables = DotEnv::parseFileRaw($dotEnvFilepath);
         $dotEnvExampleVariables = DotEnv::parseFileRaw($dotEnvExampleFilepath);

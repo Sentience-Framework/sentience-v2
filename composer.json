@@ -11,8 +11,8 @@
             "": "./"
         },
         "files": [
-            "src/functions/custom_functions.php",
-            "src/functions/functions.php"
+            "src/functions/sentience.php",
+            "src/functions/custom.php"
         ]
     }
 }

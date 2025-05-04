@@ -37,7 +37,7 @@ class Select extends Query implements QueryInterface
             'where' => $this->where,
             'groupBy' => $this->groupBy,
             'having' => [
-                'having' => $this->having,
+                'expression' => $this->havingExpression,
                 'values' => $this->havingValues,
             ],
             'orderBy' => $this->orderBy,

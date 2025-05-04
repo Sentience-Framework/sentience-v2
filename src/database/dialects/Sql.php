@@ -70,7 +70,7 @@ class Sql implements DialectInterface
         $this->addJoins($query, $config['joins']);
         $this->addWhere($query, $params, $config['where']);
         $this->addGroupBy($query, $config['groupBy']);
-        $this->addHaving($query, $params, $config['having']['having'], $config['having']['values']);
+        $this->addHaving($query, $params, $config['having']['expression'], $config['having']['values']);
         $this->addOrderBy($query, $config['orderBy']);
         $this->addLimit($query, $config['limit']);
         $this->addOffset($query, $config['limit'], $config['offset']);
@@ -129,12 +129,12 @@ class Sql implements DialectInterface
             )
         );
 
-        $this->addConflict(
+        $this->addOnConflict(
             $query,
             $params,
-            $config['conflict']['conflict'],
-            $config['conflict']['updates'],
-            $config['conflict']['primaryKey'],
+            $config['onConflict']['conflict'],
+            $config['onConflict']['updates'],
+            $config['onConflict']['primaryKey'],
             $config['values']
         );
         $this->addReturning($query, $config['returning']);
@@ -577,7 +577,7 @@ class Sql implements DialectInterface
         $query .= ' OFFSET ' . $offset;
     }
 
-    protected function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void
+    protected function addOnConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void
     {
         /**
          * The official SQL standard does not define a clear way to handle conflicts

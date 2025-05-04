@@ -8,5 +8,6 @@ interface QueryInterface
 {
     public function build(): array;
     public function execute(): ?Results;
+    public function tryCatch(): ?Results;
     public function rawQuery(): string;
 }

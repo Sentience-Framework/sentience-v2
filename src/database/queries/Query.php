@@ -3,6 +3,7 @@
 namespace src\database\queries;
 
 use DateTime;
+use Throwable;
 use src\database\Database;
 use src\database\dialects\DialectInterface;
 use src\database\queries\containers\Alias;
@@ -33,6 +34,19 @@ abstract class Query implements QueryInterface
         }
 
         return $this->database->safe($query, $params);
+    }
+
+    public function tryCatch(?callable $handleException = null): ?Results
+    {
+        try {
+            return $this->execute();
+        } catch (Throwable $exception) {
+            if ($handleException) {
+                $handleException($exception);
+            }
+
+            return null;
+        }
     }
 
     public function rawQuery(): string

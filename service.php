@@ -6,7 +6,7 @@ use src\sentience\Stdio;
 use src\utils\Terminal;
 
 /**
- * A class to define your global variables
+ * An anonymous class to define your global variables
  * These variables will be injected as arguments in callbacks
  *
  * When a method or function calls for $database, the public function database()
@@ -16,8 +16,7 @@ use src\utils\Terminal;
  * A good use case would be putting the database connection variable here
  */
 
-class Service
-{
+return new class {
     public function database(): Database
     {
         $debugCallback = env('DB_DEBUG', false)
@@ -55,4 +54,4 @@ class Service
 
         return new Database($dsn, $debugCallback);
     }
-}
+};

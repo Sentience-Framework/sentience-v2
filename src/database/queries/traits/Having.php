@@ -6,12 +6,12 @@ use DateTime;
 
 trait Having
 {
-    protected ?string $having = null;
+    protected ?string $havingExpression = null;
     protected array $havingValues = [];
 
     public function having(string $expression, bool|int|float|string|DateTime ...$values): static
     {
-        $this->having = $expression;
+        $this->havingExpression = $expression;
         $this->havingValues = $values;
 
         return $this;

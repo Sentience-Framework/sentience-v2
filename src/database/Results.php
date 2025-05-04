@@ -46,18 +46,18 @@ class Results
         return $this->pdoStatement->fetchAll(PDO::FETCH_CLASS, $class);
     }
 
-    public function fetchAssoc(): ?object
+    public function fetchAssociative(): ?object
     {
-        $assoc = $this->pdoStatement->fetch(PDO::FETCH_ASSOC);
+        $associative = $this->pdoStatement->fetch(PDO::FETCH_ASSOC);
 
-        if (is_bool($assoc)) {
+        if (is_bool($associative)) {
             return null;
         }
 
-        return $assoc;
+        return $associative;
     }
 
-    public function fetchAllAssoc(): array
+    public function fetchAllAssociative(): array
     {
         return $this->pdoStatement->fetchAll(PDO::FETCH_ASSOC);
     }

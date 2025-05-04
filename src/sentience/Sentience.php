@@ -7,7 +7,6 @@ use ReflectionClass;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
-use Service;
 use Throwable;
 use src\controllers\Controller;
 use src\middleware\Middleware;
@@ -28,13 +27,13 @@ class Sentience
 {
     protected CliRouter $cliRouter;
     protected HttpRouter $httpRouter;
-    protected Service $service;
+    protected object $service;
 
-    public function __construct()
+    public function __construct(object $service)
     {
         $this->cliRouter = new CliRouter();
         $this->httpRouter = new HttpRouter();
-        $this->service = new Service();
+        $this->service = $service;
     }
 
     public function bindCommand(Command $command): static

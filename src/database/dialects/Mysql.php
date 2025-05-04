@@ -14,7 +14,7 @@ class Mysql extends Sql implements DialectInterface
     public const TABLE_OR_COLUMN_ESCAPE = '`';
     public const STRING_ESCAPE = '"';
 
-    public function addConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void
+    public function addOnConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void
     {
         if (is_null($conflict)) {
             return;
