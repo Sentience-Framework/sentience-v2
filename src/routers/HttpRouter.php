@@ -3,7 +3,6 @@
 namespace src\routers;
 
 use src\sentience\Request;
-use src\utils\Regex;
 
 class HttpRouter
 {
@@ -62,11 +61,30 @@ class HttpRouter
             return [true, null];
         }
 
-        $pathVars = Regex::template($route, $path, '.[^\/]*');
+        $keys = [];
 
-        if (!$pathVars) {
+        $regex = preg_replace_callback(
+            '/{(.[^\}]*)}/',
+            function (array $matches) use (&$keys): string {
+                $keys[] = $matches[1];
+
+                return '(.[^\/]*)';
+            },
+            sprintf(
+                '/^%s$/',
+                escape_chars($route, ['.', '/', '+', '*', '?', '^', '[', ']', '$', '(', ')', '=', '!', '<', '>', '|', ':', '-'])
+            )
+        );
+
+        $isMatch = preg_match($regex, $path, $matches);
+
+        if (!$isMatch) {
             return [false, null];
         }
+
+        $values = array_splice($matches, 1);
+
+        $pathVars = array_combine($keys, $values);
 
         return [true, $pathVars];
     }
