@@ -137,7 +137,12 @@ class HttpRouter
             }
         }
 
-        return $mappedRoutes;
+        return array_filter(
+            $mappedRoutes,
+            function (array $methods): bool {
+                return count($methods) > 0;
+            }
+        );
     }
 
     protected function mapRouteGroup(RouteGroup $routeGroup, array $prefixes, array $middleware): array
