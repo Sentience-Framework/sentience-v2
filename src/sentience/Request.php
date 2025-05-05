@@ -69,14 +69,19 @@ class Request
         return $this->pathVars[$key];
     }
 
-    public function getJson(): mixed
+    public function getJson(bool $associative = true): mixed
     {
-        return Json::decode($this->body);
+        return Json::decode($this->body, $associative);
     }
 
     public function getXml(): ?SimpleXMLElement
     {
         return Xml::decode($this->body);
+    }
+
+    public function getUrlEncoded(bool $unique = false): array
+    {
+        return UrlEncoding::decode($this->body, $unique);
     }
 
     public function getIPAddress(): ?string

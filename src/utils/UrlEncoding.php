@@ -2,6 +2,8 @@
 
 namespace src\utils;
 
+use src\exceptions\UrlEncodingException;
+
 class UrlEncoding
 {
     public static function encode(array $associative): string
@@ -17,6 +19,10 @@ class UrlEncoding
                 array_walk(
                     $value,
                     function (mixed $value) use ($key, &$encoded): void {
+                        if (!is_scalar($value)) {
+                            throw new UrlEncodingException('arrays can only be nested one layer deep');
+                        }
+
                         $encoded[] = sprintf(
                             '%s=%s',
                             urlencode($key),

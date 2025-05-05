@@ -26,6 +26,21 @@ class ExampleController extends Controller
         ]));
     }
 
+    public function jsonResponse(): void
+    {
+        Response::ok(['key' => 'value'], 'json');
+    }
+
+    public function xmlResponse(): void
+    {
+        Response::ok(['key' => 'value'], 'xml');
+    }
+
+    public function urlResponse(): void
+    {
+        Response::ok(['key' => 'value'], 'url');
+    }
+
     public function getUser(): void
     {
         Response::ok($this->request);

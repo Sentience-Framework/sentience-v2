@@ -22,6 +22,14 @@ $routes = [
             Response::ok(['status' => 'available']);
         }),
 
+    RouteGroup::create('/response')
+        ->setMiddleware([
+            [CORSMiddleware::class, 'addHeaders']
+        ])
+        ->bind(Route::create('/json')->setCallback([ExampleController::class, 'jsonResponse']))
+        ->bind(Route::create('/xml')->setCallback([ExampleController::class, 'xmlResponse']))
+        ->bind(Route::create('/url')->setCallback([ExampleController::class, 'urlResponse'])),
+
     RouteGroup::create('/users/{userId}')
         ->setMiddleware([
             [CORSMiddleware::class, 'addHeaders'],

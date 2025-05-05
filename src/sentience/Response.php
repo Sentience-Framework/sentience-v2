@@ -4,6 +4,7 @@ namespace src\sentience;
 
 use src\exceptions\EncodingException;
 use src\utils\Json;
+use src\utils\UrlEncoding;
 use src\utils\Xml;
 
 class Response
@@ -322,7 +323,7 @@ class Response
             exit;
         }
 
-        $encoding = !in_array($encoding, ['json', 'xml'])
+        $encoding = !in_array($encoding, ['json', 'xml', 'url'])
             ? env('APP_DEFAULT_ENCODING')
             : $encoding;
 
@@ -367,6 +368,14 @@ class Response
                     return $parent;
                 }
             );
+
+            exit;
+        }
+
+        if ($encoding == 'url') {
+            header('Content-Type: application/x-www-form-urlencoded', false);
+
+            echo UrlEncoding::encode($content);
 
             exit;
         }
