@@ -4,7 +4,7 @@ namespace src\utils;
 
 class Terminal
 {
-    public static function exec(string $command, &$stdout = null, &$stderr = null): int
+    public static function exec(string $command, &$stdout = null, &$stderr = null, float $interval = 1000): int
     {
         $pipes = [];
 
@@ -21,14 +21,16 @@ class Terminal
         $stdout = '';
         $stderr = '';
 
-        if (is_resource($process)) {
-            stream_set_blocking($pipes[0], 0);
-            stream_set_blocking($pipes[1], 0);
-            stream_set_blocking($pipes[2], 0);
-
-            fwrite($pipes[0], '');
-            fclose($pipes[0]);
+        if (!is_resource($process)) {
+            return 1;
         }
+
+        stream_set_blocking($pipes[0], false);
+        stream_set_blocking($pipes[1], false);
+        stream_set_blocking($pipes[2], false);
+
+        fwrite($pipes[0], '');
+        fclose($pipes[0]);
 
         while (is_resource($process)) {
             $stdout .= stream_get_contents($pipes[1]);
@@ -45,7 +47,7 @@ class Terminal
                 return (int) $status['exitcode'];
             }
 
-            usleep(1000);
+            usleep($interval * 1000);
         }
 
         return 1;
@@ -68,33 +70,40 @@ class Terminal
         $stdout = '';
         $stderr = '';
 
-        if (is_resource($process)) {
-            stream_set_blocking($pipes[0], 0);
-            stream_set_blocking($pipes[1], 0);
-            stream_set_blocking($pipes[2], 0);
-
-            fwrite($pipes[0], '');
-            fclose($pipes[0]);
+        if (!is_resource($process)) {
+            return 1;
         }
+
+        stream_set_blocking($pipes[0], false);
+        stream_set_blocking($pipes[1], false);
+        stream_set_blocking($pipes[2], false);
+
+        fwrite($pipes[0], '');
 
         while (is_resource($process)) {
             $stdout = stream_get_contents($pipes[1]);
             $stderr = stream_get_contents($pipes[2]);
 
-            $exitcode = $callback($stdout, $stderr);
+            $stdin = $callback($stdout, $stderr);
 
-            if (!is_null($exitcode)) {
+            if (is_int($stdin)) {
+                fclose($pipes[0]);
                 fclose($pipes[1]);
                 fclose($pipes[2]);
 
                 proc_terminate($process);
 
-                return (int) $exitcode;
+                return (int) $stdin;
+            }
+
+            if (is_string($stdin)) {
+                fwrite($pipes[0], $stdin);
             }
 
             $status = proc_get_status($process);
 
             if (!$status['running']) {
+                fclose($pipes[0]);
                 fclose($pipes[1]);
                 fclose($pipes[2]);
 
@@ -120,7 +129,7 @@ class Terminal
 
     protected static function getWidthCommandPrompt(): int
     {
-        $exitCode = static::exec('cmd /c mode con', $stdout, $stderr);
+        $exitCode = static::exec('cmd /c mode con', $stdout, $stderr, 0);
 
         if ($exitCode != 0) {
             return 80;
@@ -137,7 +146,7 @@ class Terminal
 
     protected static function getWidthTerminal(): int
     {
-        $exitCode = static::exec('stty size < /dev/tty', $stdout, $stderr);
+        $exitCode = static::exec('stty size < /dev/tty', $stdout, $stderr, 0);
 
         if (preg_match('/(\d+) (\d+)/', $stdout, $matches)) {
             [$height, $width] = array_slice($matches, 1);
@@ -145,7 +154,7 @@ class Terminal
             return (int) $width;
         }
 
-        $exitCode = static::exec('tput cols', $stdout, $stderr);
+        $exitCode = static::exec('tput cols', $stdout, $stderr, 0);
 
         if ($exitCode == 0) {
             return (int) $stdout;
