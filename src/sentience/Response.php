@@ -316,7 +316,7 @@ class Response
         }
 
         if (is_scalar($content)) {
-            header('Content-Type: text/plain', false);
+            header('Content-Type: text/plain', true);
 
             echo strval($content);
 
@@ -328,7 +328,7 @@ class Response
             : $encoding;
 
         if ($encoding == 'json') {
-            header('Content-Type: application/json', false);
+            header('Content-Type: application/json', true);
 
             echo Json::encode($content);
 
@@ -336,7 +336,7 @@ class Response
         }
 
         if ($encoding == 'xml') {
-            header('Content-Type: text/xml', false);
+            header('Content-Type: text/xml', true);
 
             echo Xml::encode(
                 $content,

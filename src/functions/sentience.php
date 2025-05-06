@@ -14,30 +14,6 @@ function is_cli(): bool
     return empty($_SERVER['REMOTE_ADDR']) && !isset($_SERVER['HTTP_USER_AGENT']) && count($_SERVER['argv']) > 0;
 }
 
-function to_snake_case(string $string): string
-{
-    $string = preg_replace('/([a-z])([A-Z])/', '$1 $2', $string);
-    $string = preg_replace('/[_\-\s]+/', '_', strtolower($string));
-
-    return $string;
-}
-
-function to_camel_case($string): string
-{
-    $string = lcfirst(to_pascal_case($string));
-
-    return $string;
-}
-
-function to_pascal_case($string): string
-{
-    $string = preg_replace('/[-_\s]+/', ' ', $string);
-    $string = ucwords($string);
-    $string = str_replace(' ', '', $string);
-
-    return $string;
-}
-
 function escape_chars(string $string, array $chars, string $replacement = '\\\$0'): string
 {
     foreach ($chars as $char) {
