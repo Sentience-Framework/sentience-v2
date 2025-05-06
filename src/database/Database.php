@@ -73,7 +73,9 @@ class Database
 
     public function safe(string $query, array $params = []): Results
     {
-        $rawQuery = $this->dialect->toRawQuery($query, $params);
+        $rawQuery = str_contains($query, '?')
+            ? $this->dialect->toRawQuery($query, $params)
+            : $query;
 
         $startTime = microtime(true);
 
