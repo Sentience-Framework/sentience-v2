@@ -25,7 +25,7 @@ class Database
     protected PDO $pdo;
     protected DialectInterface $dialect;
 
-    public function __construct(string $dsn, ?callable $debug = null)
+    public function __construct(string $dsn, ?callable $debug = null, ?string $username = null, ?string $password = null)
     {
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT,
@@ -36,8 +36,8 @@ class Database
 
         $this->pdo = new PDO(
             $dsn,
-            null,
-            null,
+            $username,
+            $password,
             $options
         );
 

@@ -502,10 +502,8 @@ class Sql implements DialectInterface
             return;
         }
 
-        $query .= ' ';
-
         $query .= sprintf(
-            'GROUP BY %s',
+            ' GROUP BY %s',
             implode(
                 ', ',
                 array_map(
@@ -535,10 +533,8 @@ class Sql implements DialectInterface
             return;
         }
 
-        $query .= ' ';
-
         $query .= sprintf(
-            'ORDER BY %s',
+            ' ORDER BY %s',
             implode(
                 ', ',
                 array_map(

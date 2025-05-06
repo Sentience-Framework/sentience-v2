@@ -76,17 +76,6 @@ class Mysql extends Sql implements DialectInterface
         return $stringifiedColumn;
     }
 
-    public function stringifyAlterTableAddColumn(AddColumn $addColumn): string
-    {
-        $stringifiedAddColumn = parent::stringifyAlterTableAddColumn($addColumn);
-
-        if ($addColumn->autoIncrement && str_contains(strtolower($addColumn->type), 'int')) {
-            $stringifiedAddColumn .= ' AUTO_INCREMENT';
-        }
-
-        return $stringifiedAddColumn;
-    }
-
     public function stringifyAlterTableAlterColumn(AlterColumn $alterColumn): string
     {
         $stringifiedAlterColumn = parent::stringifyAlterTableAlterColumn($alterColumn);
