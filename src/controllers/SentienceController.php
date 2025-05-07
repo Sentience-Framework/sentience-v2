@@ -39,7 +39,7 @@ class SentienceController extends Controller
                 }
 
                 $stderr = str_ends_with($stderr, PHP_EOL)
-                    ? substr($stderr, 0, strlen($stderr) - 1)
+                    ? substr($stderr, 0, -1)
                     : $stderr;
 
                 $lines = explode(PHP_EOL, $stderr);

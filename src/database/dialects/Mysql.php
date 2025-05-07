@@ -14,6 +14,17 @@ class Mysql extends Sql implements DialectInterface
     public const TABLE_OR_COLUMN_ESCAPE = '`';
     public const STRING_ESCAPE = '"';
 
+    public function createTable(array $config): array
+    {
+        [$query, $params] = parent::createTable($config);
+
+        $query = substr($query, 0, -1);
+
+        $query .= ' ENGINE=InnoDB;';
+
+        return [$query, $params];
+    }
+
     public function addOnConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void
     {
         if (is_null($conflict)) {

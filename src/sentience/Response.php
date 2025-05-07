@@ -344,21 +344,21 @@ class Response
                     $lowercaseParent = strtolower($parent);
 
                     if (preg_match('/^.{1}ies$/', $lowercaseParent)) {
-                        return substr($parent, 0, strlen($parent) - 1);
+                        return substr($parent, 0, -1);
                     }
 
                     if (preg_match('/ies$/', $lowercaseParent)) {
-                        $singular = substr($parent, 0, strlen($parent) - 3);
+                        $singular = substr($parent, 0, -3);
 
                         return $singular . (preg_match('/[A-Z]{1}$/', $singular) ? 'Y' : 'y');
                     }
 
                     if (preg_match('/[^aeiouy]es$/', $lowercaseParent)) {
-                        return substr($parent, 0, strlen($parent) - 2);
+                        return substr($parent, 0, -2);
                     }
 
                     if (preg_match('/s{1}$/', $lowercaseParent)) {
-                        return substr($parent, 0, strlen($parent) - 1);
+                        return substr($parent, 0, -1);
                     }
 
                     if ($lowercaseParent == 'trace' && $statusCode == 500) {

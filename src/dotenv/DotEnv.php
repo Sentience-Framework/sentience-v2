@@ -173,10 +173,10 @@ class DotEnv
 
     protected static function parseStringValue(string $value, string $quote): string
     {
-        $quoteTrim = substr($value, 1, (strlen($value) - 2));
+        $quoteTrim = substr($value, 1, -1);
 
         return str_replace(
-            sprintf('\%s', $quote),
+            sprintf('\\%s', $quote),
             $quote,
             $quoteTrim
         );
