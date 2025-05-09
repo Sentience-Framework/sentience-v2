@@ -73,9 +73,7 @@ class Database
 
     public function safe(string $query, array $params = []): Results
     {
-        $rawQuery = count($params) > 0
-            ? $this->dialect->toRawQuery($query, $params)
-            : $query;
+        $rawQuery = $this->dialect->toRawQuery($query, $params);
 
         $startTime = microtime(true);
 
