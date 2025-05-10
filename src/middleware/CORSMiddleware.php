@@ -24,9 +24,9 @@ class CORSMiddleware extends Middleware
             ? $originHeader
             : $originEnv;
 
-        header(sprintf('Access-Control-Allow-Origin: %s', $origin));
-        header(sprintf('Access-Control-Allow-Credentials: %s', env('ACCESS_CONTROL_ALLOW_CREDENTIALS', true) ? 'true' : 'false'));
-        header(sprintf('Access-Control-Allow-Methods: %s', implode(', ', env('ACCESS_CONTROL_ALLOW_METHODS', ['*']))));
-        header(sprintf('Access-Control-Allow-Headers: %s', implode(', ', env('ACCESS_CONTROL_ALLOW_HEADERS', ['*']))));
+        header('Access-Control-Allow-Origin: ' . $origin);
+        header('Access-Control-Allow-Credentials: ' . env('ACCESS_CONTROL_ALLOW_CREDENTIALS', true) ? 'true' : 'false');
+        header('Access-Control-Allow-Methods: ' . implode(', ', env('ACCESS_CONTROL_ALLOW_METHODS', ['*'])));
+        header('Access-Control-Allow-Headers: ' . implode(', ', env('ACCESS_CONTROL_ALLOW_HEADERS', ['*'])));
     }
 }

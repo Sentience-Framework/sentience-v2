@@ -11,7 +11,7 @@ function env(string $key, mixed $default = null): mixed
 
 function is_cli(): bool
 {
-    return empty($_SERVER['REMOTE_ADDR']) && !isset($_SERVER['HTTP_USER_AGENT']) && count($_SERVER['argv']) > 0;
+    return php_sapi_name() == 'cli';
 }
 
 function escape_chars(string $string, array $chars, string $replacement = '\\\$0'): string
