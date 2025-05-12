@@ -3,7 +3,6 @@
 namespace src\database\dialects;
 
 use src\database\queries\containers\Raw;
-use src\database\queries\definitions\AddColumn;
 use src\database\queries\definitions\AlterColumn;
 use src\database\queries\definitions\Column;
 use src\database\queries\definitions\DropConstraint;
