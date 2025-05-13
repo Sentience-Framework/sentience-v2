@@ -294,6 +294,17 @@ class Response
         static::respond(511, $content, $encoding);
     }
 
+    public static function custom(string $content, string $contentType, int $statusCode = 200): void
+    {
+        http_response_code($statusCode);
+
+        header('Content-Type: ' . $contentType, true);
+
+        echo $content;
+
+        exit;
+    }
+
     protected static function redirect(int $statusCode, string $url): void
     {
         http_response_code($statusCode);
