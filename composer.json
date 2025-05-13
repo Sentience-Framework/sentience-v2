@@ -14,5 +14,8 @@
             "src/functions/sentience.php",
             "src/functions/custom.php"
         ]
+    },
+    "require": {
+        "php": "^8.0"
     }
 }
