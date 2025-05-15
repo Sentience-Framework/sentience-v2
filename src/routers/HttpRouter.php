@@ -84,6 +84,13 @@ class HttpRouter
 
         $values = array_splice($matches, 1);
 
+        $values = array_map(
+            function (string $value): string {
+                return urldecode($value);
+            },
+            $values
+        );
+
         $pathVars = array_combine($keys, $values);
 
         return [true, $pathVars];
