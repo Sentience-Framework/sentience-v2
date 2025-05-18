@@ -62,12 +62,6 @@ class DependencyInjector
                 continue;
             }
 
-            if ($functionParameter->allowsNull()) {
-                $parameters[$name] = null;
-
-                continue;
-            }
-
             if ($functionParameter->isVariadic()) {
                 $parameters[$name] = array_filter(
                     $parameters,
@@ -76,6 +70,12 @@ class DependencyInjector
                     },
                     ARRAY_FILTER_USE_KEY
                 );
+                continue;
+            }
+
+            if ($functionParameter->allowsNull()) {
+                $parameters[$name] = null;
+
                 continue;
             }
 
