@@ -16,7 +16,7 @@ $database->select()
         Query::alias(
             Query::raw('column2'),
             'col2'
-        ),
+        )
     ])
     ->leftJoin(
         Query::alias('(ALIAS)table2', 'jt'),

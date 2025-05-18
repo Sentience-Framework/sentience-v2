@@ -50,7 +50,7 @@ $routes = [
     Route::create('/{country}-{language}')
         ->setCallback(function (Request $request): void {
             Response::ok($request->pathVars);
-        }),
+        })
 ];
 
 foreach ($routes as $route) {

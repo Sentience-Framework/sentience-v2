@@ -38,7 +38,7 @@ $commands = [
         ->setCallback([ExampleController::class, 'cliExample']),
 
     Command::create('query')
-        ->setCallback([ExampleController::class, 'query']),
+        ->setCallback([ExampleController::class, 'query'])
 ];
 
 foreach ($commands as $command) {

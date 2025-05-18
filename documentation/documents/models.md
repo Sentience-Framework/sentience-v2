@@ -14,7 +14,7 @@ protected bool $primaryKeyAutoIncrement = true;
 
 protected array $columns = [
     'property' => 'column',
-    'property' => 'column',
+    'property' => 'column'
 ];
 ```
 

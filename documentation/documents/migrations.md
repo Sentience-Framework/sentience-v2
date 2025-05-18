@@ -41,7 +41,7 @@ Each time the rollback command is executed, the last batch will be reverted.
 
 ## 4. Creating your own migrations
 
-After running the `migrations:create` command, a new migration is created with an anonymous class with two methods, up() and down().
+After running the `migrations:create` command, a new migration is created with an anonymous class with two methods, apply() and rollback().
 
 The Database class passed in as the parameters offers multiple options to programmatically build queries:
 ```

@@ -35,7 +35,7 @@ use src\sentience\Response;
         ),
 
     Route::create('/{country}-{language}')
-        ->setCallback('callback'),
+        ->setCallback('callback')
 ];
 
 function callback(Request $request): void

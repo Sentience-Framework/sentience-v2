@@ -81,7 +81,7 @@ class ExampleController extends Controller
                 Query::alias(
                     Query::raw('column2'),
                     'col2'
-                ),
+                )
             ])
             ->leftJoin(
                 Query::alias('table2', 'jt'),
@@ -154,7 +154,7 @@ class ExampleController extends Controller
                 'column1' => Query::now(),
                 'column2' => true,
                 'column3' => false,
-                'column4' => Query::raw('column1 + 1'),
+                'column4' => Query::raw('column1 + 1')
             ])
             ->returning(['id'])
             ->rawQuery();

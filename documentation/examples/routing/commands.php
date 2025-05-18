@@ -23,5 +23,5 @@ use src\sentience\Stdio;
                     Stdio::errorLn('no $flags provided');
                 }
             }
-        ]),
+        ])
 ];
