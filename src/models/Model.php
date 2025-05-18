@@ -2,7 +2,6 @@
 
 namespace src\models;
 
-use PDO;
 use ReflectionProperty;
 use ReflectionUnionType;
 use src\database\dialects\DialectFactory;
