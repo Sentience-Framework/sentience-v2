@@ -94,7 +94,7 @@ class Sqlite extends Sql implements DialectInterface
             'int' => 'INTEGER',
             'float' => 'REAL',
             'string' => 'TEXT',
-            'DateTime' => 'DATETIME',
+            'DateTime' => 'DATETIME'
         ][$type];
     }
 }

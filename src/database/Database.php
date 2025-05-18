@@ -29,7 +29,7 @@ class Database
     {
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT,
-            PDO::ATTR_STRINGIFY_FETCHES => false,
+            PDO::ATTR_STRINGIFY_FETCHES => false
         ];
 
         $this->debug = $debug;

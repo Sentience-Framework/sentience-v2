@@ -757,12 +757,12 @@ class Sql implements DialectInterface
                     $identifier
                 )
             )
-            : $this->escape($identifier, $this::TABLE_OR_COLUMN_ESCAPE);
+            : $this->escape($identifier, self::TABLE_OR_COLUMN_ESCAPE);
     }
 
     public function escapeString(string $string): string
     {
-        return $this->escape($string, $this::STRING_ESCAPE);
+        return $this->escape($string, self::STRING_ESCAPE);
     }
 
     protected function escape(string $string, string $character): string
@@ -821,7 +821,7 @@ class Sql implements DialectInterface
 
     public function castDateTime(DateTime $dateTime): mixed
     {
-        return $dateTime->format($this::DATETIME_FORMAT);
+        return $dateTime->format(self::DATETIME_FORMAT);
     }
 
     public function parseBool(mixed $value): bool
@@ -835,7 +835,7 @@ class Sql implements DialectInterface
             return null;
         }
 
-        $dateTime = DateTime::createFromFormat($this::DATETIME_FORMAT, $dateTimeString);
+        $dateTime = DateTime::createFromFormat(self::DATETIME_FORMAT, $dateTimeString);
 
         if ($dateTime) {
             return $dateTime;
@@ -859,7 +859,7 @@ class Sql implements DialectInterface
             'int' => 'INT',
             'float' => 'FLOAT',
             'string' => 'TEXT',
-            'DateTime' => 'DATETIME',
+            'DateTime' => 'DATETIME'
         ][$type];
     }
 
@@ -876,7 +876,7 @@ class Sql implements DialectInterface
             $params
         );
 
-        $stringEscape = $this::STRING_ESCAPE;
+        $stringEscape = self::STRING_ESCAPE;
 
         $regex = sprintf(
             '/(?<!\\\)(\?)(?=(?:[^%s]|%s[^%s]*%s)*$)/',

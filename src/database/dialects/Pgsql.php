@@ -86,7 +86,7 @@ class Pgsql extends Sql implements DialectInterface
             'int' => 'INT8',
             'float' => 'FLOAT8',
             'string' => 'TEXT',
-            'DateTime' => 'TIMESTAMP',
+            'DateTime' => 'TIMESTAMP'
         ][$type];
     }
 }

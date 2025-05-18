@@ -5,7 +5,6 @@ namespace src\sentience;
 use Closure;
 use ReflectionClass;
 use ReflectionFunction;
-use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use Throwable;
 use src\controllers\Controller;
@@ -146,22 +145,31 @@ class Sentience
     {
         $this->validateCallback($callback);
 
-        $args = $this->executeMiddleware($middleware, $words, $flags, $request);
+        $dependencyInjector = new DependencyInjector(
+            [
+                'words' => $words,
+                'flags' => $flags,
+                'request' => $request
+            ],
+            $this->service
+        );
+
+        $args = $this->executeMiddleware($dependencyInjector, $middleware);
 
         if (is_array($callback)) {
-            [$callback, $args] = $this->constructCallbackClass($callback, $args, $words, $flags, $request);
+            [$callback, $args] = $this->constructCallbackClass($dependencyInjector, $callback, $args);
         }
 
         $callbackReflector = is_array($callback)
             ? new ReflectionMethod(...$callback)
             : new ReflectionFunction($callback);
 
-        $filteredArgs = $this->filterArgs($callbackReflector, $args, $words, $flags, $request);
+        $filteredArgs = $dependencyInjector->getFunctionParameters($callbackReflector, $args);
 
         $callback(...$filteredArgs);
     }
 
-    protected function executeMiddleware(array $middleware, array $words, array $flags, ?Request $request): ?array
+    protected function executeMiddleware(DependencyInjector $dependencyInjector, array $middleware): ?array
     {
         $args = [];
 
@@ -169,22 +177,22 @@ class Sentience
             $this->validateCallback($callback);
 
             if (is_array($callback)) {
-                [$callback, $args] = $this->constructCallbackClass($callback, $args, $words, $flags, $request);
+                [$callback, $args] = $this->constructCallbackClass($dependencyInjector, $callback, $args);
             }
 
-            $args = $this->executeMiddlewareCallback($callback, $args, $words, $flags, $request);
+            $args = $this->executeMiddlewareCallback($dependencyInjector, $callback, $args);
         }
 
         return $args;
     }
 
-    protected function executeMiddlewareCallback(string|array|callable $callback, array $args, array $words, array $flags, ?Request $request): array
+    protected function executeMiddlewareCallback(DependencyInjector $dependencyInjector, string|array|callable $callback, array $args): array
     {
         $callbackReflector = is_array($callback)
             ? new ReflectionMethod(...$callback)
             : new ReflectionFunction($callback);
 
-        $filteredArgs = $this->filterArgs($callbackReflector, $args, $words, $flags, $request);
+        $filteredArgs = $dependencyInjector->getFunctionParameters($callbackReflector, $args);
 
         $middlewareArgs = $callback(...$filteredArgs);
 
@@ -220,7 +228,7 @@ class Sentience
         }
     }
 
-    protected function constructCallbackClass(array $callback, array $args, array $words, array $flags, ?Request $request): array
+    protected function constructCallbackClass(DependencyInjector $dependencyInjector, array $callback, array $args): array
     {
         [$class, $method] = $callback;
 
@@ -235,72 +243,13 @@ class Sentience
 
         $constructorReflector = $reflectionClass->getConstructor();
 
-        $filteredArgs = $constructorReflector ? $this->filterArgs($constructorReflector, $args, $words, $flags, $request) : [];
+        $filteredArgs = $constructorReflector ? $dependencyInjector->getFunctionParameters($constructorReflector, $args) : [];
 
         $callback = [new $class(...$filteredArgs), $method];
 
         $args = [...$args, ...$filteredArgs];
 
         return [$callback, $args];
-    }
-
-    protected function filterArgs(ReflectionFunctionAbstract $callbackReflector, array $args, array $words, array $flags, ?Request $request): array
-    {
-        $callbackArgs = $callbackReflector->getParameters();
-
-        $serviceMethods = get_class_methods($this->service);
-
-        $filteredArgs = [];
-
-        foreach ($callbackArgs as $callbackArg) {
-            $name = $callbackArg->getName();
-
-            if ($callbackArg->isVariadic()) {
-                $filteredArgs[$name] = array_filter(
-                    $args,
-                    function (string $arg) use ($filteredArgs): bool {
-                        return !key_exists($arg, $filteredArgs);
-                    },
-                    ARRAY_FILTER_USE_KEY
-                );
-                continue;
-            }
-
-            if (key_exists($name, $args)) {
-                $filteredArgs[$name] = $args[$name];
-                continue;
-            }
-
-            if ($name == 'words') {
-                $filteredArgs['words'] = $words;
-                continue;
-            }
-
-            if ($name == 'flags') {
-                $filteredArgs['flags'] = $flags;
-                continue;
-            }
-
-            if ($name == 'request') {
-                $filteredArgs['request'] = $request;
-                continue;
-            }
-
-            if (in_array($name, $serviceMethods)) {
-                $serviceMethod = [$this->service, $name];
-                $filteredArgs[$name] = $serviceMethod();
-                continue;
-            }
-
-            if ($callbackArg->isDefaultValueAvailable()) {
-                $filteredArgs[$name] = $callbackArg->getDefaultValue();
-                continue;
-            }
-
-            $filteredArgs[$name] = null;
-        }
-
-        return $filteredArgs;
     }
 
     protected function handleException(Throwable $exception): void

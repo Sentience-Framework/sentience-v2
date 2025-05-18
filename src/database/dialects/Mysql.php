@@ -115,7 +115,7 @@ class Mysql extends Sql implements DialectInterface
             'int' => 'INT',
             'float' => 'FLOAT',
             'string' => 'LONGTEXT',
-            'DateTime' => 'DATETIME(6)',
+            'DateTime' => 'DATETIME(6)'
         ][$type];
     }
 }

@@ -31,7 +31,7 @@ abstract class Model
     public function __construct(Database $database, ?object $record = null)
     {
         $this->database = $database;
-        $this->dialect = DialectFactory::fromDriver($database->getPDOAttribute(PDO::ATTR_DRIVER_NAME));
+        $this->dialect = DialectFactory::fromDatabase($database);
 
         if ($record) {
             $this->hydrateByRecord($record);

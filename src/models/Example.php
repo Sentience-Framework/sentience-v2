@@ -11,7 +11,7 @@ class Example extends Model
     protected bool $primaryKeyAutoIncrement = true;
     protected array $columns = [
         'id' => 'id',
-        'exampleId' => 'example_id',
+        'exampleId' => 'example_id'
     ];
 
     public int $id;
