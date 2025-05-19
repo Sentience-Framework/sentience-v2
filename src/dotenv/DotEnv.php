@@ -14,11 +14,13 @@ class DotEnv
                     '0' => false,
                     '1' => true
                 ][$value];
+
                 continue;
             }
 
             if ($parseDirectoryArrays && str_contains($value, DIRECTORY_SEPARATOR) && str_contains($value, PATH_SEPARATOR)) {
                 $_ENV[$key] = explode(':', $value);
+
                 continue;
             }
 
@@ -73,8 +75,8 @@ class DotEnv
         $variables = [];
 
         foreach ($lines as $line) {
-            $dotEnvRegex = '/(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*\'(?:\\\'|[^\'])*\'|\s*"(?:(?:\\")|[^"])*"|`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/';
-            $isMatch = preg_match($dotEnvRegex, $line, $matches);
+            $isMatch = preg_match('/(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*\'(?:\\\'|[^\'])*\'|\s*"(?:(?:\\")|[^"])*"|`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/', $line, $matches);
+
             if (!$isMatch) {
                 continue;
             }
@@ -129,11 +131,10 @@ class DotEnv
 
     protected static function parseArrayValue(string $value, array $parsedVariables): array
     {
-        $jsonRegex = '/(\"(.*?)\")|(\'(.*?)\')|[-\w.]+/';
-
         $values = [];
 
-        $isMatch = preg_match_all($jsonRegex, $value, $matches, PREG_UNMATCHED_AS_NULL);
+        $isMatch = preg_match_all('/(\"(.*?)\")|(\'(.*?)\')|[-\w.]+/', $value, $matches, PREG_UNMATCHED_AS_NULL);
+
         if (!$isMatch) {
             return $values;
         }
@@ -151,7 +152,9 @@ class DotEnv
         $string = static::parseStringValue($value, '"');
 
         $envTemplateRegex = '/\$\{(.[^\}]*)\}/';
+
         $isMatch = preg_match_all($envTemplateRegex, $string, $matches);
+
         if (!$isMatch) {
             return $string;
         }
