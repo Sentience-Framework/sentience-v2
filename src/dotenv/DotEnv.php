@@ -131,11 +131,9 @@ class DotEnv
 
     protected static function parseArrayValue(string $value, array $parsedVariables): array
     {
-        $jsonRegex = '/(\"(.*?)\")|(\'(.*?)\')|[-\w.]+/';
-
         $values = [];
 
-        $isMatch = preg_match_all($jsonRegex, $value, $matches, PREG_UNMATCHED_AS_NULL);
+        $isMatch = preg_match_all('/(\"(.*?)\")|(\'(.*?)\')|[-\w.]+/', $value, $matches, PREG_UNMATCHED_AS_NULL);
 
         if (!$isMatch) {
             return $values;
@@ -153,16 +151,8 @@ class DotEnv
     {
         $string = static::parseStringValue($value, $quote);
 
-        $envTemplateRegex = '/\$\{(.[^\}]*)\}/';
-
-        $isMatch = preg_match_all($envTemplateRegex, $string, $matches);
-
-        if (!$isMatch) {
-            return $string;
-        }
-
         return preg_replace_callback(
-            $envTemplateRegex,
+            '/\$\{(.[^\}]*)\}/',
             function (array $matches) use ($parsedVariables): mixed {
                 [$original, $key] = $matches;
 
