@@ -2,6 +2,8 @@
 
 namespace src\dotenv;
 
+use src\exceptions\DotEnvException;
+
 class DotEnv
 {
     public static function loadEnv(bool $parseBooleans = false, bool $parseDirectoryArrays = false): void
@@ -14,13 +16,11 @@ class DotEnv
                     '0' => false,
                     '1' => true
                 ][$value];
-
                 continue;
             }
 
             if ($parseDirectoryArrays && str_contains($value, DIRECTORY_SEPARATOR) && str_contains($value, PATH_SEPARATOR)) {
                 $_ENV[$key] = explode(':', $value);
-
                 continue;
             }
 
@@ -70,23 +70,19 @@ class DotEnv
 
     protected static function parseDotEnvString(string $string): array
     {
-        $lines = preg_split('/(\r\n|\n|\r)/', $string) ?? [$string];
+        $isMatch = preg_match_all('/^(?!#)\s*([A-Z0-9_]+)\s*=\s*(?:\'|\"([^\2]*?)\2|`{3}([\s\S]*?)\`{3}|([^#\r\n]+?))\s*(?=[\r\n]|$|#)/m', $string, $matches);
+
+        if (!$isMatch) {
+            throw new DotEnvException('parsing error');
+        }
 
         $variables = [];
 
-        foreach ($lines as $line) {
-            $isMatch = preg_match('/(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*\'(?:\\\'|[^\'])*\'|\s*"(?:(?:\\")|[^"])*"|`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/', $line, $matches);
-
-            if (!$isMatch) {
-                continue;
-            }
-
-            if (count($matches) < 3) {
-                continue;
-            }
-
-            $key = trim($matches[1]);
-            $value = trim($matches[2]);
+        foreach ($matches[0] as $index => $variable) {
+            $key = $matches[1][$index];
+            $multiline = $matches[3][$index];
+            $singleline = $matches[4][$index];
+            $value = !empty($multiline) ? sprintf('```%s```', trim($multiline)) : $singleline;
 
             $variables[$key] = $value;
         }
@@ -96,34 +92,38 @@ class DotEnv
 
     protected static function parseVariable(string $value, array $parsedVariables): mixed
     {
-        $trimmedValue = trim($value);
+        $firstCharacter = substr($value, 0, 1);
 
-        if (substr($trimmedValue, 0, 1) == '[') {
-            return static::parseArrayValue($trimmedValue, $parsedVariables);
+        if ($firstCharacter == '[') {
+            return static::parseArrayValue($value, $parsedVariables);
         }
 
-        if (substr($trimmedValue, 0, 1) == '"') {
-            return static::parseTemplateValue($trimmedValue, $parsedVariables);
+        if ($firstCharacter == '"') {
+            return static::parseTemplateValue($value, '"', $parsedVariables);
         }
 
-        if (substr($trimmedValue, 0, 1) == "'") {
-            return static::parseStringValue($trimmedValue, "'");
+        if ($firstCharacter == "'") {
+            return static::parseStringValue($value, "'");
         }
 
-        if (str_contains($trimmedValue, '.')) {
-            return static::parseFloatValue($trimmedValue);
+        if ($firstCharacter == '`') {
+            return static::parseTemplateValue($value, '```', $parsedVariables);
         }
 
-        if (preg_match('/.*[0-9].*/', $trimmedValue)) {
-            return static::parseIntValue($trimmedValue);
+        if (str_contains($value, '.')) {
+            return static::parseFloatValue($value);
         }
 
-        if (in_array(strtolower($trimmedValue), ['true', 'false'])) {
-            return static::parseBoolValue($trimmedValue);
+        if (preg_match('/.*[0-9].*/', $value)) {
+            return static::parseIntValue($value);
         }
 
-        if ($trimmedValue == 'null') {
-            return static::parseNullValue($trimmedValue);
+        if (in_array(strtolower($value), ['true', 'false'])) {
+            return static::parseBoolValue($value);
+        }
+
+        if ($value == 'null') {
+            return static::parseNullValue($value);
         }
 
         return null;
@@ -131,9 +131,11 @@ class DotEnv
 
     protected static function parseArrayValue(string $value, array $parsedVariables): array
     {
+        $jsonRegex = '/(\"(.*?)\")|(\'(.*?)\')|[-\w.]+/';
+
         $values = [];
 
-        $isMatch = preg_match_all('/(\"(.*?)\")|(\'(.*?)\')|[-\w.]+/', $value, $matches, PREG_UNMATCHED_AS_NULL);
+        $isMatch = preg_match_all($jsonRegex, $value, $matches, PREG_UNMATCHED_AS_NULL);
 
         if (!$isMatch) {
             return $values;
@@ -147,9 +149,9 @@ class DotEnv
         );
     }
 
-    protected static function parseTemplateValue(string $value, array $parsedVariables): string
+    protected static function parseTemplateValue(string $value, string $quote, array $parsedVariables): string
     {
-        $string = static::parseStringValue($value, '"');
+        $string = static::parseStringValue($value, $quote);
 
         $envTemplateRegex = '/\$\{(.[^\}]*)\}/';
 
@@ -176,7 +178,9 @@ class DotEnv
 
     protected static function parseStringValue(string $value, string $quote): string
     {
-        $quoteTrim = substr($value, 1, -1);
+        $quoteLength = strlen($quote);
+
+        $quoteTrim = substr($value, $quoteLength, $quoteLength * -1);
 
         return str_replace(
             sprintf('\\%s', $quote),
@@ -199,7 +203,7 @@ class DotEnv
     {
         return match (strtolower($value)) {
             'true' => true,
-            'false' => false
+            'false' => false,
         };
     }
 
