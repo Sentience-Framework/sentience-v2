@@ -63,13 +63,16 @@ class DependencyInjector
             }
 
             if ($functionParameter->isVariadic()) {
-                $parameters[$name] = array_filter(
-                    $parameters,
-                    function (string $parameter) use ($parameters): bool {
-                        return !key_exists($parameter, $parameters);
-                    },
-                    ARRAY_FILTER_USE_KEY
-                );
+                $parameters = [
+                    ...$parameters,
+                    ...array_filter(
+                        $injectables,
+                        function (string $injectable) use ($parameters): bool {
+                            return !key_exists($injectable, $parameters);
+                        },
+                        ARRAY_FILTER_USE_KEY
+                    )
+                ];
                 continue;
             }
 

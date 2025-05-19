@@ -197,10 +197,10 @@ class Sentience
         $middlewareArgs = $callback(...$filteredArgs);
 
         if (!is_array($middlewareArgs)) {
-            return $args;
+            return [...$args, ...$filteredArgs];
         }
 
-        return [...$args, ...$middlewareArgs];
+        return [...$args, ...$filteredArgs, ...$middlewareArgs];
     }
 
     protected function validateCallback(string|array|callable $callback): void
