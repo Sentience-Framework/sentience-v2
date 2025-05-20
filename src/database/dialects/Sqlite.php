@@ -2,11 +2,11 @@
 
 namespace src\database\dialects;
 
-use src\database\queries\containers\Raw;
-use src\database\queries\definitions\AddForeignKeyConstraint;
-use src\database\queries\definitions\AddUniqueConstraint;
-use src\database\queries\definitions\AlterColumn;
-use src\database\queries\definitions\DropConstraint;
+use src\database\queries\objects\AddForeignKeyConstraint;
+use src\database\queries\objects\AddUniqueConstraint;
+use src\database\queries\objects\AlterColumn;
+use src\database\queries\objects\DropConstraint;
+use src\database\queries\objects\Raw;
 use src\exceptions\QueryException;
 
 class Sqlite extends Sql implements DialectInterface

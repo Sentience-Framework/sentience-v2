@@ -3,7 +3,7 @@
 namespace src\database\dialects;
 
 use DateTime;
-use src\database\queries\containers\Raw;
+use src\database\queries\objects\Raw;
 
 interface DialectInterface
 {

@@ -3,9 +3,9 @@
 namespace src\database\queries\traits;
 
 use DateTime;
-use src\database\queries\containers\Condition;
-use src\database\queries\containers\ConditionGroup;
 use src\database\queries\enums\WhereOperator;
+use src\database\queries\objects\Condition;
+use src\database\queries\objects\ConditionGroup;
 use src\exceptions\QueryException;
 use src\utils\Reflector;
 

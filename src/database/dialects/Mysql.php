@@ -2,10 +2,10 @@
 
 namespace src\database\dialects;
 
-use src\database\queries\containers\Raw;
-use src\database\queries\definitions\AlterColumn;
-use src\database\queries\definitions\Column;
-use src\database\queries\definitions\DropConstraint;
+use src\database\queries\objects\AlterColumn;
+use src\database\queries\objects\Column;
+use src\database\queries\objects\DropConstraint;
+use src\database\queries\objects\Raw;
 use src\database\queries\Query;
 
 class Mysql extends Sql implements DialectInterface

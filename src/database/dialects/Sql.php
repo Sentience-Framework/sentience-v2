@@ -3,23 +3,23 @@
 namespace src\database\dialects;
 
 use DateTime;
-use src\database\queries\containers\Alias;
-use src\database\queries\containers\Condition;
-use src\database\queries\containers\ConditionGroup;
-use src\database\queries\containers\Join;
-use src\database\queries\containers\OrderBy;
-use src\database\queries\containers\Raw;
-use src\database\queries\definitions\AddColumn;
-use src\database\queries\definitions\AddForeignKeyConstraint;
-use src\database\queries\definitions\AddUniqueConstraint;
-use src\database\queries\definitions\AlterColumn;
-use src\database\queries\definitions\Column;
-use src\database\queries\definitions\DropColumn;
-use src\database\queries\definitions\DropConstraint;
-use src\database\queries\definitions\ForeignKeyConstraint;
-use src\database\queries\definitions\RenameColumn;
-use src\database\queries\definitions\UniqueConstraint;
 use src\database\queries\enums\WhereOperator;
+use src\database\queries\objects\AddColumn;
+use src\database\queries\objects\AddForeignKeyConstraint;
+use src\database\queries\objects\AddUniqueConstraint;
+use src\database\queries\objects\Alias;
+use src\database\queries\objects\AlterColumn;
+use src\database\queries\objects\Column;
+use src\database\queries\objects\Condition;
+use src\database\queries\objects\ConditionGroup;
+use src\database\queries\objects\DropColumn;
+use src\database\queries\objects\DropConstraint;
+use src\database\queries\objects\ForeignKeyConstraint;
+use src\database\queries\objects\Join;
+use src\database\queries\objects\OrderBy;
+use src\database\queries\objects\Raw;
+use src\database\queries\objects\RenameColumn;
+use src\database\queries\objects\UniqueConstraint;
 use src\exceptions\QueryException;
 
 class Sql implements DialectInterface

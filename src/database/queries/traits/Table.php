@@ -2,8 +2,8 @@
 
 namespace src\database\queries\traits;
 
-use src\database\queries\containers\Alias;
-use src\database\queries\containers\Raw;
+use src\database\queries\objects\Alias;
+use src\database\queries\objects\Raw;
 
 trait Table
 {

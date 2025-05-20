@@ -1,6 +1,6 @@
 <?php
 
-namespace src\database\queries\definitions;
+namespace src\database\queries\objects;
 
 class RenameColumn
 {

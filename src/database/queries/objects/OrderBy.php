@@ -1,6 +1,6 @@
 <?php
 
-namespace src\database\queries\containers;
+namespace src\database\queries\objects;
 
 use src\database\queries\enums\OrderByDirection;
 

@@ -2,13 +2,13 @@
 
 namespace src\database\queries;
 
-use src\database\queries\definitions\AddColumn;
-use src\database\queries\definitions\AddForeignKeyConstraint;
-use src\database\queries\definitions\AddUniqueConstraint;
-use src\database\queries\definitions\AlterColumn;
-use src\database\queries\definitions\DropColumn;
-use src\database\queries\definitions\DropConstraint;
-use src\database\queries\definitions\RenameColumn;
+use src\database\queries\objects\AddColumn;
+use src\database\queries\objects\AddForeignKeyConstraint;
+use src\database\queries\objects\AddUniqueConstraint;
+use src\database\queries\objects\AlterColumn;
+use src\database\queries\objects\DropColumn;
+use src\database\queries\objects\DropConstraint;
+use src\database\queries\objects\RenameColumn;
 use src\database\queries\traits\Table;
 
 class AlterTable extends Query implements QueryInterface

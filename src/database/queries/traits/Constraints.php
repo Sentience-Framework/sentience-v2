@@ -2,8 +2,8 @@
 
 namespace src\database\queries\traits;
 
-use src\database\queries\definitions\ForeignKeyConstraint;
-use src\database\queries\definitions\UniqueConstraint;
+use src\database\queries\objects\ForeignKeyConstraint;
+use src\database\queries\objects\UniqueConstraint;
 
 trait Constraints
 {

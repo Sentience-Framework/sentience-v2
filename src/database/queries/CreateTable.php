@@ -2,7 +2,7 @@
 
 namespace src\database\queries;
 
-use src\database\queries\definitions\Column;
+use src\database\queries\objects\Column;
 use src\database\queries\traits\Constraints;
 use src\database\queries\traits\IfNotExists;
 use src\database\queries\traits\Table;

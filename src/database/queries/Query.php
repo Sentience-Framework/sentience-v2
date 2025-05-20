@@ -6,8 +6,8 @@ use DateTime;
 use Throwable;
 use src\database\Database;
 use src\database\dialects\DialectInterface;
-use src\database\queries\containers\Alias;
-use src\database\queries\containers\Raw;
+use src\database\queries\objects\Alias;
+use src\database\queries\objects\Raw;
 use src\database\Results;
 
 abstract class Query implements QueryInterface

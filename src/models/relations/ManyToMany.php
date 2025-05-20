@@ -3,7 +3,7 @@
 namespace src\models\relations;
 
 use src\database\Database;
-use src\database\queries\containers\Alias;
+use src\database\queries\objects\Alias;
 use src\database\queries\Query;
 use src\models\Model;
 

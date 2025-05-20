@@ -2,7 +2,7 @@
 
 namespace src\database\queries;
 
-use src\database\queries\containers\Raw;
+use src\database\queries\objects\Raw;
 use src\database\queries\traits\Columns;
 use src\database\queries\traits\Distinct;
 use src\database\queries\traits\GroupBy;
