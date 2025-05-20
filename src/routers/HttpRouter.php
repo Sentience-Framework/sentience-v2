@@ -180,7 +180,7 @@ class HttpRouter
 
                 $route->setMiddleware([
                     ...$middleware,
-                    ...$routeMiddleware,
+                    ...$routeMiddleware
                 ]);
 
                 foreach ($route->methods as $method) {

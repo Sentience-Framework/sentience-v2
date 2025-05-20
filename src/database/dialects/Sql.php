@@ -381,7 +381,7 @@ class Sql implements DialectInterface
                 $this->escapeIdentifier($join->joinTableAlias ?? $join->joinTable),
                 $this->escapeIdentifier($join->joinTableColumn),
                 $this->escapeIdentifier($join->onTable),
-                $this->escapeIdentifier($join->onTableColumn),
+                $this->escapeIdentifier($join->onTableColumn)
             );
         }
     }
@@ -883,7 +883,7 @@ class Sql implements DialectInterface
             $stringEscape,
             $stringEscape,
             $stringEscape,
-            $stringEscape,
+            $stringEscape
         );
 
         $index = 0;

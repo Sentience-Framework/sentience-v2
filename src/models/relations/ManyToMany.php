@@ -45,7 +45,7 @@ class ManyToMany extends Relation implements RelationInterface
             )
             ->whereEquals(
                 [$this->junctionTable, $junctionTableModelColumn],
-                $model->{$modelProperty},
+                $model->{$modelProperty}
             );
 
         $query = $this->modifyQuery($query, $modifyQuery);

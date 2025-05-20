@@ -13,7 +13,7 @@ class Terminal
             [
                 ['pipe', 'r'],
                 ['pipe', 'w'],
-                ['pipe', 'w'],
+                ['pipe', 'w']
             ],
             $pipes
         );
@@ -62,7 +62,7 @@ class Terminal
             [
                 ['pipe', 'r'],
                 ['pipe', 'w'],
-                ['pipe', 'w'],
+                ['pipe', 'w']
             ],
             $pipes
         );
