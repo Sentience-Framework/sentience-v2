@@ -126,7 +126,7 @@ class DevToolsController extends Controller
                 )
             );
 
-            Stdio::printFLn("Removed trailing comma's in: %s", $file);
+            Stdio::printFLn('Removed trailing commas in: %s', $file);
         }
 
         Stdio::printLn(str_repeat('=', $terminalWidth));
