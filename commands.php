@@ -41,6 +41,9 @@ $commands = [
     Command::create('dev-tools:remove-trailing-commas')
         ->setCallback([DevToolsController::class, 'removeTrailingCommas']),
 
+    Command::create('dev-tools:remove-excessive-whitespace')
+        ->setCallback([DevToolsController::class, 'removeExcessiveWhitespace']),
+
     Command::create('example')
         ->setCallback([ExampleController::class, 'cliExample']),
 

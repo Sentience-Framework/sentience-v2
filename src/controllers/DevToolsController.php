@@ -131,4 +131,48 @@ class DevToolsController extends Controller
 
         Stdio::printLn(str_repeat('=', $terminalWidth));
     }
+
+    public function removeExcessiveWhitespace(): void
+    {
+        $terminalWidth = Terminal::getWidth();
+
+        $equalSigns = ($terminalWidth - 17) / 2 - 1;
+
+        Stdio::errorFLn(
+            '%s Development tools %s',
+            str_repeat('=', ceil($equalSigns)),
+            str_repeat('=', floor($equalSigns))
+        );
+
+        $files = Filesystem::scandir(SENTIENCE_DIR, -1);
+
+        foreach ($files as $file) {
+            if (is_dir($file)) {
+                continue;
+            }
+
+            if (str_starts_with($file, Filesystem::path(SENTIENCE_DIR, 'vendor'))) {
+                continue;
+            }
+
+            if (!str_ends_with($file, '.php')) {
+                continue;
+            }
+
+            $fileContents = file_get_contents($file);
+
+            file_put_contents(
+                $file,
+                preg_replace(
+                    '/(\r\n|\r|\n){3,}/m',
+                    '$1$1',
+                    $fileContents
+                )
+            );
+
+            Stdio::printFLn('Removed excessive whitespace in: %s', $file);
+        }
+
+        Stdio::printLn(str_repeat('=', $terminalWidth));
+    }
 }
