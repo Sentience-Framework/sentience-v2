@@ -4,11 +4,11 @@ namespace src\database\dialects;
 
 use DateTime;
 use src\database\queries\containers\Alias;
+use src\database\queries\containers\Condition;
+use src\database\queries\containers\ConditionGroup;
 use src\database\queries\containers\Join;
 use src\database\queries\containers\OrderBy;
 use src\database\queries\containers\Raw;
-use src\database\queries\containers\Condition;
-use src\database\queries\containers\ConditionGroup;
 use src\database\queries\definitions\AddColumn;
 use src\database\queries\definitions\AddForeignKeyConstraint;
 use src\database\queries\definitions\AddUniqueConstraint;

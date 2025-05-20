@@ -1,7 +1,7 @@
 <?php
 
-use src\database\queries\Query;
 use src\database\Database;
+use src\database\queries\Query;
 
 /**
  * @var Database $database;

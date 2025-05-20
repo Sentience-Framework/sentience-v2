@@ -2,10 +2,10 @@
 
 namespace src\database\queries\traits;
 
-use src\database\queries\enums\JoinType;
 use src\database\queries\containers\Alias;
 use src\database\queries\containers\Join;
 use src\database\queries\containers\Raw;
+use src\database\queries\enums\JoinType;
 use src\database\queries\Query;
 
 trait Joins

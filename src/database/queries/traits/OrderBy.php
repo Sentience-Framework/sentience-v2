@@ -2,9 +2,9 @@
 
 namespace src\database\queries\traits;
 
-use src\database\queries\enums\OrderByDirection;
 use src\database\queries\containers\OrderBy as OrderByContainer;
 use src\database\queries\containers\Raw;
+use src\database\queries\enums\OrderByDirection;
 
 trait OrderBy
 {

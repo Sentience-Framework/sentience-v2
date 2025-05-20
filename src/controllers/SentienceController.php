@@ -2,9 +2,9 @@
 
 namespace src\controllers;
 
-use src\dotenv\DotEnv;
-use src\database\queries\Query;
 use src\database\Database;
+use src\database\queries\Query;
+use src\dotenv\DotEnv;
 use src\exceptions\BuiltInWebServerException;
 use src\exceptions\MigrationException;
 use src\exceptions\TerminalException;

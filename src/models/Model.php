@@ -4,10 +4,10 @@ namespace src\models;
 
 use ReflectionProperty;
 use ReflectionUnionType;
+use src\database\Database;
 use src\database\dialects\DialectFactory;
 use src\database\dialects\DialectInterface;
 use src\database\queries\Insert;
-use src\database\Database;
 use src\exceptions\ModelException;
 use src\exceptions\RelationException;
 use src\models\relations\BelongsTo;

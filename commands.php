@@ -1,5 +1,6 @@
 <?php
 
+use src\controllers\DevToolsController;
 use src\controllers\ExampleController;
 use src\controllers\SentienceController;
 use src\routers\Command;
@@ -33,6 +34,9 @@ $commands = [
 
     Command::create('dotenv:fix')
         ->setCallback([SentienceController::class, 'fixDotEnv']),
+
+    Command::create('dev-tools:sort-imports')
+        ->setCallback([DevToolsController::class, 'sortImports']),
 
     Command::create('example')
         ->setCallback([ExampleController::class, 'cliExample']),

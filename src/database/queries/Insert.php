@@ -2,8 +2,8 @@
 
 namespace src\database\queries;
 
-use src\database\queries\traits\Returning;
 use src\database\queries\traits\OnConflict;
+use src\database\queries\traits\Returning;
 use src\database\queries\traits\Table;
 use src\database\queries\traits\Values;
 

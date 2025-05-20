@@ -2,8 +2,8 @@
 
 namespace src\controllers;
 
-use src\database\queries\Query;
 use src\database\Database;
+use src\database\queries\Query;
 use src\sentience\Request;
 use src\sentience\Response;
 use src\sentience\Stdio;
