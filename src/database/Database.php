@@ -117,7 +117,7 @@ class Database
         return new Results(
             $this,
             $pdoStatement,
-            $rawQuery,
+            $rawQuery
         );
     }
 

@@ -891,7 +891,7 @@ class MimeTypes
             '8' => 'application/x-troff-man',
             '123' => 'application/vnd.lotus-1-2-3',
             '669' => 'audio/x-mod',
-            '726' => 'audio/32kadpcm',
+            '726' => 'audio/32kadpcm'
         ];
 
         return $mimeTypes[strtolower($mimeType)]

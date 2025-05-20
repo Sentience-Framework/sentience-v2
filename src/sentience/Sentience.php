@@ -333,7 +333,7 @@ class Sentience
         $response = [
             'error' => [
                 'type' => Reflector::getShortName($exception),
-                'message' => $exception->getMessage(),
+                'message' => $exception->getMessage()
             ]
         ];
 

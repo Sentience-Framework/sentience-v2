@@ -193,7 +193,7 @@ class DotEnv
     {
         return match (strtolower($value)) {
             'true' => true,
-            'false' => false,
+            'false' => false
         };
     }
 
