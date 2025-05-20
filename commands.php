@@ -38,6 +38,9 @@ $commands = [
     Command::create('dev-tools:sort-imports')
         ->setCallback([DevToolsController::class, 'sortImports']),
 
+    Command::create('dev-tools:remove-trailing-commas')
+        ->setCallback([DevToolsController::class, 'removeTrailingCommas']),
+
     Command::create('example')
         ->setCallback([ExampleController::class, 'cliExample']),
 
