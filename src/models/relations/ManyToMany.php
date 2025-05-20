@@ -41,7 +41,7 @@ class ManyToMany extends Relation implements RelationInterface
                 $relationTable,
                 $this->relationModel::getColumnByProperty($relationProperty),
                 $this->junctionTable,
-                $junctionTableRelationColumn
+                $junctionTableRelationColumn,
             )
             ->whereEquals(
                 [$this->junctionTable, $junctionTableModelColumn],

@@ -119,8 +119,8 @@ class DevToolsController extends Controller
 
             file_put_contents(
                 $file,
-                preg_replace(
-                    '/(?<![\"\'])\s*()(\s*(?=[\)\]\}]))/m',
+                preg_replace_callback(
+                    '/(?<!\\\)(,)(\s*(?=[\)\]\}]))(?=(?:[^\'\"]|\'\"[^\'\"]*\'\")*$)/m',
                     '$2',
                     $fileContents
                 )
