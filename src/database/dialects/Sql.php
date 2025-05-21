@@ -876,20 +876,10 @@ class Sql implements DialectInterface
             $params
         );
 
-        $stringEscape = self::STRING_ESCAPE;
-
-        $regex = sprintf(
-            '/(?<!\\\)(\?)(?=(?:[^%s]|%s[^%s]*%s)*$)/',
-            $stringEscape,
-            $stringEscape,
-            $stringEscape,
-            $stringEscape
-        );
-
         $index = 0;
 
         return preg_replace_callback(
-            $regex,
+            '/\\?(?=(?:[^\'\"`\\\\]|\'(?:\\\\.|[^\\\\\'])*\'|\"(?:[\\\\].|[^\\\\\"])*\"|`(?:[\\\\].|[^\\\\`])*`)*$)/',
             function () use ($params, &$index): mixed {
                 if (!key_exists($index, $params)) {
                     throw new QueryException('placeholder and value count do not match');
