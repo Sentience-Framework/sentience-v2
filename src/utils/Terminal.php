@@ -148,7 +148,7 @@ class Terminal
     {
         $exitCode = static::exec('stty size < /dev/tty', $stdout, $stderr, 0);
 
-        if (preg_match('/(\d+) (\d+)/', $stdout, $matches)) {
+        if (preg_match('/(\d+)\s(\d+)/', $stdout, $matches)) {
             [$height, $width] = array_slice($matches, 1);
 
             return (int) $width;

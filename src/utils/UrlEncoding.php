@@ -46,7 +46,7 @@ class UrlEncoding
 
     public static function decode(string $string, bool $unique = true): array
     {
-        $isMatch = preg_match_all('/([^&=]+)(=([^&]*))?/', $string, $matches);
+        $isMatch = preg_match_all('/([^&\=]+)(\=([^&]*))?/', $string, $matches);
 
         if (!$isMatch) {
             return [];

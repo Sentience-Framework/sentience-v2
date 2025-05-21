@@ -133,7 +133,7 @@ class DotEnv
     {
         $values = [];
 
-        $isMatch = preg_match_all('/(\"(.*?)\")|(\'(.*?)\')|[-\w.]+/', $value, $matches, PREG_UNMATCHED_AS_NULL);
+        $isMatch = preg_match_all('/(\"(.*?)\")|(\'(.*?)\')|[\-\w.]+/', $value, $matches, PREG_UNMATCHED_AS_NULL);
 
         if (!$isMatch) {
             return $values;
