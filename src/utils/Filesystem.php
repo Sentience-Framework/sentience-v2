@@ -68,7 +68,7 @@ class Filesystem
             $items
         );
 
-        sort($items);
+        natcasesort($items);
 
         $paths = [];
 
