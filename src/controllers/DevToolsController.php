@@ -20,17 +20,23 @@ class DevToolsController extends Controller
             str_repeat('=', floor($equalSigns))
         );
 
+        $importRegex = '/^use\s+[^;]+;/m';
+
         $files = Filesystem::scandir(SENTIENCE_DIR, -1);
 
-        $importRegex = '/^use\s+[^;]+;/m';
+        $excludedDirectories = [
+            Filesystem::path(SENTIENCE_DIR, 'vendor')
+        ];
 
         foreach ($files as $file) {
             if (is_dir($file)) {
                 continue;
             }
 
-            if (str_starts_with($file, Filesystem::path(SENTIENCE_DIR, 'vendor'))) {
-                continue;
+            foreach ($excludedDirectories as $excludedDirectory) {
+                if (str_starts_with($file, $excludedDirectory)) {
+                    continue;
+                }
             }
 
             if (!str_ends_with($file, '.php')) {
@@ -102,13 +108,19 @@ class DevToolsController extends Controller
 
         $files = Filesystem::scandir(SENTIENCE_DIR, -1);
 
+        $excludedDirectories = [
+            Filesystem::path(SENTIENCE_DIR, 'vendor')
+        ];
+
         foreach ($files as $file) {
             if (is_dir($file)) {
                 continue;
             }
 
-            if (str_starts_with($file, Filesystem::path(SENTIENCE_DIR, 'vendor'))) {
-                continue;
+            foreach ($excludedDirectories as $excludedDirectory) {
+                if (str_starts_with($file, $excludedDirectory)) {
+                    continue;
+                }
             }
 
             if (!str_ends_with($file, '.php')) {
@@ -146,13 +158,19 @@ class DevToolsController extends Controller
 
         $files = Filesystem::scandir(SENTIENCE_DIR, -1);
 
+        $excludedDirectories = [
+            Filesystem::path(SENTIENCE_DIR, 'vendor')
+        ];
+
         foreach ($files as $file) {
             if (is_dir($file)) {
                 continue;
             }
 
-            if (str_starts_with($file, Filesystem::path(SENTIENCE_DIR, 'vendor'))) {
-                continue;
+            foreach ($excludedDirectories as $excludedDirectory) {
+                if (str_starts_with($file, $excludedDirectory)) {
+                    continue;
+                }
             }
 
             if (!str_ends_with($file, '.php')) {
