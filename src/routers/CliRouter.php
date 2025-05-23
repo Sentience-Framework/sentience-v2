@@ -41,10 +41,11 @@ class CliRouter
         $flags = [];
 
         foreach ($args as $arg) {
-            $isSyntaxMatch = preg_match('/\-\-(.[^\=]*)\=?(.*)/', $arg, $matches);
+            $isMatch = preg_match('/\-\-(.[^\=]*)\=?(.*)/', $arg, $matches);
 
-            if (!$isSyntaxMatch) {
+            if (!$isMatch) {
                 $words[] = $arg;
+
                 continue;
             }
 
