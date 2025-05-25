@@ -15,7 +15,6 @@ use src\database\queries\objects\ConditionGroup;
 use src\database\queries\objects\DropColumn;
 use src\database\queries\objects\DropConstraint;
 use src\database\queries\objects\ForeignKeyConstraint;
-use src\database\queries\objects\Join;
 use src\database\queries\objects\OrderBy;
 use src\database\queries\objects\Raw;
 use src\database\queries\objects\RenameColumn;
@@ -361,9 +360,6 @@ class Sql implements DialectInterface
 
         $query .= ' ';
 
-        /**
-         * @var Join|Raw[] $joins
-         */
         foreach ($joins as $index => $join) {
             if ($index > 0) {
                 $query .= ' ';
@@ -394,9 +390,6 @@ class Sql implements DialectInterface
 
         $query .= ' WHERE ';
 
-        /**
-         * @var Condition|ConditionGroup[] $where
-         */
         foreach ($where as $index => $condition) {
             if ($condition instanceof Condition) {
                 $this->addCondition($query, $params, $index, $condition);
@@ -480,9 +473,6 @@ class Sql implements DialectInterface
 
         $query .= '(';
 
-        /**
-         * @var Condition|ConditionGroup[] $conditions
-         */
         foreach ($conditions as $index => $condition) {
             if ($condition instanceof Condition) {
                 $this->addCondition($query, $params, $index, $condition);

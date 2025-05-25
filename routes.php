@@ -7,11 +7,6 @@ use src\routers\Route;
 use src\routers\RouteGroup;
 use src\sentience\Request;
 use src\sentience\Response;
-use src\sentience\Sentience;
-
-/**
- * @var Sentience $sentience
- */
 
 $routes = [
     Route::create('/healthcheck')

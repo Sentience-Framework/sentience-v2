@@ -1,11 +1,5 @@
 <?php
 
-use src\database\Database;
-
-/**
- * @var Database $database;
- */
-
 $database->createTable()
     ->ifNotExists()
     ->table('table_1')

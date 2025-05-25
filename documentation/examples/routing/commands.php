@@ -1,10 +1,6 @@
 <?php
 
-use src\controllers\SentienceController;
-use src\routers\Command;
-use src\sentience\Stdio;
-
-[
+$commands = [
     Command::create('migrations:init')
         ->setCallback([SentienceController::class, 'initMigrations'])
         ->setMiddleware([

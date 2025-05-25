@@ -371,10 +371,6 @@ abstract class Model
         );
     }
 
-    /**
-     * Static methods used to retrieve model data without initializing the class
-     */
-
     public static function getPrimaryKeyProperty(): string
     {
         $primaryKeyProperty = Reflector::getDefaultValue(static::class, 'primaryKey');
@@ -440,12 +436,6 @@ abstract class Model
 
         return $property;
     }
-
-    /**
-     * Create read update delete hooks
-     *
-     * A developer can override these methods to add webhooks, or other actions that are required on model actions
-     */
 
     protected function onSelect(): void
     {

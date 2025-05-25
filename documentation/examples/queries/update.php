@@ -1,12 +1,5 @@
 <?php
 
-use src\database\Database;
-use src\database\queries\Query;
-
-/**
- * @var Database $database;
- */
-
 $database->update()
     ->table('table_1')
     ->values([

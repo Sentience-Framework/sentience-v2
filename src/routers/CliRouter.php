@@ -6,9 +6,6 @@ use src\sentience\Argv;
 
 class CliRouter
 {
-    /**
-     * @var Command[] $commands
-     */
     public array $commands = [];
 
     public function __construct()

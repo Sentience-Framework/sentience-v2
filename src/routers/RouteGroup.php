@@ -5,9 +5,6 @@ namespace src\routers;
 class RouteGroup
 {
     public string $route;
-    /**
-     * @var Route|RouteGroup[] $routes
-     */
     public array $routes = [];
     public array $middleware = [];
 

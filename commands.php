@@ -4,11 +4,6 @@ use src\controllers\DevToolsController;
 use src\controllers\ExampleController;
 use src\controllers\SentienceController;
 use src\routers\Command;
-use src\sentience\Sentience;
-
-/**
- * @var Sentience $sentience
- */
 
 $commands = [
     Command::create('server:start')

@@ -11,9 +11,6 @@ use src\utils\Reflector;
 
 trait Where
 {
-    /**
-     * @var Condition|ConditionGroup;
-     */
     protected array $where = [];
 
     public function whereEquals(string|array $column, mixed $value): static

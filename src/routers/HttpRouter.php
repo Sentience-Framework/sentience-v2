@@ -6,9 +6,6 @@ use src\sentience\Request;
 
 class HttpRouter
 {
-    /**
-     * @var Route|RouteGroup[] $routes
-     */
     public array $routes = [];
 
     public function __construct()
