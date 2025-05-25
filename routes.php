@@ -8,7 +8,7 @@ use src\routers\RouteGroup;
 use src\sentience\Request;
 use src\sentience\Response;
 
-$routes = [
+return [
     Route::create('/healthcheck')
         ->setMiddleware([
             [CORSMiddleware::class, 'addHeaders']
@@ -47,7 +47,3 @@ $routes = [
             Response::ok($request->pathVars);
         })
 ];
-
-foreach ($routes as $route) {
-    $sentience->bindRoute($route);
-}

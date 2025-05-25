@@ -5,7 +5,7 @@ use src\controllers\ExampleController;
 use src\controllers\SentienceController;
 use src\routers\Command;
 
-$commands = [
+return [
     Command::create('server:start')
         ->setCallback([SentienceController::class, 'startServer']),
 
@@ -45,7 +45,3 @@ $commands = [
     Command::create('query')
         ->setCallback([ExampleController::class, 'query'])
 ];
-
-foreach ($commands as $command) {
-    $sentience->bindCommand($command);
-}
