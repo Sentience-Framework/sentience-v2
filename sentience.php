@@ -2,6 +2,7 @@
 
 use src\dotenv\DotEnv;
 use src\sentience\Sentience;
+use src\utils\Filesystem;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -9,17 +10,17 @@ define('SENTIENCE_DIR', __DIR__);
 
 DotEnv::loadEnv();
 DotEnv::loadFile(
-    __DIR__ . '/.env',
-    __DIR__ . '/.env.example',
+    Filesystem::path(SENTIENCE_DIR, '.env'),
+    Filesystem::path(SENTIENCE_DIR, '.env.example'),
     [
         'SENTIENCE_DIR' => SENTIENCE_DIR,
         ...$_ENV
     ]
 );
 
-$commands = require __DIR__ . '/commands.php';
-$routes = require __DIR__ . '/routes.php';
-$service = require __DIR__ . '/service.php';
+$commands = require Filesystem::path(SENTIENCE_DIR, 'commands.php');
+$routes = require Filesystem::path(SENTIENCE_DIR, 'routes.php');
+$service = require Filesystem::path(SENTIENCE_DIR, 'service.php');
 
 $sentience = new Sentience($service);
 
