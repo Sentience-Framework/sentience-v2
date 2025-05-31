@@ -13,6 +13,7 @@ use src\database\queries\Delete;
 use src\database\queries\DropTable;
 use src\database\queries\Insert;
 use src\database\queries\objects\Alias;
+use src\database\queries\objects\QueryWithParams;
 use src\database\queries\objects\Raw;
 use src\database\queries\Select;
 use src\database\queries\Update;
@@ -73,7 +74,9 @@ class Database
 
     public function safe(string $query, array $params = []): Results
     {
-        $rawQuery = $this->dialect->toRawQuery($query, $params);
+        $queryWithParams = new QueryWithParams($query, $params);
+
+        $rawQuery = $queryWithParams->toRawQuery($this->dialect);
 
         $startTime = microtime(true);
 

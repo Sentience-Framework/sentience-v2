@@ -35,7 +35,7 @@ return new class {
                 Stdio::errorFLn('Query     : %s', $query);
 
                 if ($startTime && $endTime) {
-                    Stdio::errorFLn('Time      : %s ms', round(($endTime - $startTime) * 1000, 2));
+                    Stdio::errorFLn('Time      : %f ms', round(($endTime - $startTime) * 1000, 2));
                 }
 
                 if ($error) {

@@ -2,19 +2,20 @@
 
 namespace src\database\queries;
 
+use src\database\queries\objects\QueryWithParams;
 use src\database\queries\traits\OnConflict;
 use src\database\queries\traits\Returning;
 use src\database\queries\traits\Table;
 use src\database\queries\traits\Values;
 
-class Insert extends Query implements QueryInterface
+class Insert extends Query
 {
     use OnConflict;
     use Returning;
     use Table;
     use Values;
 
-    public function build(): array
+    public function build(): QueryWithParams
     {
         return $this->dialect->insert([
             'table' => $this->table,

@@ -3,11 +3,12 @@
 namespace src\database\queries;
 
 use src\database\queries\objects\Column;
+use src\database\queries\objects\QueryWithParams;
 use src\database\queries\traits\Constraints;
 use src\database\queries\traits\IfNotExists;
 use src\database\queries\traits\Table;
 
-class CreateTable extends Query implements QueryInterface
+class CreateTable extends Query
 {
     use Constraints;
     use IfNotExists;
@@ -16,7 +17,7 @@ class CreateTable extends Query implements QueryInterface
     protected array $columns = [];
     protected array $primaryKeys = [];
 
-    public function build(): array
+    public function build(): QueryWithParams
     {
         return $this->dialect->createTable([
             'table' => $this->table,

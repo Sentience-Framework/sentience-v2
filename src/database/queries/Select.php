@@ -2,6 +2,7 @@
 
 namespace src\database\queries;
 
+use src\database\queries\objects\QueryWithParams;
 use src\database\queries\objects\Raw;
 use src\database\queries\traits\Columns;
 use src\database\queries\traits\Distinct;
@@ -14,7 +15,7 @@ use src\database\queries\traits\OrderBy;
 use src\database\queries\traits\Table;
 use src\database\queries\traits\Where;
 
-class Select extends Query implements QueryInterface
+class Select extends Query
 {
     use Columns;
     use Distinct;
@@ -27,7 +28,7 @@ class Select extends Query implements QueryInterface
     use Table;
     use Where;
 
-    public function build(): array
+    public function build(): QueryWithParams
     {
         return $this->dialect->select([
             'table' => $this->table,
@@ -36,10 +37,7 @@ class Select extends Query implements QueryInterface
             'joins' => $this->joins,
             'where' => $this->where,
             'groupBy' => $this->groupBy,
-            'having' => [
-                'expression' => $this->havingExpression,
-                'values' => $this->havingValues
-            ],
+            'having' => $this->having,
             'orderBy' => $this->orderBy,
             'limit' => $this->limit,
             'offset' => $this->offset

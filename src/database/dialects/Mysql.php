@@ -5,6 +5,7 @@ namespace src\database\dialects;
 use src\database\queries\objects\AlterColumn;
 use src\database\queries\objects\Column;
 use src\database\queries\objects\DropConstraint;
+use src\database\queries\objects\QueryWithParams;
 use src\database\queries\objects\Raw;
 use src\database\queries\Query;
 
@@ -13,7 +14,7 @@ class Mysql extends Sql implements DialectInterface
     public const TABLE_OR_COLUMN_ESCAPE = '`';
     public const STRING_ESCAPE = '"';
 
-    public function createTable(array $config): array
+    public function createTable(array $config): QueryWithParams
     {
         [$query, $params] = parent::createTable($config);
 
@@ -21,7 +22,7 @@ class Mysql extends Sql implements DialectInterface
 
         $query .= ' ENGINE=InnoDB;';
 
-        return [$query, $params];
+        return new QueryWithParams($query, $params);
     }
 
     public function addOnConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void

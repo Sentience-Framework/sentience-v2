@@ -25,15 +25,18 @@ abstract class Query implements QueryInterface
 
     public function execute(): ?Results
     {
-        [$query, $params] = $this->build();
+        $queryWithParams = $this->build();
 
-        if (preg_match('/^CREATE|ALTER|DROP/', $query)) {
-            $this->database->unsafe($query);
+        if (preg_match('/^CREATE|ALTER|DROP/', $queryWithParams->expression)) {
+            $this->database->unsafe($queryWithParams->expression);
 
             return null;
         }
 
-        return $this->database->safe($query, $params);
+        return $this->database->safe(
+            $queryWithParams->expression,
+            $queryWithParams->params
+        );
     }
 
     public function tryCatch(?callable $handleException = null): ?Results
@@ -51,9 +54,9 @@ abstract class Query implements QueryInterface
 
     public function rawQuery(): string
     {
-        [$query, $params] = $this->build();
+        $queryWithParams = $this->build();
 
-        return $this->dialect->toRawQuery($query, $params);
+        return $queryWithParams->toRawQuery($this->dialect);
     }
 
     public static function alias(string|array|Raw $name, string $alias): Alias

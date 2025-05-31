@@ -2,13 +2,14 @@
 
 namespace src\database\queries;
 
+use src\database\queries\objects\QueryWithParams;
 use src\database\queries\traits\Limit;
 use src\database\queries\traits\Returning;
 use src\database\queries\traits\Table;
 use src\database\queries\traits\Values;
 use src\database\queries\traits\Where;
 
-class Update extends Query implements QueryInterface
+class Update extends Query
 {
     use Limit;
     use Returning;
@@ -16,7 +17,7 @@ class Update extends Query implements QueryInterface
     use Values;
     use Where;
 
-    public function build(): array
+    public function build(): QueryWithParams
     {
         return $this->dialect->update([
             'table' => $this->table,

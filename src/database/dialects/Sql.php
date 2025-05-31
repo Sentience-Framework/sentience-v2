@@ -16,6 +16,7 @@ use src\database\queries\objects\DropColumn;
 use src\database\queries\objects\DropConstraint;
 use src\database\queries\objects\ForeignKeyConstraint;
 use src\database\queries\objects\OrderBy;
+use src\database\queries\objects\QueryWithParams;
 use src\database\queries\objects\Raw;
 use src\database\queries\objects\RenameColumn;
 use src\database\queries\objects\UniqueConstraint;
@@ -27,7 +28,7 @@ class Sql implements DialectInterface
     public const STRING_ESCAPE = "'";
     public const DATETIME_FORMAT = 'Y-m-d H:i:s.u';
 
-    public function select(array $config): array
+    public function select(array $config): QueryWithParams
     {
         $query = '';
         $params = [];
@@ -69,17 +70,17 @@ class Sql implements DialectInterface
         $this->addJoins($query, $config['joins']);
         $this->addWhere($query, $params, $config['where']);
         $this->addGroupBy($query, $config['groupBy']);
-        $this->addHaving($query, $params, $config['having']['expression'], $config['having']['values']);
+        $this->addHaving($query, $params, $config['having']);
         $this->addOrderBy($query, $config['orderBy']);
         $this->addLimit($query, $config['limit']);
         $this->addOffset($query, $config['limit'], $config['offset']);
 
         $query .= ';';
 
-        return [$query, $params];
+        return new QueryWithParams($query, $params);
     }
 
-    public function insert(array $config): array
+    public function insert(array $config): QueryWithParams
     {
         $query = '';
         $params = [];
@@ -140,10 +141,10 @@ class Sql implements DialectInterface
 
         $query .= ';';
 
-        return [$query, $params];
+        return new QueryWithParams($query, $params);
     }
 
-    public function update(array $config): array
+    public function update(array $config): QueryWithParams
     {
         $query = '';
         $params = [];
@@ -181,10 +182,10 @@ class Sql implements DialectInterface
 
         $query .= ';';
 
-        return [$query, $params];
+        return new QueryWithParams($query, $params);
     }
 
-    public function delete(array $config): array
+    public function delete(array $config): QueryWithParams
     {
         $query = '';
         $params = [];
@@ -197,10 +198,10 @@ class Sql implements DialectInterface
 
         $query .= ';';
 
-        return [$query, $params];
+        return new QueryWithParams($query, $params);
     }
 
-    public function createTable(array $config): array
+    public function createTable(array $config): QueryWithParams
     {
         $query = '';
         $params = [];
@@ -243,10 +244,10 @@ class Sql implements DialectInterface
         $query .= sprintf(' (%s)', implode(', ', $definitions));
         $query .= ';';
 
-        return [$query, $params];
+        return new QueryWithParams($query, $params);
     }
 
-    public function alterTable(array $config): array
+    public function alterTable(array $config): QueryWithParams
     {
         $query = '';
         $params = [];
@@ -314,10 +315,10 @@ class Sql implements DialectInterface
 
         $query .= implode(' ', $queries);
 
-        return [$query, $params];
+        return new QueryWithParams($query, $params);
     }
 
-    public function dropTable(array $config): array
+    public function dropTable(array $config): QueryWithParams
     {
         $query = '';
         $params = [];
@@ -332,7 +333,7 @@ class Sql implements DialectInterface
 
         $query .= ';';
 
-        return [$query, $params];
+        return new QueryWithParams($query, $params);
     }
 
     protected function addTable(string &$query, string|array|Alias|Raw $table): void
@@ -506,15 +507,15 @@ class Sql implements DialectInterface
         );
     }
 
-    protected function addHaving(string &$query, array &$params, ?string $having, array $values): void
+    protected function addHaving(string &$query, array &$params, ?QueryWithParams $having): void
     {
         if (is_null($having)) {
             return;
         }
 
-        $query .= ' HAVING ' . $having;
+        $query .= ' HAVING ' . $having->expression;
 
-        array_push($params, ...$values);
+        array_push($params, ...$having->params);
     }
 
     protected function addOrderBy(string &$query, array $orderBy): void

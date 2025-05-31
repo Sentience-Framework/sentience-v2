@@ -56,7 +56,7 @@ abstract class Model
         $record = $results->fetch();
 
         if (!$record) {
-            throw new ModelException('unable to find record for model %s', Reflector::getShortName($this));
+            throw new ModelException('unable to find record for model');
         }
 
         $this->hydrateByRecord($record);
@@ -309,10 +309,9 @@ abstract class Model
             if (is_null($columnValue)) {
                 if (!$propertyAllowsNull) {
                     throw new ModelException(
-                        'column %s contains null value, while property %s does not allow null, in model %s',
+                        'column %s contains null value, while property %s does not allow null',
                         $column,
-                        $property,
-                        Reflector::getShortName($this)
+                        $property
                     );
                 }
 
@@ -376,7 +375,7 @@ abstract class Model
         $primaryKeyProperty = Reflector::getDefaultValue(static::class, 'primaryKey');
 
         if (!$primaryKeyProperty) {
-            throw new ModelException('no primary key set in model %s', static::class);
+            throw new ModelException('no primary key set in model');
         }
 
         return $primaryKeyProperty;
@@ -394,7 +393,7 @@ abstract class Model
         $table = Reflector::getDefaultValue(static::class, 'table');
 
         if (!$table) {
-            throw new ModelException('no table set in model %s', Reflector::getShortName(static::class));
+            throw new ModelException('no table set in model');
         }
 
         return $table;
@@ -405,7 +404,7 @@ abstract class Model
         $columns = Reflector::getDefaultValue(static::class, 'columns');
 
         if (!$columns) {
-            throw new ModelException('no columns set in model %s', Reflector::getShortName(static::class));
+            throw new ModelException('no columns set in model');
         }
 
         return array_values($columns);
@@ -418,7 +417,7 @@ abstract class Model
         $column = $columns[$property] ?? null;
 
         if (!$column) {
-            throw new ModelException('no column for %s set in model %s', $property, Reflector::getShortName(static::class));
+            throw new ModelException('no column for %s set in model', $property);
         }
 
         return $column;
@@ -431,7 +430,7 @@ abstract class Model
         $property = array_flip($columns)[$column] ?? null;
 
         if (!$property) {
-            throw new ModelException('no property for %s set in model %s', $property, Reflector::getShortName(static::class));
+            throw new ModelException('no property for %s set in model', $property);
         }
 
         return $property;

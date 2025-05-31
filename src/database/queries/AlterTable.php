@@ -8,16 +8,17 @@ use src\database\queries\objects\AddUniqueConstraint;
 use src\database\queries\objects\AlterColumn;
 use src\database\queries\objects\DropColumn;
 use src\database\queries\objects\DropConstraint;
+use src\database\queries\objects\QueryWithParams;
 use src\database\queries\objects\RenameColumn;
 use src\database\queries\traits\Table;
 
-class AlterTable extends Query implements QueryInterface
+class AlterTable extends Query
 {
     use Table;
 
     protected array $alters = [];
 
-    public function build(): array
+    public function build(): QueryWithParams
     {
         return $this->dialect->alterTable([
             'table' => $this->table,

@@ -274,7 +274,7 @@ class Sentience
         Stdio::errorFLn('- Text  : %s', $exception->getMessage());
         Stdio::errorFLn('- Type  : %s', Reflector::getShortName($exception));
         Stdio::errorFLn('- File  : %s', $exception->getFile());
-        Stdio::errorFLn('- Line  : %s', $exception->getLine());
+        Stdio::errorFLn('- Line  : %d', $exception->getLine());
 
         if (env('APP_STACK_TRACE', false)) {
             $stackTrace = array_values(
@@ -312,7 +312,7 @@ class Sentience
                     );
 
                     Stdio::errorFLn(
-                        '      %s : %s:%s %s(%s)',
+                        '      %d : %s:%d %s(%s)',
                         $index + 1,
                         $file,
                         $line,

@@ -21,7 +21,7 @@ class SentienceController extends Controller
         $terminalWidth = Terminal::getWidth();
 
         if ($terminalWidth < 40) {
-            throw new TerminalException('terminal width of %s is too small. minimum width of 40 required', $terminalWidth);
+            throw new TerminalException('terminal width of %d is too small. minimum width of 40 required', $terminalWidth);
         }
 
         $dir = escapeshellarg(Filesystem::path(SENTIENCE_DIR, 'public'));
@@ -29,7 +29,7 @@ class SentienceController extends Controller
         $host = env('SERVER_HOST', 'localhost');
         $port = env('SERVER_PORT', 8000);
 
-        $command = sprintf('cd %s && %s -S %s:%s', $dir, $bin, $host, $port);
+        $command = sprintf('cd %s && %s -S %s:%d', $dir, $bin, $host, $port);
 
         Terminal::stream(
             $command,

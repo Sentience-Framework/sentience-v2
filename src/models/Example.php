@@ -13,6 +13,7 @@ class Example extends Model
         'id' => 'id',
         'exampleId' => 'example_id'
     ];
+    protected array $unique = ['exampleId'];
 
     public int $id;
     public int $exampleId;
@@ -23,7 +24,7 @@ class Example extends Model
     {
         parent::__construct($database, $record);
 
-        $this->hasOne('example', Example::class, 'id->exampleId');
+        $this->hasOne('example', Example::class, 'exampleId->id');
         $this->belongsTo('example', Example::class, 'id<-exampleId');
         $this->hasMany('examples', Example::class, 'id-<exampleId');
         $this->manyToMany('examples', Example::class, 'example_has_example', 'id-<jt_column1:jt_column2>-exampleId');
