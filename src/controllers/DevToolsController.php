@@ -35,7 +35,7 @@ class DevToolsController extends Controller
 
             foreach ($excludedDirectories as $excludedDirectory) {
                 if (str_starts_with($file, $excludedDirectory)) {
-                    continue;
+                    continue 2;
                 }
             }
 
@@ -119,7 +119,7 @@ class DevToolsController extends Controller
 
             foreach ($excludedDirectories as $excludedDirectory) {
                 if (str_starts_with($file, $excludedDirectory)) {
-                    continue;
+                    continue 2;
                 }
             }
 
@@ -169,7 +169,7 @@ class DevToolsController extends Controller
 
             foreach ($excludedDirectories as $excludedDirectory) {
                 if (str_starts_with($file, $excludedDirectory)) {
-                    continue;
+                    continue 2;
                 }
             }
 
