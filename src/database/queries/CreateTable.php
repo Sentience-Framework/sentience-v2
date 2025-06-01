@@ -20,8 +20,8 @@ class CreateTable extends Query
     public function build(): QueryWithParams
     {
         return $this->dialect->createTable([
-            'table' => $this->table,
             'ifNotExists' => $this->ifNotExists,
+            'table' => $this->table,
             'columns' => $this->columns,
             'primaryKeys' => $this->primaryKeys,
             'constraints' => [

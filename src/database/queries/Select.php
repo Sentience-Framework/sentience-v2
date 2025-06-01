@@ -31,8 +31,8 @@ class Select extends Query
     public function build(): QueryWithParams
     {
         return $this->dialect->select([
-            'table' => $this->table,
             'distinct' => $this->distinct,
+            'table' => $this->table,
             'columns' => $this->columns,
             'joins' => $this->joins,
             'where' => $this->where,
