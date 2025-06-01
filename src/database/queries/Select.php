@@ -52,7 +52,7 @@ class Select extends Query
         $this->distinct = false;
 
         $countExpression = !is_null($column)
-            ? $this->dialect->escapeIdentifier($column)
+            ? ($previousDistinct ? 'DISTINCT ' : '') . $this->dialect->escapeIdentifier($column)
             : '*';
 
         $this->columns([
@@ -60,7 +60,7 @@ class Select extends Query
                 Query::raw(
                     sprintf(
                         'COUNT(%s)',
-                        ($previousDistinct ? 'DISTINCT ' : '') . $countExpression
+                        $countExpression
                     )
                 ),
                 'count'
