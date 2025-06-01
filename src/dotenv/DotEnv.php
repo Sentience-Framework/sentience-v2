@@ -173,7 +173,7 @@ class DotEnv
         $quoteTrim = substr($value, $quoteLength, $quoteLength * -1);
 
         return str_replace(
-            sprintf('\\%s', $quote),
+            sprintf('\\%s', substr($quote, 0, 1)),
             $quote,
             $quoteTrim
         );
