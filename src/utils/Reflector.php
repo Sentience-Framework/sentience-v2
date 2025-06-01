@@ -9,17 +9,23 @@ class Reflector
 {
     public static function getShortName(string|object $objectOrClass): string
     {
-        return (new ReflectionClass($objectOrClass))->getShortName();
+        $reflectionClass = new ReflectionClass($objectOrClass);
+
+        return $reflectionClass->getShortName();
     }
 
     public static function isPropertyInitialized(object $class, string $property): bool
     {
-        return (new ReflectionProperty($class, $property))->isInitialized($class);
+        $reflectionClass = new ReflectionProperty($class, $property);
+
+        return $reflectionClass->isInitialized($class);
     }
 
     public static function hasDefaultValue(string|object $objectOrClass, string $property): bool
     {
-        return (new ReflectionProperty($objectOrClass, $property))->hasDefaultValue();
+        $reflectionProperty = new ReflectionProperty($objectOrClass, $property);
+
+        return $reflectionProperty->hasDefaultValue();
     }
 
     public static function getDefaultValue(string|object $objectOrClass, string $property): mixed
@@ -31,5 +37,12 @@ class Reflector
         }
 
         return $reflectionProperty->getDefaultValue();
+    }
+
+    public static function isSubclassOf(string|object $objectOrClass, string $parent): mixed
+    {
+        $reflectionClass = new ReflectionClass($objectOrClass);
+
+        return $reflectionClass->isSubclassOf($parent);
     }
 }
