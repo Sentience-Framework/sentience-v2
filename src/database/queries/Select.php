@@ -67,7 +67,7 @@ class Select extends Query
             )
         ]);
 
-        $count = (int) $this->execute()->fetch()->count;
+        $count = (int) $this->execute()->fetch()->count ?? 0;
 
         $this->columns = $previousColumns;
         $this->distinct = $previousDistinct;
