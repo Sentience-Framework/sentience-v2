@@ -32,8 +32,8 @@ class Select extends Query
     {
         return $this->dialect->select([
             'distinct' => $this->distinct,
-            'table' => $this->table,
             'columns' => $this->columns,
+            'table' => $this->table,
             'joins' => $this->joins,
             'where' => $this->where,
             'groupBy' => $this->groupBy,
