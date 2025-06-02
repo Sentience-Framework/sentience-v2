@@ -7,7 +7,7 @@ use src\database\queries\objects\Raw;
 
 trait Table
 {
-    protected string|array|Alias|raw $table = '';
+    protected string|array|Alias|Raw $table = '';
 
     public function table(string|array|Alias|Raw $table): static
     {
