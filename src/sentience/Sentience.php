@@ -63,7 +63,7 @@ class Sentience
 
                 $message = $error['message'];
                 $severity = $error['type'];
-                $file = $error['type'];
+                $file = $error['file'];
                 $line = $error['line'];
 
                 $exception = new FatalErrorException($message, 0, $severity, $file, $line);
