@@ -748,12 +748,12 @@ class Sql implements DialectInterface
                     $identifier
                 )
             )
-            : $this->escape($identifier, self::TABLE_OR_COLUMN_ESCAPE);
+            : $this->escape($identifier, $this::TABLE_OR_COLUMN_ESCAPE);
     }
 
     public function escapeString(string $string): string
     {
-        return $this->escape($string, self::STRING_ESCAPE);
+        return $this->escape($string, $this::STRING_ESCAPE);
     }
 
     protected function escape(string $string, string $character): string
@@ -812,7 +812,7 @@ class Sql implements DialectInterface
 
     public function castDateTime(DateTime $dateTime): mixed
     {
-        return $dateTime->format(self::DATETIME_FORMAT);
+        return $dateTime->format($this::DATETIME_FORMAT);
     }
 
     public function parseBool(mixed $value): bool
@@ -826,7 +826,7 @@ class Sql implements DialectInterface
             return null;
         }
 
-        $dateTime = DateTime::createFromFormat(self::DATETIME_FORMAT, $dateTimeString);
+        $dateTime = DateTime::createFromFormat($this::DATETIME_FORMAT, $dateTimeString);
 
         if ($dateTime) {
             return $dateTime;
