@@ -82,7 +82,7 @@ class SentienceController extends Controller
                             Stdio::errorFLn(
                                 '%s (%.2f ms) %s',
                                 date('Y-m-d H:i:s'),
-                                round(($endTime - $startTime) * 1000, 2),
+                                ($endTime - $startTime) * 1000,
                                 $path
                             );
 
