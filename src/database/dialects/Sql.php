@@ -20,7 +20,6 @@ use src\database\queries\objects\QueryWithParams;
 use src\database\queries\objects\Raw;
 use src\database\queries\objects\RenameColumn;
 use src\database\queries\objects\UniqueConstraint;
-use src\exceptions\QueryException;
 
 class Sql implements DialectInterface
 {
@@ -852,37 +851,5 @@ class Sql implements DialectInterface
             'string' => 'TEXT',
             'DateTime' => 'DATETIME'
         ][$type];
-    }
-
-    public function toRawQuery(string $query, array $params): string
-    {
-        if (count($params) == 0) {
-            return $query;
-        }
-
-        $params = array_map(
-            function (mixed $param): mixed {
-                return $this->castToQuery($param);
-            },
-            $params
-        );
-
-        $index = 0;
-
-        return preg_replace_callback(
-            '/\\?(?=(?:[^\'\"\`\\\\]|\'(?:\\\\.|[^\\\\\'])*\'|\"(?:[\\\\].|[^\\\\\"])*\"|\`(?:[\\\\].|[^\\\\\`])*\`)*$)/',
-            function () use ($params, &$index): mixed {
-                if (!key_exists($index, $params)) {
-                    throw new QueryException('placeholder and value count do not match');
-                }
-
-                $param = $params[$index];
-
-                $index++;
-
-                return $param;
-            },
-            $query
-        );
     }
 }

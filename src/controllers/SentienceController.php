@@ -55,7 +55,7 @@ class SentienceController extends Controller
                         throw new BuiltInWebServerException($matches[1]);
                     }
 
-                    if (preg_match('/^\[.*?\] PHP/', $line)) {
+                    if (preg_match('/^\[.*?\]\sPHP/', $line)) {
                         $equalSigns = ($terminalWidth - 28) / 2 - 1;
 
                         Stdio::printFLn(
@@ -67,7 +67,7 @@ class SentienceController extends Controller
                         continue;
                     }
 
-                    if (preg_match('/^\[.*?\]\s.*\:\d+ (\w+)/', $line, $matches)) {
+                    if (preg_match('/^\[.*?\]\s.*\:\d+\s(\w+)/', $line, $matches)) {
                         $status = $matches[1];
 
                         if ($status == 'Accepted') {
@@ -92,7 +92,7 @@ class SentienceController extends Controller
                         continue;
                     }
 
-                    if (preg_match('/^\[.*?\] .*\:\d+ \[\d+\]\: \w+ (.*)/', $line, $matches)) {
+                    if (preg_match('/^\[.*?\]\s.*\:\d+\s\[\d+\]\:\s\w+\s(.*)/', $line, $matches)) {
                         $path = $matches[1];
 
                         continue;
@@ -444,7 +444,7 @@ class SentienceController extends Controller
 
         $dotEnvFileContents = file_get_contents($dotEnvFilepath);
 
-        $lines = preg_split("/(\r\n|\n|\r)/", $dotEnvFileContents);
+        $lines = preg_split('/[\r\n|\n|\r]/', $dotEnvFileContents);
 
         if (!empty(end($lines))) {
             $lines[] = '';
