@@ -3,7 +3,6 @@
 namespace src\models;
 
 use ReflectionProperty;
-use ReflectionUnionType;
 use src\database\Database;
 use src\database\dialects\DialectFactory;
 use src\database\dialects\DialectInterface;
@@ -33,7 +32,7 @@ abstract class Model
         $this->dialect = DialectFactory::fromDatabase($database);
 
         if ($record) {
-            $this->hydrateByRecord($record);
+            $this->hydrateFromRecord($record);
         }
     }
 
@@ -59,7 +58,7 @@ abstract class Model
             throw new ModelException('unable to find record for model');
         }
 
-        $this->hydrateByRecord($record);
+        $this->hydrateFromRecord($record);
 
         foreach ($relations as $property) {
             $this->selectRelation($property);
@@ -86,7 +85,7 @@ abstract class Model
         $values = [];
 
         foreach ($this->columns as $property => $column) {
-            if ($property == $this->primaryKey && !Reflector::isPropertyInitialized($this, $this->primaryKey)) {
+            if (!Reflector::isPropertyInitialized($this, $property)) {
                 continue;
             }
 
@@ -113,7 +112,7 @@ abstract class Model
         $insertedRecord = $results->fetch();
 
         if ($insertedRecord) {
-            $this->hydrateByRecord($insertedRecord);
+            $this->hydrateFromRecord($insertedRecord);
         }
 
         $this->onInsert();
@@ -177,7 +176,7 @@ abstract class Model
         $updatedRecord = $results->fetch();
 
         if ($updatedRecord) {
-            $this->hydrateByRecord($updatedRecord);
+            $this->hydrateFromRecord($updatedRecord);
         }
 
         $this->onUpdate();
@@ -204,7 +203,7 @@ abstract class Model
         $deletedRecord = $statement->fetch();
 
         if ($deletedRecord) {
-            $this->hydrateByRecord($deletedRecord);
+            $this->hydrateFromRecord($deletedRecord);
         }
 
         $this->onDelete();
@@ -223,12 +222,12 @@ abstract class Model
         }
 
         foreach ($this->columns as $property => $column) {
+            if (!Reflector::hasSingularType($this, $property)) {
+                throw new ModelException('empty or union types are not allowed as model properties');
+            }
+
             $reflectionProperty = new ReflectionProperty($this, $property);
             $reflectionType = $reflectionProperty->getType();
-
-            if ($reflectionType instanceof ReflectionUnionType) {
-                throw new ModelException('union types are not allowed as model properties');
-            }
 
             $propertyType = $reflectionType->getName();
             $propertyAllowsNull = $reflectionType->allowsNull();
@@ -293,16 +292,22 @@ abstract class Model
         return $query->rawQuery();
     }
 
-    protected function hydrateByRecord(object $record): void
+    protected function hydrateFromRecord(object $record): void
     {
         foreach ($this->columns as $property => $column) {
             if (!property_exists($record, $column)) {
                 continue;
             }
 
+            if (!Reflector::hasSingularType($this, $property)) {
+                throw new ModelException('empty or union types are not allowed as model properties');
+            }
+
             $reflectionProperty = new ReflectionProperty($this, $property);
-            $propertyType = $reflectionProperty->getType()->getName();
-            $propertyAllowsNull = $reflectionProperty->getType()->allowsNull();
+            $reflectionType = $reflectionProperty->getType();
+
+            $propertyType = $reflectionType->getName();
+            $propertyAllowsNull = $reflectionType->allowsNull();
 
             $columnValue = $record->{$column};
 

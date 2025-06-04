@@ -4,6 +4,7 @@ namespace src\utils;
 
 use ReflectionClass;
 use ReflectionProperty;
+use ReflectionUnionType;
 
 class Reflector
 {
@@ -44,5 +45,28 @@ class Reflector
         $reflectionClass = new ReflectionClass($objectOrClass);
 
         return $reflectionClass->isSubclassOf($parent);
+    }
+
+    public static function hasSingularType(string|object $objectOrClass, string $property): bool
+    {
+        $reflectionProperty = new ReflectionProperty($objectOrClass, $property);
+
+        $reflectionType = $reflectionProperty->getType();
+
+        if (is_null($reflectionType)) {
+            return false;
+        }
+
+        if ($reflectionType instanceof ReflectionUnionType) {
+            return false;
+        }
+
+        $propertyType = $reflectionType->getName();
+
+        if ($propertyType == 'mixed') {
+            return false;
+        }
+
+        return true;
     }
 }
