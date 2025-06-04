@@ -2,6 +2,7 @@
 
 namespace src\controllers;
 
+use Throwable;
 use src\database\Database;
 use src\database\queries\Query;
 use src\dotenv\DotEnv;
@@ -321,9 +322,15 @@ class SentienceController extends Controller
 
         $migration = include $migrationFilepath;
 
-        $database->transactionInCallback(function (Database $database) use ($migration): void {
-            $migration->apply($database);
-        });
+        try {
+            $database->transactionInCallback(function (Database $database) use ($migration): void {
+                $migration->apply($database);
+            });
+        } catch (Throwable $exception) {
+            unlink($migrationFilepath);
+
+            throw $exception;
+        }
 
         $highestBatch = $database->select()
             ->table(Migration::getTable())
@@ -386,9 +393,15 @@ class SentienceController extends Controller
 
         $migration = include $migrationFilepath;
 
-        $database->transactionInCallback(function (Database $database) use ($migration): void {
-            $migration->apply($database);
-        });
+        try {
+            $database->transactionInCallback(function (Database $database) use ($migration): void {
+                $migration->apply($database);
+            });
+        } catch (Throwable $exception) {
+            unlink($migrationFilepath);
+
+            throw $exception;
+        }
 
         $highestBatch = $database->select()
             ->table(Migration::getTable())
