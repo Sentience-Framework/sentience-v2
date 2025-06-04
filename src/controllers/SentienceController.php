@@ -2,6 +2,7 @@
 
 namespace src\controllers;
 
+use src\utils\Reflector;
 use Throwable;
 use src\database\Database;
 use src\database\queries\Query;
@@ -283,14 +284,17 @@ class SentienceController extends Controller
 
     public function initModel(Database $database, array $words, array $flags): void
     {
-        $classShortName = $flags['model'] ?? $words[0] ?? null;
+        $class = $flags['model'] ?? $words[0] ?? null;
 
-        if (!$classShortName) {
+        if (!$class) {
             Stdio::errorLn('No model set');
             return;
         }
 
-        $class = sprintf('\\src\\models\\%s', $classShortName);
+        $class = str_contains('\\', $class)
+            ? $class = sprintf('\\src\\models\\%s', $class)
+            : $class;
+
 
         if (!class_exists($class)) {
             Stdio::errorFLn('Model %s does not exist', $class);
@@ -352,19 +356,21 @@ class SentienceController extends Controller
         $migrationModel->appliedAt = Query::now();
         $migrationModel->insert();
 
-        Stdio::printFLn('Migration for model %s created successfully', $classShortName);
+        Stdio::printFLn('Migration for model %s created successfully', Reflector::getShortName($model));
     }
 
     public function resetModel(Database $database, array $words, array $flags): void
     {
-        $classShortName = $flags['model'] ?? $words[0] ?? null;
+        $class = $flags['model'] ?? $words[0] ?? null;
 
-        if (!$classShortName) {
+        if (!$class) {
             Stdio::errorLn('No model set');
             return;
         }
 
-        $class = sprintf('\\src\\models\\%s', $classShortName);
+        $class = str_contains('\\', $class)
+            ? $class = sprintf('\\src\\models\\%s', $class)
+            : $class;
 
         if (!class_exists($class)) {
             Stdio::errorFLn('Model %s does not exist', $class);
@@ -423,7 +429,7 @@ class SentienceController extends Controller
         $migrationModel->appliedAt = Query::now();
         $migrationModel->insert();
 
-        Stdio::printFLn('Migration for model %s created successfully', $classShortName);
+        Stdio::printFLn('Migration for model %s created successfully', Reflector::getShortName($model));
     }
 
     public function fixDotEnv(array $words, array $flags): void
