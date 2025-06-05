@@ -4,7 +4,6 @@ namespace src\database\queries\enums;
 
 enum WhereOperator: string
 {
-    case RAW = '';
     case EQUALS = '=';
     case NOT_EQUALS = '<>';
     case LESS_THAN = '<';
@@ -17,6 +16,5 @@ enum WhereOperator: string
     case NOT_LIKE = 'NOT LIKE';
     case IN = 'IN';
     case NOT_IN = 'NOT IN';
-    case AND = 'AND';
-    case OR = 'OR';
+    case RAW = '';
 }

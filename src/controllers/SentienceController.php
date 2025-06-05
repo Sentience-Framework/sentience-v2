@@ -2,7 +2,6 @@
 
 namespace src\controllers;
 
-use src\utils\Reflector;
 use Throwable;
 use src\database\Database;
 use src\database\queries\Query;
@@ -14,6 +13,7 @@ use src\migrations\MigrationFactory;
 use src\models\Migration;
 use src\sentience\Stdio;
 use src\utils\Filesystem;
+use src\utils\Reflector;
 use src\utils\Terminal;
 
 class SentienceController extends Controller
@@ -294,7 +294,6 @@ class SentienceController extends Controller
         $class = str_contains('\\', $class)
             ? $class = sprintf('\\src\\models\\%s', $class)
             : $class;
-
 
         if (!class_exists($class)) {
             Stdio::errorFLn('Model %s does not exist', $class);

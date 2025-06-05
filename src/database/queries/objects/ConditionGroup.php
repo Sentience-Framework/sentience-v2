@@ -2,16 +2,16 @@
 
 namespace src\database\queries\objects;
 
-use src\database\queries\enums\WhereOperator;
+use src\database\queries\enums\Chain;
 use src\database\queries\traits\Where;
 
 class ConditionGroup
 {
     use Where;
 
-    public WhereOperator $chain;
+    public Chain $chain;
 
-    public function __construct(WhereOperator $chain)
+    public function __construct(Chain $chain)
     {
         $this->chain = $chain;
     }
