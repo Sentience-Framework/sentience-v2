@@ -20,13 +20,14 @@ class CORSMiddleware extends Middleware
 
         $returnOrigin = env('ACCESS_CONTROL_RETURN_ORIGIN', true);
 
-        $origin = ($returnOrigin && $originHeader)
-            ? $originHeader
-            : $originEnv;
+        $accessControlAllowOrigin = ($returnOrigin && $originHeader) ? $originHeader : $originEnv;
+        $accessControlAllowCredentials = env('ACCESS_CONTROL_ALLOW_CREDENTIALS', true) ? 'true' : 'false';
+        $accessControlAllowMethods = implode(', ', env('ACCESS_CONTROL_ALLOW_METHODS', ['*']));
+        $accessControlAllowHeaders = implode(', ', env('ACCESS_CONTROL_ALLOW_HEADERS', ['*']));
 
-        header('Access-Control-Allow-Origin: ' . $origin);
-        header('Access-Control-Allow-Credentials: ' . (env('ACCESS_CONTROL_ALLOW_CREDENTIALS', true) ? 'true' : 'false'));
-        header('Access-Control-Allow-Methods: ' . implode(', ', env('ACCESS_CONTROL_ALLOW_METHODS', ['*'])));
-        header('Access-Control-Allow-Headers: ' . implode(', ', env('ACCESS_CONTROL_ALLOW_HEADERS', ['*'])));
+        header('Access-Control-Allow-Origin: ' . $accessControlAllowOrigin);
+        header('Access-Control-Allow-Credentials: ' . $accessControlAllowCredentials);
+        header('Access-Control-Allow-Methods: ' . $accessControlAllowMethods);
+        header('Access-Control-Allow-Headers: ' . $accessControlAllowHeaders);
     }
 }
