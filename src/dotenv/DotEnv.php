@@ -92,33 +92,23 @@ class DotEnv
 
     protected static function parseVariable(string $value, array $parsedVariables): mixed
     {
-        $firstCharacter = substr($value, 0, 1);
-
-        if ($firstCharacter == '[') {
+        if (str_starts_with($value, '[')) {
             return static::parseArrayValue($value, $parsedVariables);
         }
 
-        if ($firstCharacter == '"') {
-            return static::parseTemplateValue($value, '"', $parsedVariables);
+        if (in_array(substr($value, 0, 1), ['"', "'", '`'])) {
+            return static::parseQuotedValue($value, $parsedVariables);
         }
 
-        if ($firstCharacter == "'") {
-            return static::parseStringValue($value, "'");
-        }
-
-        if ($firstCharacter == '`') {
-            return static::parseTemplateValue($value, '```', $parsedVariables);
-        }
-
-        if (str_contains($value, '.')) {
-            return static::parseFloatValue($value);
-        }
-
-        if (preg_match('/.*[0-9].*/', $value)) {
+        if (preg_match('/^\-{1}?[0-9]+$/', $value)) {
             return static::parseIntValue($value);
         }
 
-        if (in_array(strtolower($value), ['true', 'false'])) {
+        if (is_numeric($value)) {
+            return static::parseFloatValue($value);
+        }
+
+        if (in_array($value, ['true', 'false'])) {
             return static::parseBoolValue($value);
         }
 
@@ -126,7 +116,16 @@ class DotEnv
             return static::parseNullValue($value);
         }
 
-        return null;
+        return $value;
+    }
+
+    protected static function parseQuotedValue(string $value, array $parsedVariables): string
+    {
+        return match (substr($value, 0, 1)) {
+            '"' => static::parseTemplateValue($value, '"', $parsedVariables),
+            "'" => static::parseStringValue($value, "'"),
+            '`' => static::parseTemplateValue($value, '```', $parsedVariables)
+        };
     }
 
     protected static function parseArrayValue(string $value, array $parsedVariables): array
@@ -191,7 +190,7 @@ class DotEnv
 
     protected static function parseBoolValue(string $value): bool
     {
-        return match (strtolower($value)) {
+        return match ($value) {
             'true' => true,
             'false' => false
         };
