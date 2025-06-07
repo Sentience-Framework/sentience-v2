@@ -139,6 +139,7 @@ class SentienceController extends Controller
 
         if (count($migrations) == 0) {
             Stdio::printLn('No migrations found');
+
             return;
         }
 
@@ -166,6 +167,7 @@ class SentienceController extends Controller
 
             if ($alreadyApplied) {
                 Stdio::printFLn('Migration %s already applied', $filename);
+
                 continue;
             }
 
@@ -206,6 +208,7 @@ class SentienceController extends Controller
 
         if (count($migrations) == 0) {
             Stdio::printLn('No migrations found');
+
             return;
         }
 
@@ -223,6 +226,7 @@ class SentienceController extends Controller
 
         if ($highestBatch == 0) {
             Stdio::printLn('No migrations found to rollback');
+
             return;
         }
 
@@ -262,6 +266,7 @@ class SentienceController extends Controller
 
         if (is_null($name)) {
             Stdio::errorLn('Please provide a name for the migration');
+
             return;
         }
 
@@ -288,6 +293,7 @@ class SentienceController extends Controller
 
         if (!$class) {
             Stdio::errorLn('No model set');
+
             return;
         }
 
@@ -297,6 +303,7 @@ class SentienceController extends Controller
 
         if (!class_exists($class)) {
             Stdio::errorFLn('Model %s does not exist', $class);
+
             return;
         }
 
@@ -364,6 +371,7 @@ class SentienceController extends Controller
 
         if (!$class) {
             Stdio::errorLn('No model set');
+
             return;
         }
 
@@ -373,6 +381,7 @@ class SentienceController extends Controller
 
         if (!class_exists($class)) {
             Stdio::errorFLn('Model %s does not exist', $class);
+
             return;
         }
 
@@ -457,6 +466,7 @@ class SentienceController extends Controller
                 '%s is up to date',
                 $dotEnv
             );
+
             return;
         }
 

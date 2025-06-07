@@ -320,16 +320,19 @@ abstract class Model
                 }
 
                 $this->{$property} = null;
+
                 continue;
             }
 
             if ($propertyType == 'bool') {
                 $this->{$property} = $this->dialect->parseBool($columnValue);
+
                 continue;
             }
 
             if ($propertyType == 'DateTime') {
                 $this->{$property} = $this->dialect->parseDateTime($columnValue);
+
                 continue;
             }
 
