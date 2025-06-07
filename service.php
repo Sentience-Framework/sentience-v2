@@ -16,7 +16,7 @@ use src\utils\Terminal;
  * A good use case would be putting the database connection variable here
  */
 
-return new class {
+return new class () {
     public function database(): Database
     {
         $debugCallback = env('DB_DEBUG', false)
@@ -47,7 +47,7 @@ return new class {
 
                 Stdio::errorLn(str_repeat('=', $terminalWidth));
             }
-            : null;
+        : null;
 
         $dsn = env('DB_DSN');
 

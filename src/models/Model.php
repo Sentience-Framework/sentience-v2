@@ -273,7 +273,6 @@ abstract class Model
 
     public function dropTable(bool $ifExists = false, ?callable $modifyQuery = null): string
     {
-
         $query = $this->database->dropTable()
             ->table($this->table);
 

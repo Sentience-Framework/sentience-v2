@@ -13,7 +13,7 @@ class MigrationFactory
         $lines[] = 'use src\database\Database;';
         $lines[] = 'use src\migrations\MigrationInterface;';
         $lines[] = '';
-        $lines[] = 'return new class implements MigrationInterface {';
+        $lines[] = 'return new class implements MigrationInterface () {';
         $lines[] = '    public function apply(Database $database): void';
         $lines[] = '    {';
 

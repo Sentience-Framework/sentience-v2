@@ -291,7 +291,7 @@ class SentienceController extends Controller
             return;
         }
 
-        $class = str_contains('\\', $class)
+        $class = !str_contains('\\', $class)
             ? $class = sprintf('\\src\\models\\%s', $class)
             : $class;
 
@@ -367,7 +367,7 @@ class SentienceController extends Controller
             return;
         }
 
-        $class = str_contains('\\', $class)
+        $class = !str_contains('\\', $class)
             ? $class = sprintf('\\src\\models\\%s', $class)
             : $class;
 
