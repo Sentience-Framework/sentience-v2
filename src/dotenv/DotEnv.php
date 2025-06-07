@@ -16,11 +16,13 @@ class DotEnv
                     '0' => false,
                     '1' => true
                 ][$value];
+
                 continue;
             }
 
             if ($parseDirectoryArrays && str_contains($value, DIRECTORY_SEPARATOR) && str_contains($value, PATH_SEPARATOR)) {
                 $_ENV[$key] = explode(':', $value);
+
                 continue;
             }
 
