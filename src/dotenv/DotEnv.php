@@ -110,7 +110,7 @@ class DotEnv
             return static::parseFloatValue($value);
         }
 
-        if (in_array($value, ['true', 'false'])) {
+        if (preg_match('/^true|false$/', $value)) {
             return static::parseBoolValue($value);
         }
 
@@ -171,12 +171,12 @@ class DotEnv
     {
         $quoteLength = strlen($quote);
 
-        $quoteTrim = substr($value, $quoteLength, $quoteLength * -1);
+        $valueWithoutQuotes = substr($value, $quoteLength, $quoteLength * -1);
 
         return str_replace(
             sprintf('\\%s', substr($quote, 0, 1)),
             $quote,
-            $quoteTrim
+            $valueWithoutQuotes
         );
     }
 
