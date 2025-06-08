@@ -72,7 +72,7 @@ class DotEnv
 
     protected static function parseDotEnvString(string $string): array
     {
-        $isMatch = preg_match_all('/^(?!#)\s*([A-Z0-9_]+)\s*=\s*(?:\'|\"([^\2]*?)\2|`{3}([\s\S]*?)\`{3}|([^#\r\n]+?))\s*(?=[\r\n]|$|#)/m', $string, $matches);
+        $isMatch = preg_match_all('/^(?!\#)\s*([A-Z0-9_]+)\s*=\s*(?|(\'.*?\')|(\".*?\")|(\`{3}[\s\S]*?\`{3})|([^#\r\n]*))\s*(?=[\r\n]|$|\#)/m', $string, $matches);
 
         if (!$isMatch) {
             throw new DotEnvException('parsing error');
@@ -82,9 +82,7 @@ class DotEnv
 
         foreach ($matches[0] as $index => $variable) {
             $key = $matches[1][$index];
-            $multiline = $matches[3][$index];
-            $singleline = $matches[4][$index];
-            $value = !empty($multiline) ? sprintf('```%s```', trim($multiline)) : $singleline;
+            $value = $matches[2][$index];
 
             $variables[$key] = $value;
         }
@@ -171,7 +169,14 @@ class DotEnv
     {
         $quoteLength = strlen($quote);
 
-        $valueWithoutQuotes = substr($value, $quoteLength, $quoteLength * -1);
+        $valueWithoutQuotes = trim(
+            substr(
+                $value,
+                $quoteLength,
+                $quoteLength * -1
+            ),
+            "\r\n"
+        );
 
         return str_replace(
             sprintf('\\%s', substr($quote, 0, 1)),
