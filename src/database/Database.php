@@ -53,20 +53,18 @@ class Database
 
         $affected = $this->pdo->exec($query);
 
-        $endTime = microtime(true);
-
         if (is_bool($affected)) {
             $error = implode(' ', $this->pdo->errorInfo());
 
             if ($this->debug) {
-                ($this->debug)($query, null, null, $error);
+                ($this->debug)($query, $startTime, $error);
             }
 
             throw new SqlException($error);
         }
 
         if ($this->debug) {
-            ($this->debug)($query, $startTime, $endTime, null);
+            ($this->debug)($query, $startTime, null);
         }
 
         return $affected;
@@ -86,7 +84,7 @@ class Database
             $error = implode(' ', $this->pdo->errorInfo());
 
             if ($this->debug) {
-                ($this->debug)($rawQuery, null, null, $error);
+                ($this->debug)($rawQuery, $startTime, $error);
             }
 
             throw new SqlException($error);
@@ -105,16 +103,14 @@ class Database
             $error = implode(' ', $pdoStatement->errorInfo());
 
             if ($this->debug) {
-                ($this->debug)($rawQuery, null, null, $error);
+                ($this->debug)($rawQuery, $startTime, $error);
             }
 
             throw new SqlException($error);
         }
 
-        $endTime = microtime(true);
-
         if ($this->debug) {
-            ($this->debug)($rawQuery, $startTime, $endTime, null);
+            ($this->debug)($rawQuery, $startTime, null);
         }
 
         return new Results(

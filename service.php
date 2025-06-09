@@ -20,7 +20,9 @@ return new class () {
     public function database(): Database
     {
         $debugCallback = env('DB_DEBUG', false)
-            ? function (string $query, ?float $startTime, ?float $endTime, ?string $error): void {
+            ? function (string $query, float $startTime, ?string $error): void {
+                $endTime = microtime(true);
+
                 $terminalWidth = Terminal::getWidth();
 
                 $equalSigns = ($terminalWidth - 5) / 2 - 1;
@@ -33,13 +35,7 @@ return new class () {
 
                 Stdio::errorFLn('Timestamp : %s', date('Y-m-d H:i:s'));
                 Stdio::errorFLn('Query     : %s', $query);
-
-                if ($startTime && $endTime) {
-                    Stdio::errorFLn(
-                        'Time      : %.2f ms',
-                        ($endTime - $startTime) * 1000
-                    );
-                }
+                Stdio::errorFLn('Time      : %.2f ms', ($endTime - $startTime) * 1000);
 
                 if ($error) {
                     Stdio::errorFLn('Error     : %s', $error);
