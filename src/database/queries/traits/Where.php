@@ -265,14 +265,14 @@ trait Where
 
     protected function startsWith(string|array $column, string $value, bool $escapeBackslash, Chain $chain): static
     {
-        $this->addCondition(WhereOperator::LIKE, $column, Query::escapeLikeChars($value, $escapeBackslash) . '%', $chain);
+        $this->like($column, Query::escapeLikeChars($value, $escapeBackslash) . '%', $chain);
 
         return $this;
     }
 
     protected function endsWith(string|array $column, string $value, bool $escapeBackslash, Chain $chain): static
     {
-        $this->addCondition(WhereOperator::LIKE, $column, '%' . Query::escapeLikeChars($value, $escapeBackslash), $chain);
+        $this->like($column, '%' . Query::escapeLikeChars($value, $escapeBackslash), $chain);
 
         return $this;
     }
