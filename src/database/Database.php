@@ -44,6 +44,21 @@ class Database
 
         $driver = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
+        if ($driver == DialectFactory::PDO_DRIVER_SQLITE) {
+            if (method_exists($this->pdo, 'sqliteCreateFunction')) {
+                $this->pdo->sqliteCreateFunction(
+                    'REGEXP',
+                    function (string $pattern, string $value): bool {
+                        return preg_match(
+                            sprintf('/%s/u', $pattern),
+                            $value
+                        );
+                    },
+                    2
+                );
+            }
+        }
+
         $this->dialect = DialectFactory::fromDriver($driver);
     }
 

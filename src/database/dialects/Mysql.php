@@ -16,13 +16,15 @@ class Mysql extends Sql implements DialectInterface
 
     public function createTable(array $config): QueryWithParams
     {
-        [$query, $params] = parent::createTable($config);
+        $queryWithParams = parent::createTable($config);
 
-        $query = substr($query, 0, -1);
+        $queryWithParams->expression = substr_replace(
+            $queryWithParams->expression,
+            ' ENGINE=InnoDB;',
+            -1
+        );
 
-        $query .= ' ENGINE=InnoDB;';
-
-        return new QueryWithParams($query, $params);
+        return $queryWithParams;
     }
 
     public function addOnConflict(string &$query, array &$params, null|string|array $conflict, ?array $conflictUpdates, ?string $primaryKey, array $insertValues): void

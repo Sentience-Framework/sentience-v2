@@ -7,6 +7,7 @@ use src\database\queries\enums\Chain;
 use src\database\queries\enums\WhereOperator;
 use src\database\queries\objects\Condition;
 use src\database\queries\objects\ConditionGroup;
+use src\database\queries\Query;
 use src\exceptions\QueryException;
 use src\utils\Reflector;
 
@@ -32,6 +33,16 @@ trait Where
     public function whereNotLike(string|array $column, string $value): static
     {
         return $this->notLike($column, $value, Chain::AND);
+    }
+
+    public function whereStartsWith(string|array $column, string $value, bool $escapeBackslash = false): static
+    {
+        return $this->startsWith($column, $value, $escapeBackslash, Chain::AND);
+    }
+
+    public function whereEndsWith(string|array $column, string $value, bool $escapeBackslash = false): static
+    {
+        return $this->endsWith($column, $value, $escapeBackslash, Chain::AND);
     }
 
     public function whereIn(string|array $column, array $values, bool $preventSqlSyntaxError = true): static
@@ -84,6 +95,16 @@ trait Where
         return $this->isNotNull($column, Chain::AND);
     }
 
+    public function whereRegex(string|array $column, string $pattern): static
+    {
+        return $this->regex($column, $pattern, Chain::AND);
+    }
+
+    public function whereNotRegex(string|array $column, string $pattern): static
+    {
+        return $this->notRegex($column, $pattern, Chain::AND);
+    }
+
     public function whereGroup(callable $callback, bool $preventSqlSyntaxError = true): static
     {
         return $this->group($callback, $preventSqlSyntaxError, Chain::AND);
@@ -112,6 +133,16 @@ trait Where
     public function orWhereNotLike(string|array $column, string $value): static
     {
         return $this->notLike($column, $value, Chain::OR);
+    }
+
+    public function orWhereStartsWith(string|array $column, string $value, bool $escapeBackslash = false): static
+    {
+        return $this->startsWith($column, $value, $escapeBackslash, Chain::OR);
+    }
+
+    public function orWhereEndsWith(string|array $column, string $value, bool $escapeBackslash = false): static
+    {
+        return $this->endsWith($column, $value, $escapeBackslash, Chain::OR);
     }
 
     public function orWhereIn(string|array $column, array $values, bool $preventSqlSyntaxError = true): static
@@ -164,6 +195,16 @@ trait Where
         return $this->isNotNull($column, Chain::OR);
     }
 
+    public function orWhereRegex(string|array $column, string $pattern): static
+    {
+        return $this->regex($column, $pattern, Chain::OR);
+    }
+
+    public function orWhereNotRegex(string|array $column, string $pattern): static
+    {
+        return $this->notRegex($column, $pattern, Chain::OR);
+    }
+
     public function orWhereGroup(callable $callback, bool $preventSqlSyntaxError = true): static
     {
         return $this->group($callback, $preventSqlSyntaxError, Chain::OR);
@@ -198,6 +239,20 @@ trait Where
     protected function notLike(string|array $column, string $value, Chain $chain): static
     {
         $this->addCondition(WhereOperator::NOT_LIKE, $column, $value, $chain);
+
+        return $this;
+    }
+
+    protected function startsWith(string|array $column, string $value, bool $escapeBackslash, Chain $chain): static
+    {
+        $this->addCondition(WhereOperator::LIKE, $column, Query::escapeLikeChars($value, $escapeBackslash) . '%', $chain);
+
+        return $this;
+    }
+
+    protected function endsWith(string|array $column, string $value, bool $escapeBackslash, Chain $chain): static
+    {
+        $this->addCondition(WhereOperator::LIKE, $column, '%' . Query::escapeLikeChars($value, $escapeBackslash), $chain);
 
         return $this;
     }
@@ -276,6 +331,20 @@ trait Where
     protected function isNotNull(string|array $column, Chain $chain): static
     {
         $this->addCondition(WhereOperator::NOT_EQUALS, $column, null, $chain);
+
+        return $this;
+    }
+
+    protected function regex(string|array $column, string $pattern, Chain $chain): static
+    {
+        $this->addCondition(WhereOperator::REGEX, $column, $pattern, $chain);
+
+        return $this;
+    }
+
+    protected function notRegex(string|array $column, string $pattern, Chain $chain): static
+    {
+        $this->addCondition(WhereOperator::NOT_REGEX, $column, $pattern, $chain);
 
         return $this;
     }
