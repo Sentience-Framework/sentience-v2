@@ -135,6 +135,10 @@ class DevToolsController extends Controller
                 $fileContents
             );
 
+            if (is_null($modifiedFileContents)) {
+                continue;
+            }
+
             file_put_contents($file, $modifiedFileContents);
 
             Stdio::printFLn('Removed trailing commas in: %s', $file);
@@ -183,6 +187,10 @@ class DevToolsController extends Controller
                 '$1$1',
                 $fileContents
             );
+
+            if (is_null($modifiedFileContents)) {
+                continue;
+            }
 
             file_put_contents($file, $modifiedFileContents);
 
