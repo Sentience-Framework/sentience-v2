@@ -95,6 +95,16 @@ trait Where
         return $this->isNotNull($column, Chain::AND);
     }
 
+    public function whereEmpty(string|array $column): static
+    {
+        return $this->empty($column, Chain::AND);
+    }
+
+    public function whereNotEmpty(string|array $column): static
+    {
+        return $this->notEmpty($column, Chain::AND);
+    }
+
     public function whereRegex(string|array $column, string $pattern): static
     {
         return $this->regex($column, $pattern, Chain::AND);
@@ -193,6 +203,16 @@ trait Where
     public function orWhereIsNotNull(string|array $column): static
     {
         return $this->isNotNull($column, Chain::OR);
+    }
+
+    public function orWhereEmpty(string|array $column): static
+    {
+        return $this->empty($column, Chain::AND);
+    }
+
+    public function orWhereNotEmpty(string|array $column): static
+    {
+        return $this->notEmpty($column, Chain::AND);
     }
 
     public function orWhereRegex(string|array $column, string $pattern): static
@@ -333,6 +353,34 @@ trait Where
         $this->addCondition(WhereOperator::NOT_EQUALS, $column, null, $chain);
 
         return $this;
+    }
+
+    protected function empty(string|array $column, Chain $chain): static
+    {
+        return $this->group(
+            function (ConditionGroup $conditionGroup) use ($column): ConditionGroup {
+                return $conditionGroup
+                    ->orWhereIsNull($column)
+                    ->orWhereEquals($column, 0)
+                    ->orWhereEquals($column, '');
+            },
+            false,
+            $chain
+        );
+    }
+
+    protected function notEmpty(string|array $column, Chain $chain): static
+    {
+        return $this->group(
+            function (ConditionGroup $conditionGroup) use ($column): ConditionGroup {
+                return $conditionGroup
+                    ->whereIsNotNull($column)
+                    ->whereNotEquals($column, 0)
+                    ->whereNotEquals($column, '');
+            },
+            false,
+            $chain
+        );
     }
 
     protected function regex(string|array $column, string $pattern, Chain $chain): static

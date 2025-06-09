@@ -79,7 +79,7 @@ abstract class Query implements QueryInterface
         $chars = ['%', '_', '-', '^', '[', ']'];
 
         if ($escapeBackslash) {
-            $chars[] = '\\';
+            array_unshift($chars, '\\');
         }
 
         return escape_chars($string, $chars);
