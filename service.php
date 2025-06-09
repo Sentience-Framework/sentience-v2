@@ -20,7 +20,7 @@ return new class () {
     public function database(): Database
     {
         $debugCallback = env('DB_DEBUG', false)
-            ? function (string $query, float $startTime, ?string $error): void {
+            ? function (string $query, float $startTime, ?string $error = null): void {
                 $endTime = microtime(true);
 
                 $terminalWidth = Terminal::getWidth();

@@ -64,7 +64,7 @@ class Database
         }
 
         if ($this->debug) {
-            ($this->debug)($query, $startTime, null);
+            ($this->debug)($query, $startTime);
         }
 
         return $affected;
@@ -110,7 +110,7 @@ class Database
         }
 
         if ($this->debug) {
-            ($this->debug)($rawQuery, $startTime, null);
+            ($this->debug)($rawQuery, $startTime);
         }
 
         return new Results(
