@@ -26,6 +26,8 @@ class Sql implements DialectInterface
     public const TABLE_OR_COLUMN_ESCAPE = '"';
     public const STRING_ESCAPE = "'";
     public const DATETIME_FORMAT = 'Y-m-d H:i:s.u';
+    public const REGEX_FUNCTION = 'REGEXP';
+    public const NOT_REGEX_FUNCTION = 'NOT REGEXP';
 
     public function select(array $config): QueryWithParams
     {
@@ -450,6 +452,20 @@ class Sql implements DialectInterface
             );
 
             array_push($params, ...$condition->value);
+
+            return;
+        }
+
+        if (in_array($condition->type, [WhereOperator::REGEX, WhereOperator::NOT_REGEX])) {
+            $comparator = ($condition->type == WhereOperator::REGEX) ? $this::REGEX_FUNCTION : $this::NOT_REGEX_FUNCTION;
+
+            $query .= sprintf(
+                '(%s %s ?)',
+                $this->escapeIdentifier($condition->expression),
+                $comparator
+            );
+
+            array_push($params, $condition->value);
 
             return;
         }

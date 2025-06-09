@@ -65,6 +65,8 @@ Select::whereEquals();
 Select::whereNotEquals();
 Select::whereLike();
 Select::whereNotLike();
+Select::whereStartsWith();
+Select::whereEndsWith();
 Select::whereIn();
 Select::whereNotIn();
 Select::whereLessThan();
@@ -75,12 +77,18 @@ Select::whereBetween();
 Select::whereNotBetween();
 Select::whereIsNull();
 Select::whereIsNotNull();
+Select::whereEmpty();
+Select::whereNotEmpty();
+Select::whereRegex();
+Select::whereNotRegex();
 Select::whereGroup();
 Select::where();
 Select::orWhereEquals();
 Select::orWhereNotEquals();
 Select::orWhereLike();
 Select::orWhereNotLike();
+Select::orWhereStartsWith();
+Select::orWhereEndsWith();
 Select::orWhereIn();
 Select::orWhereNotIn();
 Select::orWhereLessThan();
@@ -91,6 +99,10 @@ Select::orWhereBetween();
 Select::orWhereNotBetween();
 Select::orWhereIsNull();
 Select::orWhereIsNotNull();
+Select::orWhereEmpty();
+Select::orWhereNotEmpty();
+Select::orWhereRegex();
+Select::orWhereNotRegex();
 Select::orWhereGroup();
 Select::orWhere();
 Select::groupBy();
@@ -133,6 +145,8 @@ Update::whereEquals();
 Update::whereNotEquals();
 Update::whereLike();
 Update::whereNotLike();
+Update::whereStartsWith();
+Update::whereEndsWith();
 Update::whereIn();
 Update::whereNotIn();
 Update::whereLessThan();
@@ -143,12 +157,18 @@ Update::whereBetween();
 Update::whereNotBetween();
 Update::whereIsNull();
 Update::whereIsNotNull();
+Update::whereEmpty();
+Update::whereNotEmpty();
+Update::whereRegex();
+Update::whereNotRegex();
 Update::whereGroup();
 Update::where();
 Update::orWhereEquals();
 Update::orWhereNotEquals();
 Update::orWhereLike();
 Update::orWhereNotLike();
+Update::orWhereStartsWith();
+Update::orWhereEndsWith();
 Update::orWhereIn();
 Update::orWhereNotIn();
 Update::orWhereLessThan();
@@ -159,6 +179,10 @@ Update::orWhereBetween();
 Update::orWhereNotBetween();
 Update::orWhereIsNull();
 Update::orWhereIsNotNull();
+Update::orWhereEmpty();
+Update::orWhereNotEmpty();
+Update::orWhereRegex();
+Update::orWhereNotRegex();
 Update::orWhereGroup();
 Update::orWhere();
 Update::limit();
@@ -178,6 +202,8 @@ Delete::whereEquals();
 Delete::whereNotEquals();
 Delete::whereLike();
 Delete::whereNotLike();
+Delete::whereStartsWith();
+Delete::whereEndsWith();
 Delete::whereIn();
 Delete::whereNotIn();
 Delete::whereLessThan();
@@ -188,12 +214,18 @@ Delete::whereBetween();
 Delete::whereNotBetween();
 Delete::whereIsNull();
 Delete::whereIsNotNull();
+Delete::whereEmpty();
+Delete::whereNotEmpty();
+Delete::whereRegex();
+Delete::whereNotRegex();
 Delete::whereGroup();
 Delete::where();
 Delete::orWhereEquals();
 Delete::orWhereNotEquals();
 Delete::orWhereLike();
 Delete::orWhereNotLike();
+Delete::orWhereStartsWith();
+Delete::orWhereEndsWith();
 Delete::orWhereIn();
 Delete::orWhereNotIn();
 Delete::orWhereLessThan();
@@ -204,6 +236,10 @@ Delete::orWhereBetween();
 Delete::orWhereNotBetween();
 Delete::orWhereIsNull();
 Delete::orWhereIsNotNull();
+Delete::orWhereEmpty();
+Delete::orWhereNotEmpty();
+Delete::orWhereRegex();
+Delete::orWhereNotRegex();
 Delete::orWhereGroup();
 Delete::orWhere();
 Delete::limit();
@@ -292,8 +328,9 @@ Translates to:
 
 The Query class offers several helper methods:
 ```
-Query::raw()        // Returns a Raw object
-Query::alias()      // For table and columns
-Query::wildcard()   // Useful for like queries
-Query::now()        // Emulates the widely known 'now()' function
+Query::raw()                // Returns a Raw object
+Query::alias()              // For table and columns
+Query::escapeLikeChars()    // Escapes characters for like queries
+Query::wildcard()           // Useful for quick like queries
+Query::now()                // Emulates the widely known 'now()' function
 ```

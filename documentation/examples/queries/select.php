@@ -45,6 +45,14 @@ $database->select()
         return $group->whereIn('column4', [1, 2, 3, 4])
             ->whereNotEquals('column5', 'test string');
     })
+    ->whereIn('column2', [])
+    ->whereNotIn('column2', [])
+    ->whereStartsWith('column2', 'a')
+    ->whereEndsWith('column2', 'z')
+    ->whereEmpty('empty_column')
+    ->whereNotEmpty('not_empty_column')
+    ->whereRegex('column6', 'file|read|write|open')
+    ->whereNotRegex('column6', 'error')
     ->groupBy([
         ['table', 'column'],
         'column2'

@@ -121,6 +121,12 @@ class ExampleController extends Controller
                 return $group;
             })
             ->whereIn('column2', [])
+            ->whereStartsWith('column2', 'a')
+            ->whereEndsWith('column2', 'z')
+            ->whereEmpty('empty_column')
+            ->whereNotEmpty('not_empty_column')
+            ->whereRegex('column6', 'file|read|write|open')
+            ->whereNotRegex('column6', 'error')
             ->groupBy([
                 ['table', 'column'],
                 'column2',

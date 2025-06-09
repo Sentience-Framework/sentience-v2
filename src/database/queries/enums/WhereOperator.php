@@ -16,5 +16,7 @@ enum WhereOperator: string
     case NOT_LIKE = 'NOT LIKE';
     case IN = 'IN';
     case NOT_IN = 'NOT IN';
+    case REGEX = 'REGEX';
+    case NOT_REGEX = 'NOT REGEX';
     case RAW = '';
 }

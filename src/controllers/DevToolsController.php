@@ -129,14 +129,17 @@ class DevToolsController extends Controller
 
             $fileContents = file_get_contents($file);
 
-            file_put_contents(
-                $file,
-                preg_replace(
-                    '/,(?=\\s*(?=[\\)\\]\\}])(?:[^\'\"\`\\\\]|\'(?:\\\\.|[^\\\\\'])*\'|\"(?:\\\\.|[^\\\\\"])*\"|\`(?:\\\\.|[^\\\\\`])*\`)*$)/m',
-                    '',
-                    $fileContents
-                )
+            $modifiedFileContents = preg_replace(
+                '/,(?=\\s*(?=[\\)\\]\\}])(?:[^\'\"\`\\\\]|\'(?:\\\\.|[^\\\\\'])*\'|\"(?:\\\\.|[^\\\\\"])*\"|\`(?:\\\\.|[^\\\\\`])*\`)*$)/m',
+                '',
+                $fileContents
             );
+
+            if (is_null($modifiedFileContents)) {
+                continue;
+            }
+
+            file_put_contents($file, $modifiedFileContents);
 
             Stdio::printFLn('Removed trailing commas in: %s', $file);
         }
@@ -179,14 +182,17 @@ class DevToolsController extends Controller
 
             $fileContents = file_get_contents($file);
 
-            file_put_contents(
-                $file,
-                preg_replace(
-                    '/([\r\n|\r|\n]){3,}(?=(?:[^\'\"\`\\\\]|\'(?:\\\\.|[^\\\\\'])*\'|\"(?:\\\\.|[^\\\\\"])*\"|\`(?:\\\\.|[^\\\\\`])*\`)*$)/',
-                    '$1$1',
-                    $fileContents
-                )
+            $modifiedFileContents = preg_replace(
+                '/([\r\n|\r|\n]){3,}(?=(?:[^\'\"\`\\\\]|\'(?:\\\\.|[^\\\\\'])*\'|\"(?:\\\\.|[^\\\\\"])*\"|\`(?:\\\\.|[^\\\\\`])*\`)*$)/',
+                '$1$1',
+                $fileContents
             );
+
+            if (is_null($modifiedFileContents)) {
+                continue;
+            }
+
+            file_put_contents($file, $modifiedFileContents);
 
             Stdio::printFLn('Removed excessive whitespace in: %s', $file);
         }
