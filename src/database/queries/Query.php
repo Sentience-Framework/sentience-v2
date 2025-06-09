@@ -74,7 +74,7 @@ abstract class Query implements QueryInterface
         return new DateTime();
     }
 
-    public static function wildcard(string $string, bool $escapeBackslash = false): string
+    public static function escapeLikeChars(string $string, bool $escapeBackslash = false): string
     {
         $chars = ['%', '_', '-', '^', '[', ']'];
 
@@ -82,6 +82,11 @@ abstract class Query implements QueryInterface
             $chars[] = '\\';
         }
 
-        return '%' . escape_chars($string, $chars) . '%';
+        return escape_chars($string, $chars);
+    }
+
+    public static function wildcard(string $string, bool $escapeBackslash = false): string
+    {
+        return '%' . static::escapeLikeChars($string, $escapeBackslash) . '%';
     }
 }
