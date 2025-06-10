@@ -50,7 +50,10 @@ class Database
                     'REGEXP',
                     function (string $pattern, string $value): bool {
                         return preg_match(
-                            sprintf('/%s/u', $pattern),
+                            sprintf(
+                                '/%s/u',
+                                escape_chars($pattern, ['/'])
+                            ),
                             $value
                         );
                     },

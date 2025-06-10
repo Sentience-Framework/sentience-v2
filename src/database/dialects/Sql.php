@@ -767,15 +767,15 @@ class Sql implements DialectInterface
         return $this->escape($string, $this::STRING_ESCAPE);
     }
 
-    protected function escape(string $string, string $character): string
+    protected function escape(string $string, string $char): string
     {
         $escapedString = escape_chars(
             $string,
-            ['\\', $character],
+            ['\\', $char],
             '$0$0'
         );
 
-        return $character . $escapedString . $character;
+        return $char . $escapedString . $char;
     }
 
     public function castToDriver(mixed $value): mixed

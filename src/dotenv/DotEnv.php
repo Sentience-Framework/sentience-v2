@@ -178,9 +178,11 @@ class DotEnv
             "\r\n"
         );
 
+        $quoteChar = substr($quote, 0, 1);
+
         return str_replace(
-            sprintf('\\%s', substr($quote, 0, 1)),
-            $quote,
+            sprintf('\\%s', $quoteChar),
+            $quoteChar,
             $valueWithoutQuotes
         );
     }
