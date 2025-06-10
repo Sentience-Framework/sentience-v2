@@ -3,7 +3,7 @@
 namespace src\database\dialects;
 
 use DateTime;
-use src\database\queries\enums\WhereOperator;
+use src\database\queries\enums\WhereType;
 use src\database\queries\objects\AddColumn;
 use src\database\queries\objects\AddForeignKeyConstraint;
 use src\database\queries\objects\AddUniqueConstraint;
@@ -409,7 +409,7 @@ class Sql implements DialectInterface
             $query .= sprintf(' %s ', $condition->chain->value);
         }
 
-        if ($condition->type == WhereOperator::RAW) {
+        if ($condition->type == WhereType::RAW) {
             $query .= sprintf('(%s)', $condition->expression);
 
             array_push($params, ...$condition->value);
@@ -418,18 +418,16 @@ class Sql implements DialectInterface
         }
 
         if (is_null($condition->value)) {
-            $comparator = ($condition->type == WhereOperator::EQUALS) ? 'IS NULL' : 'IS NOT NULL';
-
             $query .= sprintf(
                 '(%s %s)',
                 $this->escapeIdentifier($condition->expression),
-                $comparator
+                ($condition->type == WhereType::EQUALS) ? 'IS NULL' : 'IS NOT NULL'
             );
 
             return;
         }
 
-        if (in_array($condition->type, [WhereOperator::BETWEEN, WhereOperator::NOT_BETWEEN])) {
+        if (in_array($condition->type, [WhereType::BETWEEN, WhereType::NOT_BETWEEN])) {
             $query .= sprintf(
                 '(%s %s ? AND ?)',
                 $this->escapeIdentifier($condition->expression),
@@ -456,13 +454,11 @@ class Sql implements DialectInterface
             return;
         }
 
-        if (in_array($condition->type, [WhereOperator::REGEX, WhereOperator::NOT_REGEX])) {
-            $comparator = ($condition->type == WhereOperator::REGEX) ? $this::REGEX_FUNCTION : $this::NOT_REGEX_FUNCTION;
-
+        if (in_array($condition->type, [WhereType::REGEX, WhereType::NOT_REGEX])) {
             $query .= sprintf(
                 '(%s %s ?)',
                 $this->escapeIdentifier($condition->expression),
-                $comparator
+                ($condition->type == WhereType::REGEX) ? $this::REGEX_FUNCTION : $this::NOT_REGEX_FUNCTION
             );
 
             array_push($params, $condition->value);

@@ -2,7 +2,7 @@
 
 namespace src\database\queries\enums;
 
-enum WhereOperator: string
+enum WhereType: string
 {
     case EQUALS = '=';
     case NOT_EQUALS = '<>';
