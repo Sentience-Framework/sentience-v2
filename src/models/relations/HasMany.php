@@ -7,11 +7,11 @@ use src\models\Model;
 
 class HasMany extends Relation implements RelationInterface
 {
-    protected string $mToRJoinRegex = '/(\w+)\-\<(\w+)/';
+    protected string $mToRJoinRegexPattern = '/(\w+)\-\<(\w+)/';
 
     public function retrieve(Database $database, Model $model, ?callable $modifyQuery = null): array
     {
-        preg_match($this->mToRJoinRegex, $this->mToRJoin, $matches);
+        preg_match($this->mToRJoinRegexPattern, $this->mToRJoin, $matches);
 
         [$modelProperty, $relationProperty] = array_slice($matches, 1);
 

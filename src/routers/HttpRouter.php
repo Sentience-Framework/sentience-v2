@@ -60,7 +60,7 @@ class HttpRouter
 
         $keys = [];
 
-        $regex = preg_replace_callback(
+        $pattern = preg_replace_callback(
             '/{(.[^\}]*)}/',
             function (array $matches) use (&$keys): string {
                 $keys[] = $matches[1];
@@ -73,7 +73,7 @@ class HttpRouter
             )
         );
 
-        $isMatch = preg_match($regex, $path, $matches);
+        $isMatch = preg_match($pattern, $path, $matches);
 
         if (!$isMatch) {
             return [false, null];

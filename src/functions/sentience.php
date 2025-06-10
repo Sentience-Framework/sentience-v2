@@ -14,15 +14,14 @@ function is_cli(): bool
     return php_sapi_name() == 'cli';
 }
 
-function escape_chars(string $string, array $chars, string $replacement = '\\\$0'): string
+function escape_chars(string $string, array $chars, string $replacement = '\\\$0', string $pattern = '/(?<!\\\\)(?:\\\\\\\\)*%s/'): string
 {
     foreach ($chars as $char) {
-        $char = !preg_match('/[a-zA-Z0-9]/', $char)
-            ? sprintf('\\%s', $char)
-            : $char;
-
         $string = preg_replace(
-            sprintf('/%s/', $char),
+            sprintf(
+                $pattern,
+                preg_quote($char, '/')
+            ),
             $replacement,
             $string
         );

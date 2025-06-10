@@ -9,7 +9,7 @@ use src\models\Model;
 
 class ManyToMany extends Relation implements RelationInterface
 {
-    protected string $mToRJoinRegex = '/(\w+)\-\<(\w+)\:(\w+)\>\-(\w+)/';
+    protected string $mToRJoinRegexPattern = '/(\w+)\-\<(\w+)\:(\w+)\>\-(\w+)/';
     protected string $junctionTable;
 
     public function __construct(string $relationModel, string $junctionTable, string $mToRJoin, ?callable $modifyDefaultQuery = null)
@@ -21,7 +21,7 @@ class ManyToMany extends Relation implements RelationInterface
 
     public function retrieve(Database $database, Model $model, ?callable $modifyQuery = null): array
     {
-        preg_match($this->mToRJoinRegex, $this->mToRJoin, $matches);
+        preg_match($this->mToRJoinRegexPattern, $this->mToRJoin, $matches);
 
         [$modelProperty, $junctionTableModelColumn, $junctionTableRelationColumn, $relationProperty] = array_slice($matches, 1);
 
