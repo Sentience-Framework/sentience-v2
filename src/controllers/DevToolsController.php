@@ -8,6 +8,11 @@ use src\utils\Terminal;
 
 class DevToolsController extends Controller
 {
+    public function __construct()
+    {
+        ini_set('pcre.jit', '0');
+    }
+
     public function sortImports(): void
     {
         $terminalWidth = Terminal::getWidth();
