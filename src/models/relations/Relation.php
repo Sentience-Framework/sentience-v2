@@ -12,12 +12,12 @@ abstract class Relation implements RelationInterface
 {
     protected string $relationModel;
     protected string $mToRJoin;
-    protected string $mToRJoinRegex;
+    protected string $mToRJoinRegexPattern;
     protected ?Closure $modifyDefaultQuery;
 
     public function __construct(string $relationModel, string $mToRJoin, ?callable $modifyDefaultQuery = null)
     {
-        $isMatch = preg_match($this->mToRJoinRegex, $mToRJoin, $matches);
+        $isMatch = preg_match($this->mToRJoinRegexPattern, $mToRJoin, $matches);
 
         if (!$isMatch) {
             throw new RelationException('%s is not a valid model to relation join', $mToRJoin);

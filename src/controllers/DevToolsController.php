@@ -25,7 +25,7 @@ class DevToolsController extends Controller
             str_repeat('=', floor($equalSigns))
         );
 
-        $importRegex = '/^use\s+[^;]+;/m';
+        $importRegexPattern = '/^use\s+[^;]+;/m';
 
         $files = Filesystem::scandir(SENTIENCE_DIR, -1);
 
@@ -50,7 +50,7 @@ class DevToolsController extends Controller
 
             $fileContents = file_get_contents($file);
 
-            $isMatch = preg_match_all($importRegex, $fileContents, $matches);
+            $isMatch = preg_match_all($importRegexPattern, $fileContents, $matches);
 
             if (!$isMatch) {
                 continue;
@@ -81,7 +81,7 @@ class DevToolsController extends Controller
             file_put_contents(
                 $file,
                 preg_replace_callback(
-                    $importRegex,
+                    $importRegexPattern,
                     function () use (&$index, $sortedImports): string {
                         $import = $sortedImports[$index];
 
