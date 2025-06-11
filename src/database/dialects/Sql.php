@@ -155,7 +155,6 @@ class Sql implements DialectInterface
         $this->addTable($query, $config['table']);
 
         $query .= ' SET ';
-
         $query .= implode(
             ', ',
             array_map(
@@ -343,11 +342,13 @@ class Sql implements DialectInterface
 
         if ($table instanceof Alias) {
             $query .= $this->escapeIdentifierWithAlias($table->name, $table->alias);
+
             return;
         }
 
         if ($table instanceof Raw) {
             $query .= $table->expression;
+
             return;
         }
 
@@ -369,6 +370,7 @@ class Sql implements DialectInterface
 
             if ($join instanceof Raw) {
                 $query .= $join->expression;
+
                 continue;
             }
 
