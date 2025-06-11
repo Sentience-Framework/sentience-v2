@@ -31,8 +31,7 @@ abstract class Relation implements RelationInterface
     protected function modifyQuery(Select $query, ?callable $modifyQuery): Select
     {
         if ($this->modifyDefaultQuery) {
-            $modifyDefaultQuery = $this->modifyDefaultQuery;
-            $query = $modifyDefaultQuery($query);
+            $query = ($this->modifyDefaultQuery)($query);
         }
 
         if ($modifyQuery) {
