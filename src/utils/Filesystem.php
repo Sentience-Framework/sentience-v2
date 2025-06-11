@@ -6,13 +6,16 @@ use src\exceptions\FilesystemException;
 
 class Filesystem
 {
+    public const WINDOWS_DIRECTORY_SEPARATOR = '\\';
+    public const UNIX_DIRECTORY_SEPARATOR = '/';
+
     public static function path(string $dir, ?string ...$components): string
     {
         if (!$components) {
             return $dir;
         }
 
-        $chars = implode('', ['/', '\\']);
+        $chars = static::WINDOWS_DIRECTORY_SEPARATOR . static::UNIX_DIRECTORY_SEPARATOR;
 
         $dir = rtrim($dir, $chars);
 
