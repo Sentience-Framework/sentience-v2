@@ -772,7 +772,8 @@ class Sql implements DialectInterface
         $escapedString = escape_chars(
             $string,
             [$char],
-            '$0$0'
+            '$0$0',
+            '/%s/'
         );
 
         return $char . $escapedString . $char;
