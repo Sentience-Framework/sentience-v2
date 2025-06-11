@@ -108,7 +108,7 @@ class DotEnv
             return static::parseFloatValue($value);
         }
 
-        if (preg_match('/^true|false$/', $value)) {
+        if (preg_match('/^false|true$/', $value)) {
             return static::parseBoolValue($value);
         }
 
@@ -117,15 +117,6 @@ class DotEnv
         }
 
         return $value;
-    }
-
-    protected static function parseQuotedValue(string $value, array $parsedVariables): string
-    {
-        return match (substr($value, 0, 1)) {
-            '"' => static::parseTemplateValue($value, '"', $parsedVariables),
-            "'" => static::parseStringValue($value, "'"),
-            '`' => static::parseTemplateValue($value, '```', $parsedVariables)
-        };
     }
 
     protected static function parseArrayValue(string $value, array $parsedVariables): array
@@ -144,6 +135,15 @@ class DotEnv
             },
             $matches[0]
         );
+    }
+
+    protected static function parseQuotedValue(string $value, array $parsedVariables): string
+    {
+        return match (substr($value, 0, 1)) {
+            '"' => static::parseTemplateValue($value, '"', $parsedVariables),
+            "'" => static::parseStringValue($value, "'"),
+            '`' => static::parseTemplateValue($value, '```', $parsedVariables)
+        };
     }
 
     protected static function parseTemplateValue(string $value, string $quote, array $parsedVariables): string
@@ -200,8 +200,8 @@ class DotEnv
     protected static function parseBoolValue(string $value): bool
     {
         return match ($value) {
-            'true' => true,
-            'false' => false
+            'false' => false,
+            'true' => true
         };
     }
 
