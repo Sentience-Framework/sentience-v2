@@ -116,7 +116,7 @@ class DotEnv
             return static::parseNullValue($value);
         }
 
-        return $value;
+        return rtrim($value);
     }
 
     protected static function parseArrayValue(string $value, array $parsedVariables): array
