@@ -21,13 +21,13 @@ class Request
 
     public function __construct()
     {
-        $url = parse_url((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+        $url = (key_exists('HTTPS', $_SERVER) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
-        $this->url = $url['scheme'] . '://' . $url['host'] . (key_exists('port', $url) ? ':' . $url['port'] : '') . $url['path'] . (key_exists('query', $url) ? '?' . $url['query'] : '');
-        $this->path = $url['path'];
+        $this->url = $url;
+        $this->path = strtok($_SERVER["REQUEST_URI"], '?');
         $this->method = strtoupper($_SERVER['REQUEST_METHOD']);
         $this->headers = array_change_key_case(getallheaders(), CASE_LOWER);
-        $this->queryString = $url['query'] ?? '';
+        $this->queryString = $_SERVER['QUERY_STRING'] ?? '';
         $this->queryParams = UrlEncoding::decode($this->queryString, false);
         $this->cookies = $_COOKIE;
         $this->body = file_get_contents('php://input');
