@@ -24,7 +24,7 @@ class Request
         $url = (key_exists('HTTPS', $_SERVER) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         $this->url = $url;
-        $this->path = strtok($_SERVER["REQUEST_URI"], '?');
+        $this->path = strtok($_SERVER['REQUEST_URI'], '?');
         $this->method = strtoupper($_SERVER['REQUEST_METHOD']);
         $this->headers = array_change_key_case(getallheaders(), CASE_LOWER);
         $this->queryString = $_SERVER['QUERY_STRING'] ?? '';

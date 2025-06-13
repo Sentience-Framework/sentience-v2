@@ -139,14 +139,13 @@ class HttpRouter
                     $mappedRoutes = [...$mappedRoutes, $mappedRouteGroupRoute => $methods];
                 }
             }
+
+            if (count($mappedRoutes[$route->route]) == 0) {
+                unset($mappedRoutes[$route->route]);
+            }
         }
 
-        return array_filter(
-            $mappedRoutes,
-            function (array $methods): bool {
-                return count($methods) > 0;
-            }
-        );
+        return $mappedRoutes;
     }
 
     protected function mapRouteGroup(RouteGroup $routeGroup, array $prefixes, array $middleware): array
@@ -157,15 +156,12 @@ class HttpRouter
         $mappedRoutes = [];
 
         foreach ($routeGroup->routes as $route) {
-            $routeWithPrefixes = trim(
-                implode(
-                    '/',
-                    [
-                        ...$prefixes,
-                        $route->route
-                    ]
-                ),
-                '/'
+            $routeWithPrefixes = implode(
+                '/',
+                array_filter([
+                    ...$prefixes,
+                    $route->route
+                ])
             );
 
             if (!key_exists($routeWithPrefixes, $mappedRoutes)) {
@@ -204,6 +200,10 @@ class HttpRouter
 
                     $mappedRoutes = [...$mappedRoutes, $mappedRouteGroupRoute => $methods];
                 }
+            }
+
+            if (count($mappedRoutes[$routeWithPrefixes]) == 0) {
+                unset($mappedRoutes[$routeWithPrefixes]);
             }
         }
 

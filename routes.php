@@ -9,41 +9,41 @@ use src\sentience\Request;
 use src\sentience\Response;
 
 return [
-    Route::create('/healthcheck')
-        ->setMiddleware([
-            [CORSMiddleware::class, 'addHeaders']
-        ])
-        ->setCallback(function (): void {
+    Route::register(
+        '/healthcheck',
+        function (): void {
             Response::ok(['status' => 'available']);
-        }),
+        }
+    )->setMiddleware([
+                [CORSMiddleware::class, 'addHeaders']
+            ]),
 
-    RouteGroup::create('/response')
+    RouteGroup::register('/response')
         ->setMiddleware([
             [CORSMiddleware::class, 'addHeaders']
         ])
-        ->bind(Route::create('/json')->setCallback([ExampleController::class, 'jsonResponse']))
-        ->bind(Route::create('/xml')->setCallback([ExampleController::class, 'xmlResponse']))
-        ->bind(Route::create('/url')->setCallback([ExampleController::class, 'urlResponse'])),
+        ->bind(Route::register('/json', [ExampleController::class, 'jsonResponse']))
+        ->bind(Route::register('/xml', [ExampleController::class, 'xmlResponse']))
+        ->bind(Route::register('/url', [ExampleController::class, 'urlResponse'])),
 
-    RouteGroup::create('/users/{userId}')
+    RouteGroup::register('/users/{userId}')
         ->setMiddleware([
             [CORSMiddleware::class, 'addHeaders'],
             [ExampleMiddleware::class, 'killSwitch']
         ])
-        ->bind(Route::create('/')->setCallback([ExampleController::class, 'getUser'])->setMethods(['GET']))
+        ->bind(Route::register('/', [ExampleController::class, 'getUser'])->setMethods(['GET']))
         ->bind(
-            RouteGroup::create('/contacts')
-                ->bind(Route::create('/')->setCallback([ExampleController::class, 'getContacts'])->setMethods(['GET']))
-                ->bind(Route::create('/')->setCallback([ExampleController::class, 'createContact'])->setMethods(['POST']))
+            RouteGroup::register('/contacts')
+                ->bind(Route::register('/', [ExampleController::class, 'getContacts'])->setMethods(['GET']))
+                ->bind(Route::register('/', [ExampleController::class, 'createContact'])->setMethods(['POST']))
                 ->bind(
-                    RouteGroup::create('/{contactId}')
-                        ->bind(Route::create('/')->setCallback([ExampleController::class, 'getContact'])->setMethods(['GET']))
-                        ->bind(Route::create('/')->setCallback([ExampleController::class, 'updateContact'])->setMethods(['PUT']))
+                    RouteGroup::register('/{contactId}')
+                        ->bind(Route::register('/', [ExampleController::class, 'getContact'])->setMethods(['GET']))
+                        ->bind(Route::register('/', [ExampleController::class, 'updateContact'])->setMethods(['PUT']))
                 )
         ),
 
-    Route::create('/{country}-{language}')
-        ->setCallback(function (Request $request): void {
-            Response::ok($request->pathVars);
-        })
+    Route::register('/{country}-{language}', function (Request $request): void {
+        Response::ok($request->pathVars);
+    })
 ];

@@ -9,14 +9,22 @@ class Route
     public array $methods = ['*'];
     public array $middleware = [];
 
-    public static function create(string $route): static
+    public static function register(string $route, string|array|callable $callback): static
     {
-        return new static($route);
+        return new static($route, $callback);
     }
 
-    public function __construct(string $route)
+    public function __construct(string $route, string|array|callable $callback)
+    {
+        $this->setRoute($route);
+        $this->setCallback($callback);
+    }
+
+    public function setRoute(string $route): static
     {
         $this->route = trim($route, '/');
+
+        return $this;
     }
 
     public function setCallback(string|array|callable $callback): static
