@@ -54,9 +54,7 @@ abstract class Query implements QueryInterface
 
     public function rawQuery(): string
     {
-        $queryWithParams = $this->build();
-
-        return $queryWithParams->toRawQuery($this->dialect);
+        return $this->build()->toRawQuery($this->dialect);
     }
 
     public static function alias(string|array|Raw $name, string $alias): Alias
