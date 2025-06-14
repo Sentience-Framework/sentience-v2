@@ -829,7 +829,7 @@ class Sql implements DialectInterface
 
     public function parseBool(mixed $value): bool
     {
-        return ($value == 1) ? true : false;
+        return $value == 1 ? true : false;
     }
 
     public function parseDateTime(?string $dateTimeString): ?DateTime

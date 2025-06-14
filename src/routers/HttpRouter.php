@@ -61,7 +61,7 @@ class HttpRouter
         $keys = [];
 
         $pattern = preg_replace_callback(
-            '/{(.[^\}]*)}/',
+            '/\{(.[^\}]*)\}/',
             function (array $matches) use (&$keys): string {
                 $keys[] = $matches[1];
 
