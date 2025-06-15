@@ -6,42 +6,68 @@ use src\controllers\SentienceController;
 use src\routers\Command;
 
 return [
-    Command::create('server:start')
-        ->setCallback([SentienceController::class, 'startServer']),
+    Command::register(
+        'server:start',
+        [SentienceController::class, 'startServer']
+    ),
 
-    Command::create('migrations:init')
-        ->setCallback([SentienceController::class, 'initMigrations']),
+    Command::register(
+        'migrations:init',
+        [SentienceController::class, 'initMigrations']
+    ),
 
-    Command::create('migrations:apply')
-        ->setCallback([SentienceController::class, 'applyMigrations']),
+    Command::register(
+        'migrations:apply',
+        [SentienceController::class, 'applyMigrations']
+    ),
 
-    Command::create('migrations:rollback')
-        ->setCallback([SentienceController::class, 'rollbackMigrations']),
+    Command::register(
+        'migrations:rollback',
+        [SentienceController::class, 'rollbackMigrations']
+    ),
 
-    Command::create('migrations:create')
-        ->setCallback([SentienceController::class, 'createMigration']),
+    Command::register(
+        'migrations:create',
+        [SentienceController::class, 'createMigration']
+    ),
 
-    Command::create('models:init')
-        ->setCallback([SentienceController::class, 'initModel']),
+    Command::register(
+        'models:init',
+        [SentienceController::class, 'initModel']
+    ),
 
-    Command::create('models:reset')
-        ->setCallback([SentienceController::class, 'resetModel']),
+    Command::register(
+        'models:reset',
+        [SentienceController::class, 'resetModel']
+    ),
 
-    Command::create('dotenv:fix')
-        ->setCallback([SentienceController::class, 'fixDotEnv']),
+    Command::register(
+        'dotenv:fix',
+        [SentienceController::class, 'fixDotEnv']
+    ),
 
-    Command::create('dev-tools:sort-imports')
-        ->setCallback([DevToolsController::class, 'sortImports']),
+    Command::register(
+        'dev-tools:sort-imports',
+        [DevToolsController::class, 'sortImports']
+    ),
 
-    Command::create('dev-tools:remove-trailing-commas')
-        ->setCallback([DevToolsController::class, 'removeTrailingCommas']),
+    Command::register(
+        'dev-tools:remove-trailing-commas',
+        [DevToolsController::class, 'removeTrailingCommas']
+    ),
 
-    Command::create('dev-tools:remove-excessive-whitespace')
-        ->setCallback([DevToolsController::class, 'removeExcessiveWhitespace']),
+    Command::register(
+        'dev-tools:remove-excessive-whitespace',
+        [DevToolsController::class, 'removeExcessiveWhitespace']
+    ),
 
-    Command::create('example')
-        ->setCallback([ExampleController::class, 'cliExample']),
+    Command::register(
+        'example',
+        [ExampleController::class, 'cliExample']
+    ),
 
-    Command::create('query')
-        ->setCallback([ExampleController::class, 'query'])
+    Command::register(
+        'query',
+        [ExampleController::class, 'query']
+    )
 ];

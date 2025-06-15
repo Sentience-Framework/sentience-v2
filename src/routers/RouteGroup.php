@@ -18,13 +18,6 @@ class RouteGroup
         $this->setRoute($route);
     }
 
-    public function bind(Route|RouteGroup $route): static
-    {
-        $this->routes[] = $route;
-
-        return $this;
-    }
-
     public function setRoute(string $route): static
     {
         $this->route = trim($route, '/');
@@ -35,6 +28,13 @@ class RouteGroup
     public function setMiddleware(array $middleware): static
     {
         $this->middleware = $middleware;
+
+        return $this;
+    }
+
+    public function bind(Route|RouteGroup $route): static
+    {
+        $this->routes[] = $route;
 
         return $this;
     }

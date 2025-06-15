@@ -14,12 +14,11 @@ The order in which commands and routes are defined, are they order they are proc
 
 ## 2. Setting callback and middleware
 
-To set the callback and middleware, Sentience allows you to method chain setter functions upon calling the `create()` method.
+To set the callback and middleware, Sentience allows you to method chain setter functions upon calling the `register()` method.
 
 Example:
 ```
-Route::create()
-    ->setCallback([PublicController::class, 'homepage'])
+Route::register('/', [PublicController::class, 'homepage'])
     ->setMiddleware([
         [TrackingMiddleware::class, 'registerPageVisit']
     ])
@@ -29,15 +28,11 @@ The `RouteGroup` lacks the `setCallback()` method, but instead has a `bind()` me
 
 Example:
 ```
-RouteGroup::create('/users/{userId}')
+RouteGroup::register('/users/{userId}')
     ->setMiddleware([
         [CORSMiddleware::class, 'addHeaders'],
     ])
-    ->bind(
-        Route::create('/')
-            ->setCallback([UserController::class, 'getUser'])
-            ->setMethods(['GET'])
-    );
+    ->bind(Route::register('/', [UserController::class, 'getUser'])->setMethods(['GET']));
 ```
 
 The order in which middleware is defined, is the order they will be executed in. If a route group defines middleware, and the route itself also defines middleware, then the middleware defined by the route group will be executed first.

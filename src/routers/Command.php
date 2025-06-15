@@ -8,14 +8,22 @@ class Command
     public mixed $callback;
     public array $middleware = [];
 
-    public static function create(string $command): static
+    public static function register(string $command, string|array|callable $callback): static
     {
-        return new static($command);
+        return new static($command, $callback);
     }
 
-    public function __construct(string $command)
+    public function __construct(string $command, string|array|callable $callback)
+    {
+        $this->setCommand($command);
+        $this->setCallback($callback);
+    }
+
+    public function setCommand(string $command): static
     {
         $this->command = $command;
+
+        return $this;
     }
 
     public function setCallback(string|array|callable $callback): static

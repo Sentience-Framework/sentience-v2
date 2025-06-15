@@ -1,23 +1,24 @@
 <?php
 
 $commands = [
-    Command::create('migrations:init')
-        ->setCallback([SentienceController::class, 'initMigrations'])
-        ->setMiddleware([
-            function (array $words): void {
-                if (count($words) == 0) {
-                    Stdio::errorLn('no $words provided');
-                }
-            }
-        ]),
+    Command::register(
+        'migrations:init',
+        [SentienceController::class, 'initMigrations']
+    )->setMiddleware([
+                [AdminMiddleware::class, 'isAuthenticated']
+            ]),
 
-    Command::create('migrations:apply')
-        ->setCallback([SentienceController::class, 'applyMigrations'])
-        ->setMiddleware([
-            function (array $flags): void {
-                if (count($flags) == 0) {
-                    Stdio::errorLn('no $flags provided');
-                }
-            }
-        ])
+    Command::register(
+        'migrations:apply',
+        [SentienceController::class, 'applyMigrations']
+    )->setMiddleware([
+                [AdminMiddleware::class, 'isAuthenticated']
+            ]),
+
+    Command::register(
+        'migrations:rollback',
+        [SentienceController::class, 'rollbackMigrations']
+    )->setMiddleware([
+                [AdminMiddleware::class, 'isAuthenticated']
+            ])
 ];
