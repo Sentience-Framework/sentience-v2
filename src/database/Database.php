@@ -109,14 +109,24 @@ class Database
             throw new SqlException($error);
         }
 
-        $success = $pdoStatement->execute(
-            array_map(
-                function (mixed $value): mixed {
-                    return $this->dialect->castToDriver($value);
-                },
-                $params
-            )
-        );
+        foreach ($params as $index => $param) {
+            $value = $this->dialect->castToDriver($param);
+
+            $pdoStatement->bindValue(
+                $index + 1,
+                $value,
+                match (get_debug_type($value)) {
+                    'null' => PDO::PARAM_NULL,
+                    'bool' => PDO::PARAM_BOOL,
+                    'int' => PDO::PARAM_INT,
+                    'float' => PDO::PARAM_STR,
+                    'string' => PDO::PARAM_STR,
+                    default => PDO::PARAM_STR
+                }
+            );
+        }
+
+        $success = $pdoStatement->execute();
 
         if (!$success) {
             $error = implode(' ', $pdoStatement->errorInfo());

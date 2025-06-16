@@ -33,6 +33,7 @@ class Pgsql extends Sql implements DialectInterface
 
         if (is_null($conflictUpdates)) {
             $query .= sprintf(' ON CONFLICT %s DO NOTHING', $expression);
+
             return;
         }
 
@@ -64,9 +65,18 @@ class Pgsql extends Sql implements DialectInterface
         );
     }
 
-    public function castBool(bool $bool): mixed
+    public function castToQuery(mixed $value): mixed
     {
-        return $bool ? 't' : 'f';
+        if (is_bool($value)) {
+            return $value ? 'TRUE' : 'FALSE';
+        }
+
+        return parent::castToQuery($value);
+    }
+
+    public function castBool(bool $bool): bool
+    {
+        return $bool;
     }
 
     public function parseDateTime(?string $dateTimeString): ?DateTime
@@ -84,12 +94,13 @@ class Pgsql extends Sql implements DialectInterface
             return 'SERIAL';
         }
 
-        return [
+        return match ($type) {
             'bool' => 'BOOL',
             'int' => 'INT8',
             'float' => 'FLOAT8',
             'string' => 'TEXT',
-            'DateTime' => 'TIMESTAMP'
-        ][$type];
+            'DateTime' => 'TIMESTAMP',
+            default => 'TEXT'
+        };
     }
 }

@@ -268,7 +268,7 @@ abstract class Model
 
         $this->onCreate();
 
-        return $query->rawQuery();
+        return $query->toRawQuery();
     }
 
     public function dropTable(bool $ifExists = false, ?callable $modifyQuery = null): string
@@ -288,7 +288,7 @@ abstract class Model
 
         $this->onDrop();
 
-        return $query->rawQuery();
+        return $query->toRawQuery();
     }
 
     protected function hydrateFromRecord(object $record): void

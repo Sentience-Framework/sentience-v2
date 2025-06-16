@@ -10,5 +10,5 @@ interface QueryInterface
     public function build(): QueryWithParams;
     public function execute(): ?Results;
     public function tryCatch(): ?Results;
-    public function rawQuery(): string;
+    public function toRawQuery(): string;
 }

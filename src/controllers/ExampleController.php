@@ -139,7 +139,7 @@ class ExampleController extends Controller
             ->orderByDesc(Query::raw('column7'))
             ->limit(1)
             ->offset(10)
-            ->rawQuery();
+            ->toRawQuery();
 
         $queries[] = $database->insert()
             ->table(Query::alias('table_1', 'table1'))
@@ -152,7 +152,7 @@ class ExampleController extends Controller
             // ->onConflictUpdate(['id'], [], 'id')
             ->onConflictIgnore(['id'], 'id')
             ->returning(['id'])
-            ->rawQuery();
+            ->toRawQuery();
 
         $queries[] = $database->update()
             ->table('table_1')
@@ -163,14 +163,14 @@ class ExampleController extends Controller
                 'column4' => Query::raw('column1 + 1')
             ])
             ->returning(['id'])
-            ->rawQuery();
+            ->toRawQuery();
 
         $queries[] = $database->delete()
             ->table('table_1')
             ->whereBetween('column2', 10, 20)
             ->orWhereNotBetween('column2', 70, 80)
             ->returning(['id'])
-            ->rawQuery();
+            ->toRawQuery();
 
         $queries[] = $database->createTable()
             ->ifNotExists()
@@ -181,7 +181,7 @@ class ExampleController extends Controller
             ->primaryKeys(['primary_key'])
             ->uniqueConstraint(['column1', 'column2'])
             ->foreignKeyConstraint('column1', 'table_2', 'reference_column', 'fk_table_1')
-            ->rawQuery();
+            ->toRawQuery();
 
         $queries[] = $database->alterTable()
             ->table('table_1')
@@ -192,12 +192,12 @@ class ExampleController extends Controller
             // ->addUniqueConstraint(['column1', 'column2'], 'unique_constraint')
             // ->addForeignKeyConstraint('column4', 'reference_table', 'reference_column')
             // ->dropConstraint('unique_constraint')
-            ->rawQuery();
+            ->toRawQuery();
 
         $queries[] = $database->dropTable()
             ->table('table_1')
             ->ifExists()
-            ->rawQuery();
+            ->toRawQuery();
 
         foreach ($queries as $query) {
             Stdio::printLn($query);

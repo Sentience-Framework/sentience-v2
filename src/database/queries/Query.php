@@ -52,7 +52,7 @@ abstract class Query implements QueryInterface
         }
     }
 
-    public function rawQuery(): string
+    public function toRawQuery(): string
     {
         return $this->build()->toRawQuery($this->dialect);
     }

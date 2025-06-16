@@ -299,7 +299,7 @@ Each query class has the following methods:
 ```
 Query::execute();   // Returns a Results object
 Query::tryCatch();  // Returns a Results object, but allows you to catch the exception using a callback
-Query::rawQuery();  // Return query with values instead of placeholders
+Query::toRawQuery();  // Return query with values instead of placeholders
 ```
 
 ### 4.9 Dot notation references

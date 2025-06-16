@@ -36,6 +36,7 @@ class Sqlite extends Sql implements DialectInterface
 
         if (is_null($conflictUpdates)) {
             $query .= sprintf(' ON CONFLICT %s DO NOTHING', $expression);
+
             return;
         }
 
@@ -89,12 +90,13 @@ class Sqlite extends Sql implements DialectInterface
 
     public function phpTypeToColumnType(string $type, bool $isAutoIncrement, bool $isPrimaryKey, bool $inConstraint): string
     {
-        return [
+        return match ($type) {
             'bool' => 'BOOLEAN',
             'int' => 'INTEGER',
             'float' => 'REAL',
             'string' => 'TEXT',
-            'DateTime' => 'DATETIME'
-        ][$type];
+            'DateTime' => 'DATETIME',
+            default => 'TEXT'
+        };
     }
 }

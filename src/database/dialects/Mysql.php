@@ -36,13 +36,19 @@ class Mysql extends Sql implements DialectInterface
 
         if (is_null($conflictUpdates) && !$primaryKey) {
             $query = substr_replace($query, 'INSERT IGNORE', 0, 6);
+
             return;
         }
 
         $updates = !empty($conflictUpdates) ? $conflictUpdates : $insertValues;
 
         if ($primaryKey) {
-            $lastInsertId = Query::raw(sprintf('LAST_INSERT_ID(%s)', $this->escapeIdentifier($primaryKey)));
+            $lastInsertId = Query::raw(
+                sprintf(
+                    'LAST_INSERT_ID(%s)',
+                    $this->escapeIdentifier($primaryKey)
+                )
+            );
 
             $updates = is_null($conflictUpdates)
                 ? [$primaryKey => $lastInsertId]
@@ -114,12 +120,13 @@ class Mysql extends Sql implements DialectInterface
             return 'VARCHAR(255)';
         }
 
-        return [
+        return match ($type) {
             'bool' => 'TINYINT',
             'int' => 'INT',
             'float' => 'FLOAT',
             'string' => 'LONGTEXT',
-            'DateTime' => 'DATETIME(6)'
-        ][$type];
+            'DateTime' => 'DATETIME(6)',
+            default => 'VARCHAR(255)'
+        };
     }
 }
