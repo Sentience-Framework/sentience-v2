@@ -17,7 +17,9 @@ class Filesystem
 
         $chars = static::WINDOWS_DIRECTORY_SEPARATOR . static::UNIX_DIRECTORY_SEPARATOR;
 
-        $dir = rtrim($dir, $chars);
+        $dir = preg_match('/^\/|\\\\\\\\$/', $dir)
+            ? rtrim($dir, $chars)
+            : $dir;
 
         $components = array_filter(
             array_map(
@@ -76,19 +78,17 @@ class Filesystem
         $paths = [];
 
         foreach ($items as $item) {
+            $paths[] = $item;
+
             if (is_file($item)) {
-                $paths[] = $item;
+                continue;
             }
 
-            if (is_dir($item)) {
-                $paths[] = $item;
-
-                if ($depth == 0) {
-                    continue;
-                }
-
-                array_push($paths, ...static::scandir($item, $depth - 1));
+            if ($depth == 0) {
+                continue;
             }
+
+            array_push($paths, ...static::scandir($item, $depth - 1));
         }
 
         return array_values($paths);

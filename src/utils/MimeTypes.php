@@ -4,9 +4,9 @@ namespace src\utils;
 
 class MimeTypes
 {
-    public static function get(string $mimeType, string $fallback = 'txt'): string
+    public static function get(string $mimeType): ?string
     {
-        $mimeTypes = [
+        return match ($mimeType) {
             '3dm' => 'text/vnd.in3d.3dml',
             '3dml' => 'text/vnd.in3d.3dml',
             '3g2' => 'video/3gpp2',
@@ -891,10 +891,8 @@ class MimeTypes
             '8' => 'application/x-troff-man',
             '123' => 'application/vnd.lotus-1-2-3',
             '669' => 'audio/x-mod',
-            '726' => 'audio/32kadpcm'
-        ];
-
-        return $mimeTypes[strtolower($mimeType)]
-            ?? $mimeTypes[strtolower($fallback)];
+            '726' => 'audio/32kadpcm',
+            default => null
+        };
     }
 }

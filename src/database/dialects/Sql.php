@@ -250,9 +250,6 @@ class Sql implements DialectInterface
 
     public function alterTable(array $config): QueryWithParams
     {
-        $query = '';
-        $params = [];
-
         $alters = [];
 
         foreach ($config['alters'] as $alter) {
@@ -314,9 +311,9 @@ class Sql implements DialectInterface
             $alters
         );
 
-        $query .= implode(' ', $queries);
+        $query = implode(' ', $queries);
 
-        return new QueryWithParams($query, $params);
+        return new QueryWithParams($query);
     }
 
     public function dropTable(array $config): QueryWithParams
@@ -424,7 +421,7 @@ class Sql implements DialectInterface
             $query .= sprintf(
                 '(%s %s)',
                 $this->escapeIdentifier($condition->expression),
-                ($condition->type == WhereType::EQUALS) ? 'IS NULL' : 'IS NOT NULL'
+                $condition->type == WhereType::EQUALS ? 'IS NULL' : 'IS NOT NULL'
             );
 
             return;
@@ -461,7 +458,7 @@ class Sql implements DialectInterface
             $query .= sprintf(
                 '(%s %s ?)',
                 $this->escapeIdentifier($condition->expression),
-                ($condition->type == WhereType::REGEX) ? $this::REGEX_FUNCTION : $this::NOT_REGEX_FUNCTION
+                $condition->type == WhereType::REGEX ? $this::REGEX_FUNCTION : $this::NOT_REGEX_FUNCTION
             );
 
             array_push($params, $condition->value);

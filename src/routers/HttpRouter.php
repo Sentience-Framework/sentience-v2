@@ -79,7 +79,7 @@ class HttpRouter
             return [false, null];
         }
 
-        $values = array_splice($matches, 1);
+        $values = array_slice($matches, 1);
 
         $values = array_map(
             function (string $value): string {
