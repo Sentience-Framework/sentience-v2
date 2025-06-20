@@ -49,38 +49,38 @@ class Filesystem
             throw new FilesystemException('directory %s does not exist', $path);
         }
 
-        $items = scandir($path);
+        $entries = scandir($path);
 
-        if (is_bool($items)) {
+        if (is_bool($entries)) {
             return [];
         }
 
-        $items = array_filter(
-            $items,
-            function (string $item): bool {
-                return !in_array($item, ['.', '..']);
+        $entries = array_filter(
+            $entries,
+            function (string $entry): bool {
+                return !in_array($entry, ['.', '..']);
             }
         );
 
-        if (count($items) == 0) {
+        if (count($entries) == 0) {
             return [];
         }
 
-        $items = array_map(
-            function (string $item) use ($path): string {
-                return static::path($path, $item);
+        $entries = array_map(
+            function (string $entry) use ($path): string {
+                return static::path($path, $entry);
             },
-            $items
+            $entries
         );
 
-        natcasesort($items);
+        natcasesort($entries);
 
         $paths = [];
 
-        foreach ($items as $item) {
-            $paths[] = $item;
+        foreach ($entries as $entry) {
+            $paths[] = $entry;
 
-            if (is_file($item)) {
+            if (is_file($entry)) {
                 continue;
             }
 
@@ -88,7 +88,7 @@ class Filesystem
                 continue;
             }
 
-            array_push($paths, ...static::scandir($item, $depth - 1));
+            array_push($paths, ...static::scandir($entry, $depth - 1));
         }
 
         return array_values($paths);
