@@ -27,6 +27,8 @@ class Sentience
     protected CliRouter $cliRouter;
     protected HttpRouter $httpRouter;
     protected object $service;
+    protected mixed $handleFatalError = null;
+    protected mixed $handleThrowable = null;
 
     public function __construct(object $service)
     {
@@ -49,6 +51,20 @@ class Sentience
         return $this;
     }
 
+    public function handleFatalError(callable $callback): static
+    {
+        $this->handleFatalError = $callback;
+
+        return $this;
+    }
+
+    public function handleThrowable(callable $callback): static
+    {
+        $this->handleThrowable = $callback;
+
+        return $this;
+    }
+
     public function execute(): void
     {
         error_reporting(0);
@@ -61,32 +77,33 @@ class Sentience
                     return;
                 }
 
-                $message = $error['message'];
-                $severity = $error['type'];
-                $file = $error['file'];
-                $line = $error['line'];
+                $s = $error['type'];
+                $m = $error['message'];
+                $f = $error['file'];
+                $l = $error['line'];
 
-                $exception = new FatalErrorException($message, 0, $severity, $file, $line);
+                $exception = new FatalErrorException($m, 0, $s, $f, $l);
 
-                $this->handleException($exception);
+                $this->handleFatalError
+                    ? ($this->handleFatalError)($exception)
+                    : $this->handleException($exception);
             }
         );
 
         set_error_handler(
             function (int $s, string $m, string $f, int $l): bool {
-                if (in_array($s, [E_NOTICE, E_USER_NOTICE])) {
-                    throw new NoticeException($m, 0, $s, $f, $l);
-                }
-
-                if (in_array($s, [E_WARNING, E_COMPILE_WARNING, E_CORE_WARNING, E_USER_WARNING])) {
-                    throw new WarningException($m, 0, $s, $f, $l);
-                }
-
-                if (in_array($s, [E_DEPRECATED, E_USER_DEPRECATED])) {
-                    throw new DeprecatedException($m, 0, $s, $f, $l);
-                }
-
-                return false;
+                return match ($s) {
+                    E_NOTICE,
+                    E_USER_NOTICE,
+                    E_STRICT => throw new NoticeException($m, 0, $s, $f, $l),
+                    E_WARNING,
+                    E_USER_WARNING,
+                    E_COMPILE_WARNING,
+                    E_CORE_WARNING => throw new WarningException($m, 0, $s, $f, $l),
+                    E_DEPRECATED,
+                    E_USER_DEPRECATED => throw new DeprecatedException($m, 0, $s, $f, $l),
+                    default => false
+                };
             }
         );
 
@@ -95,7 +112,9 @@ class Sentience
                 ? $this->executeCli()
                 : $this->executeHttp();
         } catch (Throwable $exception) {
-            $this->handleException($exception);
+            $this->handleThrowable
+                ? ($this->handleThrowable)($exception)
+                : $this->handleException($exception);
         }
     }
 
