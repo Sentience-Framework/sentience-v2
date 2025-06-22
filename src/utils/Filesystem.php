@@ -43,7 +43,7 @@ class Filesystem
         );
     }
 
-    public static function scandir(string $path, int $depth = 0): array
+    public static function scandir(string $path, int $depth = 0, array $ignore = ['.', '..']): array
     {
         if (!file_exists($path)) {
             throw new FilesystemException('directory %s does not exist', $path);
@@ -57,8 +57,8 @@ class Filesystem
 
         $entries = array_filter(
             $entries,
-            function (string $entry): bool {
-                return !in_array($entry, ['.', '..']);
+            function (string $entry) use ($ignore): bool {
+                return !in_array($entry, $ignore);
             }
         );
 
@@ -88,7 +88,7 @@ class Filesystem
                 continue;
             }
 
-            array_push($paths, ...static::scandir($entry, $depth - 1));
+            array_push($paths, ...static::scandir($entry, $depth - 1, $ignore));
         }
 
         return array_values($paths);
