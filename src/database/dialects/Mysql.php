@@ -11,7 +11,7 @@ use src\database\queries\Query;
 
 class Mysql extends Sql implements DialectInterface
 {
-    public const TABLE_OR_COLUMN_ESCAPE = '`';
+    public const IDENTIFIER_ESCAPE = '`';
     public const STRING_ESCAPE = '"';
     public const ANSI_ESCAPE = false;
 

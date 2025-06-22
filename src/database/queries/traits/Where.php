@@ -45,6 +45,11 @@ trait Where
         return $this->endsWith($column, $value, $escapeBackslash, Chain::AND);
     }
 
+    public function whereContains(string|array $column, string $value, bool $escapeBackslash = false): static
+    {
+        return $this->contains($column, $value, $escapeBackslash, Chain::AND);
+    }
+
     public function whereIn(string|array $column, array $values, bool $preventSqlSyntaxError = true): static
     {
         return $this->in($column, $values, $preventSqlSyntaxError, Chain::AND);
@@ -153,6 +158,11 @@ trait Where
     public function orWhereEndsWith(string|array $column, string $value, bool $escapeBackslash = false): static
     {
         return $this->endsWith($column, $value, $escapeBackslash, Chain::OR);
+    }
+
+    public function orWhereContains(string|array $column, string $value, bool $escapeBackslash = false): static
+    {
+        return $this->contains($column, $value, $escapeBackslash, Chain::OR);
     }
 
     public function orWhereIn(string|array $column, array $values, bool $preventSqlSyntaxError = true): static
@@ -273,6 +283,13 @@ trait Where
     protected function endsWith(string|array $column, string $value, bool $escapeBackslash, Chain $chain): static
     {
         $this->like($column, '%' . Query::escapeLikeChars($value, $escapeBackslash), $chain);
+
+        return $this;
+    }
+
+    protected function contains(string|array $column, string $value, bool $escapeBackslash, Chain $chain): static
+    {
+        $this->like($column, '%' . Query::escapeLikeChars($value, $escapeBackslash) . '%', $chain);
 
         return $this;
     }

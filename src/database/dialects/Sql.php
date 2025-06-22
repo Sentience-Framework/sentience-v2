@@ -23,7 +23,7 @@ use src\database\queries\objects\UniqueConstraint;
 
 class Sql implements DialectInterface
 {
-    public const TABLE_OR_COLUMN_ESCAPE = '"';
+    public const IDENTIFIER_ESCAPE = '"';
     public const STRING_ESCAPE = "'";
     public const ANSI_ESCAPE = true;
     public const DATETIME_FORMAT = 'Y-m-d H:i:s.u';
@@ -393,13 +393,9 @@ class Sql implements DialectInterface
         $query .= ' WHERE ';
 
         foreach ($where as $index => $condition) {
-            if ($condition instanceof Condition) {
-                $this->addCondition($query, $params, $index, $condition);
-            }
-
-            if ($condition instanceof ConditionGroup) {
-                $this->addConditionGroup($query, $params, $index, $condition);
-            }
+            $condition instanceof Condition
+                ? $this->addCondition($query, $params, $index, $condition)
+                : $this->addConditionGroup($query, $params, $index, $condition);
         }
     }
 
@@ -486,13 +482,9 @@ class Sql implements DialectInterface
         $query .= '(';
 
         foreach ($conditions as $index => $condition) {
-            if ($condition instanceof Condition) {
-                $this->addCondition($query, $params, $index, $condition);
-            }
-
-            if ($condition instanceof ConditionGroup) {
-                $this->addConditionGroup($query, $params, $index, $condition);
-            }
+            $condition instanceof Condition
+                ? $this->addCondition($query, $params, $index, $condition)
+                : $this->addConditionGroup($query, $params, $index, $condition);
         }
 
         $query .= ')';
@@ -759,7 +751,7 @@ class Sql implements DialectInterface
                     $identifier
                 )
             )
-            : $this->escape($identifier, $this::TABLE_OR_COLUMN_ESCAPE);
+            : $this->escape($identifier, $this::IDENTIFIER_ESCAPE);
     }
 
     public function escapeString(string $string): string

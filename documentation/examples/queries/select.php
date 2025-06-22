@@ -53,6 +53,7 @@ $database->select()
     ->whereNotEmpty('not_empty_column')
     ->whereRegex('column6', 'file|read|write|open')
     ->whereNotRegex('column6', 'error')
+    ->whereContains('column7', 'draft')
     ->groupBy([
         ['table', 'column'],
         'column2'

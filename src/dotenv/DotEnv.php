@@ -12,10 +12,10 @@ class DotEnv
 
         foreach ($env as $key => $value) {
             if ($parseBooleans && in_array($value, ['0', '1'])) {
-                $_ENV[$key] = [
+                $_ENV[$key] = match ($value) {
                     '0' => false,
                     '1' => true
-                ][$value];
+                };
 
                 continue;
             }
@@ -65,9 +65,7 @@ class DotEnv
 
     protected static function createFile(string $filepath, ?string $exampleFilepath): void
     {
-        (bool) $exampleFilepath
-            ? copy($exampleFilepath, $filepath)
-            : file_put_contents($filepath, '');
+        $exampleFilepath ? copy($exampleFilepath, $filepath) : file_put_contents($filepath, '');
     }
 
     protected static function parseDotEnvString(string $string): array
@@ -78,16 +76,7 @@ class DotEnv
             throw new DotEnvException('parsing error');
         }
 
-        $variables = [];
-
-        foreach ($matches[0] as $index => $variable) {
-            $key = $matches[1][$index];
-            $value = $matches[2][$index];
-
-            $variables[$key] = $value;
-        }
-
-        return $variables;
+        return array_combine($matches[1], $matches[2]);
     }
 
     protected static function parseVariable(string $value, array $parsedVariables): mixed

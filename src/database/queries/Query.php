@@ -82,9 +82,4 @@ abstract class Query implements QueryInterface
 
         return escape_chars($string, $chars);
     }
-
-    public static function wildcard(string $string, bool $escapeBackslash = false): string
-    {
-        return '%' . static::escapeLikeChars($string, $escapeBackslash) . '%';
-    }
 }
