@@ -7,7 +7,7 @@ use src\models\Model;
 
 class HasMany extends Relation implements RelationInterface
 {
-    protected string $mToRJoinRegexPattern = '/(\w+)\-\<(\w+)/';
+    protected string $mToRJoinRegexPattern = '/(.+)\-\<(.+)/';
 
     public function retrieve(Database $database, Model $model, ?callable $modifyQuery = null): array
     {

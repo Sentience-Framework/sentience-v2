@@ -6,27 +6,12 @@ use src\exceptions\DotEnvException;
 
 class DotEnv
 {
-    public static function loadEnv(bool $parseBooleans = false, bool $parseDirectoryArrays = false): void
+    public static function loadEnv(?callable $parseValue = null): void
     {
         $env = getenv();
 
         foreach ($env as $key => $value) {
-            if ($parseBooleans && in_array($value, ['0', '1'])) {
-                $_ENV[$key] = match ($value) {
-                    '0' => false,
-                    '1' => true
-                };
-
-                continue;
-            }
-
-            if ($parseDirectoryArrays && str_contains($value, DIRECTORY_SEPARATOR) && str_contains($value, PATH_SEPARATOR)) {
-                $_ENV[$key] = explode(':', $value);
-
-                continue;
-            }
-
-            $_ENV[$key] = $value;
+            $_ENV[$key] = $parseValue ? $parseValue($value, $key) : $value;
         }
     }
 
@@ -70,7 +55,11 @@ class DotEnv
 
     protected static function parseDotEnvString(string $string): array
     {
-        $isMatch = preg_match_all('/^(?!\#)\s*([A-Z0-9_]+)\s*=\s*(?|(\'.*?\')|(\".*?\")|(\`{3}[\s\S]*?\`{3})|([^#\r\n]*))\s*(?=[\r\n]|$|\#)/m', $string, $matches);
+        $isMatch = preg_match_all(
+            '/^(?!\#)\s*([a-zA-Z0-9_]+)\s*=\s*(?|(\'.*?\')|(\".*?\")|(\`{3}[\s\S]*?\`{3})|([^#\r\n]*))\s*(?=[\r\n]|$|\#)/m',
+            $string,
+            $matches
+        );
 
         if (!$isMatch) {
             throw new DotEnvException('parsing error');
@@ -112,7 +101,11 @@ class DotEnv
     {
         $values = [];
 
-        $isMatch = preg_match_all('/(\"(.*?)\")|(\'(.*?)\')|[\-\w.]+/', $value, $matches, PREG_UNMATCHED_AS_NULL);
+        $isMatch = preg_match_all(
+            '/(?:\[(?:[^\[\]]++|(?R))*\])|(?:\`{3}.*?\`{3})|(?:\"(?:\\\\.|[^\"\\\\])*\")|(?:\'(?:\\\\.|[^\'\\\\])*\')|(?:[^,W\s\[\]]+)/',
+            substr($value, 1, -1),
+            $matches
+        );
 
         if (!$isMatch) {
             return $values;

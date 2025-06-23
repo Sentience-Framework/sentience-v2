@@ -32,7 +32,7 @@ class QueryWithParams
         $index = 0;
 
         return preg_replace_callback(
-            '/\\?(?=(?:[^\'\"\`\\\\]|\'(?:\\\\.|[^\\\\\'])*\'|\"(?:[\\\\].|[^\\\\\"])*\"|\`(?:[\\\\].|[^\\\\\`])*\`)*$)/',
+            '/\?(?=(?:[^\'\"\`\\\\]|\'(?:\\\\.|[^\\\\\'])*\'|\"(?:\\\\.|[^\\\\\"])*\"|\`(?:\\\\.|[^\\\\\`])*\`)*$)/',
             function () use ($params, &$index): mixed {
                 if (!key_exists($index, $params)) {
                     throw new QueryException('placeholder and value count do not match');

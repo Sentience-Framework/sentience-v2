@@ -9,7 +9,7 @@ use src\models\Model;
 
 class ManyToMany extends Relation implements RelationInterface
 {
-    protected string $mToRJoinRegexPattern = '/(\w+)\-\<(\w+)\:(\w+)\>\-(\w+)/';
+    protected string $mToRJoinRegexPattern = '/(.+)\-\<(.+)\:(.+)\>\-(.+)/';
     protected string $junctionTable;
 
     public function __construct(string $relationModel, string $junctionTable, string $mToRJoin, ?callable $modifyDefaultQuery = null)
