@@ -2,6 +2,8 @@
 
 namespace src\utils;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use src\exceptions\FilesystemException;
 
 class Filesystem
@@ -43,53 +45,31 @@ class Filesystem
         );
     }
 
-    public static function scandir(string $path, int $depth = 0, array $ignore = ['.', '..']): array
+    public static function scandir(string $path, int $depth = 0): array
     {
         if (!file_exists($path)) {
             throw new FilesystemException('directory %s does not exist', $path);
         }
 
-        $entries = scandir($path);
-
-        if (is_bool($entries)) {
-            return [];
-        }
-
-        $entries = array_filter(
-            $entries,
-            function (string $entry) use ($ignore): bool {
-                return !in_array($entry, $ignore);
-            }
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
+                $path,
+                RecursiveDirectoryIterator::SKIP_DOTS
+            ),
+            RecursiveIteratorIterator::SELF_FIRST
         );
-
-        if (count($entries) == 0) {
-            return [];
-        }
-
-        $entries = array_map(
-            function (string $entry) use ($path): string {
-                return static::path($path, $entry);
-            },
-            $entries
-        );
-
-        natcasesort($entries);
 
         $paths = [];
 
-        foreach ($entries as $entry) {
-            $paths[] = $entry;
-
-            if (is_file($entry)) {
+        foreach ($iterator as $splFileInfo) {
+            if ($iterator->getDepth() > $depth) {
                 continue;
             }
 
-            if ($depth == 0) {
-                continue;
-            }
-
-            array_push($paths, ...static::scandir($entry, $depth - 1, $ignore));
+            $paths[] = $splFileInfo->getPathname();
         }
+
+        natcasesort($paths);
 
         return array_values($paths);
     }

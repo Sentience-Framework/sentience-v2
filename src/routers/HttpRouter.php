@@ -61,15 +61,18 @@ class HttpRouter
         $keys = [];
 
         $pattern = preg_replace_callback(
-            '/\{(.[^\}]*)\}/',
+            '/\{([^\:\}]+)(?:\:([^\}]+))?\}/',
             function (array $matches) use (&$keys): string {
-                $keys[] = $matches[1];
+                $key = $matches[1];
+                $type = $matches[2] ?? 'string';
+
+                $keys[] = [$key, $type];
 
                 return '(.[^\/]*)';
             },
             sprintf(
                 '/^%s$/',
-                escape_chars($route, ['.', '/', '+', '*', '?', '^', '[', ']', '$', '(', ')', '=', '!', '<', '>', '|', ':', '-'])
+                escape_chars($route, ['.', '/', '+', '*', '?', '^', '[', ']', '$', '(', ')', '=', '!', '<', '>', '|', '-'])
             )
         );
 
@@ -81,14 +84,17 @@ class HttpRouter
 
         $values = array_slice($matches, 1);
 
-        $values = array_map(
-            function (string $value): string {
-                return urldecode($value);
-            },
-            $values
-        );
+        $pathVars = [];
 
-        $pathVars = array_combine($keys, $values);
+        foreach ($values as $index => $value) {
+            [$key, $type] = $keys[$index];
+
+            $pathVars[$key] = match ($type) {
+                'int' => (int) $value,
+                'float' => (float) $value,
+                default => urldecode($value)
+            };
+        }
 
         return [true, $pathVars];
     }

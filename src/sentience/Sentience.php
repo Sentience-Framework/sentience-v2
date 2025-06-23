@@ -27,8 +27,8 @@ class Sentience
     protected CliRouter $cliRouter;
     protected HttpRouter $httpRouter;
     protected object $service;
-    protected mixed $handleFatalError = null;
-    protected mixed $handleThrowable = null;
+    protected ?Closure $handleFatalError = null;
+    protected ?Closure $handleThrowable = null;
 
     public function __construct(object $service)
     {
@@ -53,14 +53,14 @@ class Sentience
 
     public function handleFatalError(callable $callback): static
     {
-        $this->handleFatalError = $callback;
+        $this->handleFatalError = Closure::fromCallable($callback);
 
         return $this;
     }
 
     public function handleThrowable(callable $callback): static
     {
-        $this->handleThrowable = $callback;
+        $this->handleThrowable = Closure::fromCallable($callback);
 
         return $this;
     }
@@ -309,10 +309,6 @@ class Sentience
                 Stdio::errorLn('- Trace :');
 
                 foreach ($stackTrace as $index => $frame) {
-                    if (!key_exists('file', $frame)) {
-                        continue;
-                    }
-
                     $file = $frame['file'];
                     $line = $frame['line'];
 

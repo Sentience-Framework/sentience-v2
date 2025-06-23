@@ -37,7 +37,7 @@ return [
                 ->bind(Route::register('/', [ExampleController::class, 'getContacts'])->setMethods(['GET']))
                 ->bind(Route::register('/', [ExampleController::class, 'createContact'])->setMethods(['POST']))
                 ->bind(
-                    RouteGroup::register('/{contactId}')
+                    RouteGroup::register('/{contactId:int}')
                         ->bind(Route::register('/', [ExampleController::class, 'getContact'])->setMethods(['GET']))
                         ->bind(Route::register('/', [ExampleController::class, 'updateContact'])->setMethods(['PUT']))
                 )
