@@ -121,6 +121,7 @@ class ExampleController extends Controller
                 return $group;
             })
             ->whereIn('column2', [])
+            ->whereNotIn('column2', [])
             ->whereStartsWith('column2', 'a')
             ->whereEndsWith('column2', 'z')
             ->whereEmpty('empty_column')

@@ -438,6 +438,12 @@ class Sql implements DialectInterface
         }
 
         if (is_array($condition->value)) {
+            if (count($condition->value) == 0) {
+                $query .= $condition->type == WhereType::IN ? '(1 <> 1)' : '(1 = 1)';
+
+                return;
+            }
+
             $query .= sprintf(
                 '(%s %s (%s))',
                 $this->escapeIdentifier($condition->expression),
