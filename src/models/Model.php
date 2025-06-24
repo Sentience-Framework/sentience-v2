@@ -32,7 +32,56 @@ abstract class Model
         $this->dialect = DialectFactory::fromDatabase($database);
 
         if ($record) {
-            $this->hydrateFromRecord($record);
+            $this->fromRecord($record);
+        }
+    }
+
+    public function fromRecord(object $record): void
+    {
+        foreach ($this->columns as $property => $column) {
+            if (!property_exists($record, $column)) {
+                continue;
+            }
+
+            if (!Reflector::hasSingularType($this, $property)) {
+                throw new ModelException('empty or union types are not allowed as model properties');
+            }
+
+            $reflectionProperty = new ReflectionProperty($this, $property);
+            $reflectionType = $reflectionProperty->getType();
+
+            $propertyType = $reflectionType->getName();
+            $propertyAllowsNull = $reflectionType->allowsNull();
+
+            $value = $record->{$column};
+
+            if (is_null($value)) {
+                if (!$propertyAllowsNull) {
+                    throw new ModelException(
+                        'column %s contains null value, while property %s does not allow null',
+                        $column,
+                        $property
+                    );
+                }
+
+                $this->{$property} = null;
+
+                continue;
+            }
+
+            if ($propertyType == 'bool') {
+                $this->{$property} = $this->dialect->parseBool($value);
+
+                continue;
+            }
+
+            if ($propertyType == 'DateTime') {
+                $this->{$property} = $this->dialect->parseDateTime($value);
+
+                continue;
+            }
+
+            $this->{$property} = $value;
         }
     }
 
@@ -58,7 +107,7 @@ abstract class Model
             throw new ModelException('unable to find record for model');
         }
 
-        $this->hydrateFromRecord($record);
+        $this->fromRecord($record);
 
         foreach ($relations as $property) {
             $this->selectRelation($property);
@@ -112,7 +161,7 @@ abstract class Model
         $insertedRecord = $results->fetch();
 
         if ($insertedRecord) {
-            $this->hydrateFromRecord($insertedRecord);
+            $this->fromRecord($insertedRecord);
         }
 
         $this->onInsert();
@@ -176,7 +225,7 @@ abstract class Model
         $updatedRecord = $results->fetch();
 
         if ($updatedRecord) {
-            $this->hydrateFromRecord($updatedRecord);
+            $this->fromRecord($updatedRecord);
         }
 
         $this->onUpdate();
@@ -198,12 +247,12 @@ abstract class Model
             $query = $modifyQuery($query);
         }
 
-        $statement = $query->execute();
+        $results = $query->execute();
 
-        $deletedRecord = $statement->fetch();
+        $deletedRecord = $results->fetch();
 
         if ($deletedRecord) {
-            $this->hydrateFromRecord($deletedRecord);
+            $this->fromRecord($deletedRecord);
         }
 
         $this->onDelete();
@@ -252,12 +301,14 @@ abstract class Model
         }
 
         if (!empty($this->unique)) {
-            $query->uniqueConstraint(array_map(
-                function (string $property): string {
-                    return $this->getColumnByProperty($property);
-                },
-                $this->unique
-            ));
+            $query->uniqueConstraint(
+                array_map(
+                    function (string $property): string {
+                        return $this->getColumnByProperty($property);
+                    },
+                    $this->unique
+                )
+            );
         }
 
         if ($modifyQuery) {
@@ -289,55 +340,6 @@ abstract class Model
         $this->onDrop();
 
         return $query->toRawQuery();
-    }
-
-    protected function hydrateFromRecord(object $record): void
-    {
-        foreach ($this->columns as $property => $column) {
-            if (!property_exists($record, $column)) {
-                continue;
-            }
-
-            if (!Reflector::hasSingularType($this, $property)) {
-                throw new ModelException('empty or union types are not allowed as model properties');
-            }
-
-            $reflectionProperty = new ReflectionProperty($this, $property);
-            $reflectionType = $reflectionProperty->getType();
-
-            $propertyType = $reflectionType->getName();
-            $propertyAllowsNull = $reflectionType->allowsNull();
-
-            $columnValue = $record->{$column};
-
-            if (is_null($columnValue)) {
-                if (!$propertyAllowsNull) {
-                    throw new ModelException(
-                        'column %s contains null value, while property %s does not allow null',
-                        $column,
-                        $property
-                    );
-                }
-
-                $this->{$property} = null;
-
-                continue;
-            }
-
-            if ($propertyType == 'bool') {
-                $this->{$property} = $this->dialect->parseBool($columnValue);
-
-                continue;
-            }
-
-            if ($propertyType == 'DateTime') {
-                $this->{$property} = $this->dialect->parseDateTime($columnValue);
-
-                continue;
-            }
-
-            $this->{$property} = $columnValue;
-        }
     }
 
     protected function hasOne(string $property, string $relationModel, string $mToRJoin, ?callable $modifyDefaultQuery = null): void
@@ -377,72 +379,6 @@ abstract class Model
         );
     }
 
-    public static function getPrimaryKeyProperty(): string
-    {
-        $primaryKeyProperty = Reflector::getDefaultValue(static::class, 'primaryKey');
-
-        if (!$primaryKeyProperty) {
-            throw new ModelException('no primary key set in model');
-        }
-
-        return $primaryKeyProperty;
-    }
-
-    public static function getPrimaryKeyColumn(): string
-    {
-        $primaryKeyProperty = static::getPrimaryKeyProperty();
-
-        return static::getColumnByProperty($primaryKeyProperty);
-    }
-
-    public static function getTable(): string
-    {
-        $table = Reflector::getDefaultValue(static::class, 'table');
-
-        if (!$table) {
-            throw new ModelException('no table set in model');
-        }
-
-        return $table;
-    }
-
-    public static function getColumns(): array
-    {
-        $columns = Reflector::getDefaultValue(static::class, 'columns');
-
-        if (!$columns) {
-            throw new ModelException('no columns set in model');
-        }
-
-        return array_values($columns);
-    }
-
-    public static function getColumnByProperty(string $property): string
-    {
-        $columns = Reflector::getDefaultValue(static::class, 'columns');
-
-        $column = $columns[$property] ?? null;
-
-        if (!$column) {
-            throw new ModelException('no column for %s set in model', $property);
-        }
-
-        return $column;
-    }
-
-    public static function getPropertyByColumn(string $column): string
-    {
-        $columns = Reflector::getDefaultValue(static::class, 'columns');
-
-        $property = array_flip($columns)[$column] ?? null;
-
-        if (!$property) {
-            throw new ModelException('no property for %s set in model', $property);
-        }
-
-        return $property;
-    }
-
     protected function onSelect(): void
     {
         return;
@@ -471,5 +407,71 @@ abstract class Model
     protected function onDrop(): void
     {
         return;
+    }
+
+    public static function getColumnByProperty(string $property): string
+    {
+        $columns = Reflector::getDefaultValue(static::class, 'columns');
+
+        $column = $columns[$property] ?? null;
+
+        if (!$column) {
+            throw new ModelException('no column for %s set in model', $property);
+        }
+
+        return $column;
+    }
+
+    public static function getPropertyByColumn(string $column): string
+    {
+        $columns = Reflector::getDefaultValue(static::class, 'columns');
+
+        $property = array_flip($columns)[$column] ?? null;
+
+        if (!$property) {
+            throw new ModelException('no property for %s set in model', $property);
+        }
+
+        return $property;
+    }
+
+    public static function getTable(): string
+    {
+        $table = Reflector::getDefaultValue(static::class, 'table');
+
+        if (!$table) {
+            throw new ModelException('no table set in model');
+        }
+
+        return $table;
+    }
+
+    public static function getColumns(): array
+    {
+        $columns = Reflector::getDefaultValue(static::class, 'columns');
+
+        if (!$columns) {
+            throw new ModelException('no columns set in model');
+        }
+
+        return array_values($columns);
+    }
+
+    public static function getPrimaryKeyProperty(): string
+    {
+        $primaryKeyProperty = Reflector::getDefaultValue(static::class, 'primaryKey');
+
+        if (!$primaryKeyProperty) {
+            throw new ModelException('no primary key set in model');
+        }
+
+        return $primaryKeyProperty;
+    }
+
+    public static function getPrimaryKeyColumn(): string
+    {
+        $primaryKeyProperty = static::getPrimaryKeyProperty();
+
+        return static::getColumnByProperty($primaryKeyProperty);
     }
 }
