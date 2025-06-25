@@ -615,7 +615,7 @@ class Sql implements DialectInterface
             $stringifiedColumn .= ' NOT NULL';
         }
 
-        if ($column->defaultValue && !$column->autoIncrement) {
+        if (!is_null($column->defaultValue) && !$column->autoIncrement) {
             $defaultValue = preg_match('/^.*\(.*\)$/', $column->defaultValue)
                 ? $column->defaultValue
                 : $this->escapeString($column->defaultValue);
