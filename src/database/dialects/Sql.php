@@ -6,6 +6,7 @@ use DateTime;
 use src\database\queries\enums\WhereType;
 use src\database\queries\objects\AddColumn;
 use src\database\queries\objects\AddForeignKeyConstraint;
+use src\database\queries\objects\AddPrimaryKeys;
 use src\database\queries\objects\AddUniqueConstraint;
 use src\database\queries\objects\Alias;
 use src\database\queries\objects\AlterColumn;
@@ -273,6 +274,12 @@ class Sql implements DialectInterface
 
             if ($alter instanceof DropColumn) {
                 $alters[] = $this->stringifyAlterTableDropColumn($alter);
+
+                continue;
+            }
+
+            if ($alter instanceof AddPrimaryKeys) {
+                $alters[] = $this->stringifyAlterTableAddPrimaryKeys($alter);
 
                 continue;
             }
@@ -703,6 +710,22 @@ class Sql implements DialectInterface
         return sprintf(
             'DROP COLUMN %s',
             $this->escapeIdentifier($dropColumn->column)
+        );
+    }
+
+    protected function stringifyAlterTableAddPrimaryKeys(AddPrimaryKeys $addPrimaryKeys): string
+    {
+        return sprintf(
+            'ADD PRIMARY KEY (%s)',
+            implode(
+                ', ',
+                array_map(
+                    function (string|array|Raw $column): string {
+                        return $this->escapeIdentifier($column);
+                    },
+                    $addPrimaryKeys->columns
+                )
+            )
         );
     }
 

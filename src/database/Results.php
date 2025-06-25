@@ -30,7 +30,7 @@ class Results
         return $this->pdoStatement->columnCount();
     }
 
-    public function getColumns(): string
+    public function getColumns(): array
     {
         $columns = [];
 
@@ -39,11 +39,11 @@ class Results
         while (true) {
             $column = $this->pdoStatement->getColumnMeta($index);
 
-            $index++;
-
             if (!$column) {
                 break;
             }
+
+            $index++;
 
             $columns[] = $column['name'];
         }

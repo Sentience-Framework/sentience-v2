@@ -37,6 +37,11 @@ return [
     ),
 
     Command::register(
+        'models:update',
+        [SentienceController::class, 'updateModel']
+    ),
+
+    Command::register(
         'models:reset',
         [SentienceController::class, 'resetModel']
     ),

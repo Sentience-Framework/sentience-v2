@@ -3,6 +3,7 @@
 namespace src\database\dialects;
 
 use src\database\queries\objects\AddForeignKeyConstraint;
+use src\database\queries\objects\AddPrimaryKeys;
 use src\database\queries\objects\AddUniqueConstraint;
 use src\database\queries\objects\AlterColumn;
 use src\database\queries\objects\DropConstraint;
@@ -71,6 +72,11 @@ class Sqlite extends Sql implements DialectInterface
     public function stringifyAlterTableAlterColumn(AlterColumn $alterColumn): string
     {
         throw new QueryException('SQLite does not support altering columns');
+    }
+
+    protected function stringifyAlterTableAddPrimaryKeys(AddPrimaryKeys $addPrimaryKeys): string
+    {
+        throw new QueryException('SQLite does not support adding primary keys by altering the table');
     }
 
     protected function stringifyAlterTableAddUniqueConstraint(AddUniqueConstraint $addUniqueConstraint): string
