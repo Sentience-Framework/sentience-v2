@@ -4,7 +4,7 @@ namespace src\migrations;
 
 class MigrationFactory
 {
-    public static function createMigration(array $apply = [], array $rollback = []): string
+    public static function create(array $apply = [], array $rollback = []): string
     {
         $lines = [];
 

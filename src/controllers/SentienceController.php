@@ -280,7 +280,7 @@ class SentienceController extends Controller
             $migrationFilename
         );
 
-        $migrationFileContents = MigrationFactory::createMigration();
+        $migrationFileContents = MigrationFactory::create();
 
         file_put_contents($migrationFilepath, $migrationFileContents);
 
@@ -315,7 +315,7 @@ class SentienceController extends Controller
             $model::getTable()
         );
 
-        $migrationfileContents = MigrationFactory::createMigration(
+        $migrationfileContents = MigrationFactory::create(
             [
                 sprintf('$model = new %s($database);', $class),
                 '$model->createTable(true);'
@@ -393,7 +393,7 @@ class SentienceController extends Controller
             $model::getTable()
         );
 
-        $migrationfileContents = MigrationFactory::createMigration(
+        $migrationfileContents = MigrationFactory::create(
             [
                 sprintf('$model = new %s($database);', $class),
                 '$model->dropTable(true);',
