@@ -30,6 +30,27 @@ class Results
         return $this->pdoStatement->columnCount();
     }
 
+    public function getColumns(): string
+    {
+        $columns = [];
+
+        $index = 0;
+
+        while (true) {
+            $column = $this->pdoStatement->getColumnMeta($index);
+
+            $index++;
+
+            if (!$column) {
+                break;
+            }
+
+            $columns[] = $column['name'];
+        }
+
+        return $columns;
+    }
+
     public function fetch(string $class = 'stdClass'): ?object
     {
         $object = $this->pdoStatement->fetchObject($class);
