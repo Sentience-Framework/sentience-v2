@@ -332,9 +332,6 @@ abstract class Model
             ->execute()
             ->getColumns();
 
-        $query = $this->database->alterTable()
-            ->table($this->table);
-
         $columnsToAdd = [];
         $columnsToDrop = [];
 
@@ -357,6 +354,9 @@ abstract class Model
         if ((count($columnsToAdd) + count($columnsToDrop)) == 0) {
             return '';
         }
+
+        $query = $this->database->alterTable()
+            ->table($this->table);
 
         foreach ($columnsToAdd as $column) {
             $property = $columnsInModel[$column];
@@ -501,19 +501,6 @@ abstract class Model
         return;
     }
 
-    public static function getColumnByProperty(string $property): string
-    {
-        $columns = Reflector::getDefaultValue(static::class, 'columns');
-
-        $column = $columns[$property] ?? null;
-
-        if (!$column) {
-            throw new ModelException('no column for %s set in model', $property);
-        }
-
-        return $column;
-    }
-
     public static function getPropertyByColumn(string $column): string
     {
         $columns = Reflector::getDefaultValue(static::class, 'columns');
@@ -525,6 +512,19 @@ abstract class Model
         }
 
         return $property;
+    }
+
+    public static function getColumnByProperty(string $property): string
+    {
+        $columns = Reflector::getDefaultValue(static::class, 'columns');
+
+        $column = $columns[$property] ?? null;
+
+        if (!$column) {
+            throw new ModelException('no column for %s set in model', $property);
+        }
+
+        return $column;
     }
 
     public static function getTable(): string
