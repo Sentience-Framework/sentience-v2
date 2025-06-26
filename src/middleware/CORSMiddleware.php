@@ -20,7 +20,7 @@ class CORSMiddleware extends Middleware
 
         $returnOrigin = env('ACCESS_CONTROL_RETURN_ORIGIN', true);
 
-        $accessControlAllowOrigin = ($returnOrigin && $originHeader) ? $originHeader : $originEnv;
+        $accessControlAllowOrigin = $returnOrigin && $originHeader ? $originHeader : $originEnv;
         $accessControlAllowCredentials = env('ACCESS_CONTROL_ALLOW_CREDENTIALS', true) ? 'true' : 'false';
         $accessControlAllowMethods = implode(', ', (array) env('ACCESS_CONTROL_ALLOW_METHODS', ['*']));
         $accessControlAllowHeaders = implode(', ', (array) env('ACCESS_CONTROL_ALLOW_HEADERS', ['*']));
