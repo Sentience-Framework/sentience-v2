@@ -21,6 +21,7 @@ use src\database\queries\objects\QueryWithParams;
 use src\database\queries\objects\Raw;
 use src\database\queries\objects\RenameColumn;
 use src\database\queries\objects\UniqueConstraint;
+use src\exceptions\QueryException;
 
 class Sql implements DialectInterface
 {
@@ -301,6 +302,10 @@ class Sql implements DialectInterface
 
                 continue;
             }
+        }
+
+        if (count($alters) == 0) {
+            throw new QueryException('no table alters specified');
         }
 
         $queries = array_map(
