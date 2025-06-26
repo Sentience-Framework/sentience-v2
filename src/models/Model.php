@@ -322,6 +322,93 @@ abstract class Model
         return $query->toRawQuery();
     }
 
+    public function alterTable(?callable $modifyQuery = null): string
+    {
+        $columnsInModel = array_flip($this->columns);
+
+        $columnsInDatabase = $this->database->select()
+            ->table($this->table)
+            ->limit(0)
+            ->execute()
+            ->getColumns();
+
+        $columnsToAdd = [];
+        $columnsToDrop = [];
+
+        foreach ($columnsInModel as $column => $property) {
+            if (in_array($column, $columnsInDatabase)) {
+                continue;
+            }
+
+            $columnsToAdd[] = $column;
+        }
+
+        foreach ($columnsInDatabase as $column) {
+            if (key_exists($column, $columnsInModel)) {
+                continue;
+            }
+
+            $columnsToDrop[] = $column;
+        }
+
+        if ((count($columnsToAdd) + count($columnsToDrop)) == 0) {
+            return '';
+        }
+
+        $query = $this->database->alterTable()
+            ->table($this->table);
+
+        foreach ($columnsToAdd as $column) {
+            $property = $columnsInModel[$column];
+
+            if (!Reflector::hasSingularType($this, $property)) {
+                throw new ModelException('empty or union types are not allowed as model properties');
+            }
+
+            $reflectionProperty = new ReflectionProperty($this, $property);
+            $reflectionType = $reflectionProperty->getType();
+
+            $propertyType = $reflectionType->getName();
+            $propertyAllowsNull = $reflectionType->allowsNull();
+            $propertyHasDefaultValue = $reflectionProperty->hasDefaultValue();
+            $propertyDefaultValue = $reflectionProperty->getDefaultValue();
+            $propertyIsPrimaryKey = $property == $this->primaryKey;
+
+            $columnType = $this->dialect->phpTypeToColumnType(
+                $propertyType,
+                $propertyIsPrimaryKey ? $this->primaryKeyAutoIncrement : false,
+                $propertyIsPrimaryKey,
+                in_array($property, $this->unique)
+            );
+
+            $query->addColumn(
+                $column,
+                $columnType,
+                !$propertyAllowsNull,
+                $propertyHasDefaultValue ? $propertyDefaultValue : null,
+                $propertyIsPrimaryKey ? $this->primaryKeyAutoIncrement : false
+            );
+
+            if ($propertyIsPrimaryKey) {
+                $query->addPrimaryKeys($column);
+            }
+        }
+
+        foreach ($columnsToDrop as $column) {
+            $query->dropColumn($column);
+        }
+
+        if ($modifyQuery) {
+            $query = $modifyQuery($query);
+        }
+
+        $query->execute();
+
+        $this->onAlter();
+
+        return $query->toRawQuery();
+    }
+
     public function dropTable(bool $ifExists = false, ?callable $modifyQuery = null): string
     {
         $query = $this->database->dropTable()
@@ -404,22 +491,14 @@ abstract class Model
         return;
     }
 
-    protected function onDrop(): void
+    protected function onAlter(): void
     {
         return;
     }
 
-    public static function getColumnByProperty(string $property): string
+    protected function onDrop(): void
     {
-        $columns = Reflector::getDefaultValue(static::class, 'columns');
-
-        $column = $columns[$property] ?? null;
-
-        if (!$column) {
-            throw new ModelException('no column for %s set in model', $property);
-        }
-
-        return $column;
+        return;
     }
 
     public static function getPropertyByColumn(string $column): string
@@ -433,6 +512,19 @@ abstract class Model
         }
 
         return $property;
+    }
+
+    public static function getColumnByProperty(string $property): string
+    {
+        $columns = Reflector::getDefaultValue(static::class, 'columns');
+
+        $column = $columns[$property] ?? null;
+
+        if (!$column) {
+            throw new ModelException('no column for %s set in model', $property);
+        }
+
+        return $column;
     }
 
     public static function getTable(): string

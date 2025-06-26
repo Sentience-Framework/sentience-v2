@@ -6,6 +6,7 @@ use DateTime;
 use src\database\queries\enums\WhereType;
 use src\database\queries\objects\AddColumn;
 use src\database\queries\objects\AddForeignKeyConstraint;
+use src\database\queries\objects\AddPrimaryKeys;
 use src\database\queries\objects\AddUniqueConstraint;
 use src\database\queries\objects\Alias;
 use src\database\queries\objects\AlterColumn;
@@ -20,6 +21,7 @@ use src\database\queries\objects\QueryWithParams;
 use src\database\queries\objects\Raw;
 use src\database\queries\objects\RenameColumn;
 use src\database\queries\objects\UniqueConstraint;
+use src\exceptions\QueryException;
 
 class Sql implements DialectInterface
 {
@@ -277,6 +279,12 @@ class Sql implements DialectInterface
                 continue;
             }
 
+            if ($alter instanceof AddPrimaryKeys) {
+                $alters[] = $this->stringifyAlterTableAddPrimaryKeys($alter);
+
+                continue;
+            }
+
             if ($alter instanceof AddUniqueConstraint) {
                 $alters[] = $this->stringifyAlterTableAddUniqueConstraint($alter);
 
@@ -294,6 +302,10 @@ class Sql implements DialectInterface
 
                 continue;
             }
+        }
+
+        if (count($alters) == 0) {
+            throw new QueryException('no table alters specified');
         }
 
         $queries = array_map(
@@ -703,6 +715,22 @@ class Sql implements DialectInterface
         return sprintf(
             'DROP COLUMN %s',
             $this->escapeIdentifier($dropColumn->column)
+        );
+    }
+
+    protected function stringifyAlterTableAddPrimaryKeys(AddPrimaryKeys $addPrimaryKeys): string
+    {
+        return sprintf(
+            'ADD PRIMARY KEY (%s)',
+            implode(
+                ', ',
+                array_map(
+                    function (string|array|Raw $column): string {
+                        return $this->escapeIdentifier($column);
+                    },
+                    $addPrimaryKeys->columns
+                )
+            )
         );
     }
 

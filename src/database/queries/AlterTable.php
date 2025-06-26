@@ -4,6 +4,7 @@ namespace src\database\queries;
 
 use src\database\queries\objects\AddColumn;
 use src\database\queries\objects\AddForeignKeyConstraint;
+use src\database\queries\objects\AddPrimaryKeys;
 use src\database\queries\objects\AddUniqueConstraint;
 use src\database\queries\objects\AlterColumn;
 use src\database\queries\objects\DropColumn;
@@ -50,6 +51,13 @@ class AlterTable extends Query
     public function dropColumn(string $column): static
     {
         $this->alters[] = new DropColumn($column);
+
+        return $this;
+    }
+
+    public function addPrimaryKeys(string|array $columns): static
+    {
+        $this->alters[] = new AddPrimaryKeys(is_string($columns) ? [$columns] : $columns);
 
         return $this;
     }

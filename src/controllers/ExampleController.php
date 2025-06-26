@@ -191,6 +191,7 @@ class ExampleController extends Controller
             // ->alterColumn('column3', 'TEXT')
             ->renameColumn('column3', 'column4')
             ->dropColumn('column4')
+            // ->addPrimaryKeys(['pk'])
             // ->addUniqueConstraint(['column1', 'column2'], 'unique_constraint')
             // ->addForeignKeyConstraint('column4', 'reference_table', 'reference_column')
             // ->dropConstraint('unique_constraint')
