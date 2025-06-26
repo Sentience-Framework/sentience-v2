@@ -34,6 +34,10 @@ class Sql implements DialectInterface
 
     public function select(array $config): QueryWithParams
     {
+        if (!$config['table']) {
+            throw new QueryException('no table specified');
+        }
+
         $query = '';
         $params = [];
 
@@ -86,6 +90,14 @@ class Sql implements DialectInterface
 
     public function insert(array $config): QueryWithParams
     {
+        if (!$config['table']) {
+            throw new QueryException('no table specified');
+        }
+
+        if (count($config['values']) == 0) {
+            throw new QueryException('no insert values specified');
+        }
+
         $query = '';
         $params = [];
 
@@ -150,6 +162,14 @@ class Sql implements DialectInterface
 
     public function update(array $config): QueryWithParams
     {
+        if (!$config['table']) {
+            throw new QueryException('no table specified');
+        }
+
+        if (count($config['values']) == 0) {
+            throw new QueryException('no update values specified');
+        }
+
         $query = '';
         $params = [];
 
@@ -190,6 +210,10 @@ class Sql implements DialectInterface
 
     public function delete(array $config): QueryWithParams
     {
+        if (!$config['table']) {
+            throw new QueryException('no table specified');
+        }
+
         $query = '';
         $params = [];
 
@@ -206,6 +230,18 @@ class Sql implements DialectInterface
 
     public function createTable(array $config): QueryWithParams
     {
+        if (!$config['table']) {
+            throw new QueryException('no table specified');
+        }
+
+        if (count($config['columns']) == 0) {
+            throw new QueryException('no table columns specified');
+        }
+
+        if (count($config['primaryKeys']) == 0) {
+            throw new QueryException('no table primary key(s) specified');
+        }
+
         $query = '';
         $params = [];
 
@@ -252,6 +288,14 @@ class Sql implements DialectInterface
 
     public function alterTable(array $config): QueryWithParams
     {
+        if (!$config['table']) {
+            throw new QueryException('no table specified');
+        }
+
+        if (count($config['alters']) == 0) {
+            throw new QueryException('no table alters specified');
+        }
+
         $alters = [];
 
         foreach ($config['alters'] as $alter) {
@@ -304,10 +348,6 @@ class Sql implements DialectInterface
             }
         }
 
-        if (count($alters) == 0) {
-            throw new QueryException('no table alters specified');
-        }
-
         $queries = array_map(
             function (string $alter) use ($config): string {
                 $query = 'ALTER TABLE';
@@ -330,6 +370,10 @@ class Sql implements DialectInterface
 
     public function dropTable(array $config): QueryWithParams
     {
+        if (!$config['table']) {
+            throw new QueryException('no table specified');
+        }
+
         $query = '';
         $params = [];
 

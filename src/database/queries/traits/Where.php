@@ -50,6 +50,11 @@ trait Where
         return $this->contains($column, $value, $escapeBackslash, Chain::AND);
     }
 
+    public function whereNotContains(string|array $column, string $value, bool $escapeBackslash = false): static
+    {
+        return $this->notContains($column, $value, $escapeBackslash, Chain::AND);
+    }
+
     public function whereIn(string|array $column, array $values): static
     {
         return $this->in($column, $values, Chain::AND);
@@ -163,6 +168,11 @@ trait Where
     public function orWhereContains(string|array $column, string $value, bool $escapeBackslash = false): static
     {
         return $this->contains($column, $value, $escapeBackslash, Chain::OR);
+    }
+
+    public function orWhereNotContains(string|array $column, string $value, bool $escapeBackslash = false): static
+    {
+        return $this->notContains($column, $value, $escapeBackslash, Chain::OR);
     }
 
     public function orWhereIn(string|array $column, array $values): static
@@ -290,6 +300,13 @@ trait Where
     protected function contains(string|array $column, string $value, bool $escapeBackslash, Chain $chain): static
     {
         $this->like($column, '%' . Query::escapeLikeChars($value, $escapeBackslash) . '%', $chain);
+
+        return $this;
+    }
+
+    protected function notContains(string|array $column, string $value, bool $escapeBackslash, Chain $chain): static
+    {
+        $this->notLike($column, '%' . Query::escapeLikeChars($value, $escapeBackslash) . '%', $chain);
 
         return $this;
     }

@@ -262,6 +262,10 @@ abstract class Model
 
     public function createTable(bool $ifNotExists = false, ?callable $modifyQuery = null): string
     {
+        if (count($this->columns) == 0) {
+            return '';
+        }
+
         $query = $this->database->createTable()
             ->table($this->table)
             ->primaryKeys($this->getColumnByProperty($this->primaryKey));
