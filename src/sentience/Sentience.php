@@ -84,9 +84,11 @@ class Sentience
 
                 $exception = new FatalErrorException($m, 0, $s, $f, $l);
 
-                $this->handleFatalError
-                    ? ($this->handleFatalError)($exception)
-                    : $this->handleException($exception);
+                if ($this->handleFatalError ? ($this->handleFatalError)($exception) : false) {
+                    return;
+                }
+
+                $this->handleException($exception);
             }
         );
 
@@ -112,9 +114,11 @@ class Sentience
                 ? $this->executeCli()
                 : $this->executeHttp();
         } catch (Throwable $exception) {
-            $this->handleThrowable
-                ? ($this->handleThrowable)($exception)
-                : $this->handleException($exception);
+            if ($this->handleThrowable ? ($this->handleThrowable)($exception) : false) {
+                return;
+            }
+
+            $this->handleException($exception);
         }
     }
 
