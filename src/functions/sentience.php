@@ -29,3 +29,21 @@ function escape_chars(string $string, array $chars, string $replacement = '\\\$0
 
     return $string;
 }
+
+function extract_chars(string $string, array $chars): string
+{
+    return preg_replace(
+        sprintf(
+            '/[^%s]/',
+            preg_quote(
+                implode(
+                    '',
+                    $chars
+                ),
+                '/'
+            )
+        ),
+        '',
+        $string
+    );
+}
