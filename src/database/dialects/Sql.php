@@ -899,12 +899,8 @@ class Sql implements DialectInterface
         return $value == 1 ? true : false;
     }
 
-    public function parseDateTime(?string $dateTimeString): ?DateTime
+    public function parseDateTime(string $dateTimeString): ?DateTime
     {
-        if (!$dateTimeString) {
-            return null;
-        }
-
         $dateTime = DateTime::createFromFormat($this::DATETIME_FORMAT, $dateTimeString);
 
         if ($dateTime) {
@@ -917,9 +913,13 @@ class Sql implements DialectInterface
             return null;
         }
 
+        $hasMicroseconds = preg_match('/\.([0-9]+)[\+\-]?/', $dateTimeString, $matches);
+
+        $microseconds = $hasMicroseconds ? (int) $matches[1] : 0;
+
         $dateTime = new DateTime();
 
-        return $dateTime->setTimestamp($timestamp);
+        return $dateTime->setTimestamp($timestamp)->setMicrosecond($microseconds);
     }
 
     public function phpTypeToColumnType(string $type, bool $isAutoIncrement, bool $isPrimaryKey, bool $inConstraint): string

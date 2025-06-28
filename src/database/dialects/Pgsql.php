@@ -79,9 +79,14 @@ class Pgsql extends Sql implements DialectInterface
         return $bool;
     }
 
-    public function parseDateTime(?string $dateTimeString): ?DateTime
+    public function parseBool(mixed $bool): bool
     {
-        if (in_array(substr($dateTimeString, -3, 1), ['-', '+'])) {
+        return $bool;
+    }
+
+    public function parseDateTime(string $dateTimeString): ?DateTime
+    {
+        if (preg_match('/[\+\-][0-9]{2}$/', $dateTimeString)) {
             return parent::parseDateTime(sprintf('%s:00', $dateTimeString));
         }
 

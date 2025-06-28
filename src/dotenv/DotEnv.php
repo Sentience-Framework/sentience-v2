@@ -74,7 +74,7 @@ class DotEnv
             return static::parseArrayValue($value, $parsedVariables);
         }
 
-        if (in_array(substr($value, 0, 1), ['"', "'", '`'])) {
+        if (preg_match('/^[\"\'\`]/', $value)) {
             return static::parseQuotedValue($value, $parsedVariables);
         }
 
