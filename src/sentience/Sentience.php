@@ -96,8 +96,7 @@ class Sentience
             function (int $s, string $m, string $f, int $l): bool {
                 return match ($s) {
                     E_NOTICE,
-                    E_USER_NOTICE,
-                    E_STRICT => throw new NoticeException($m, 0, $s, $f, $l),
+                    E_USER_NOTICE => throw new NoticeException($m, 0, $s, $f, $l),
                     E_WARNING,
                     E_USER_WARNING,
                     E_COMPILE_WARNING,

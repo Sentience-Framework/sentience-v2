@@ -129,7 +129,7 @@ class SentienceController extends Controller
                     return false;
                 }
 
-                if (!preg_match('/[0-9]{14}[\-|\_][a-zA-Z0-9]+\.php$/', $path)) {
+                if (!preg_match('/[0-9]{14}[\-\_][a-zA-Z0-9\-\_]+\.php$/', $path)) {
                     return false;
                 }
 
@@ -198,7 +198,7 @@ class SentienceController extends Controller
                     return false;
                 }
 
-                if (!preg_match('/[0-9]{14}[\-|\_][a-zA-Z0-9]+\.php$/', $path)) {
+                if (!preg_match('/[0-9]{14}[\-\_][a-zA-Z0-9\-\_]+\.php$/', $path)) {
                     return false;
                 }
 

@@ -471,7 +471,7 @@ class Sql implements DialectInterface
 
         if (is_null($condition->value)) {
             $query .= sprintf(
-                '(%s %s)',
+                '%s %s',
                 $this->escapeIdentifier($condition->expression),
                 $condition->type == WhereType::EQUALS ? 'IS NULL' : 'IS NOT NULL'
             );
@@ -481,7 +481,7 @@ class Sql implements DialectInterface
 
         if (in_array($condition->type, [WhereType::BETWEEN, WhereType::NOT_BETWEEN])) {
             $query .= sprintf(
-                '(%s %s ? AND ?)',
+                '%s %s ? AND ?',
                 $this->escapeIdentifier($condition->expression),
                 $condition->type->value,
                 $condition->value[0],
@@ -495,13 +495,13 @@ class Sql implements DialectInterface
 
         if (is_array($condition->value)) {
             if (count($condition->value) == 0) {
-                $query .= $condition->type == WhereType::IN ? '(1 <> 1)' : '(1 = 1)';
+                $query .= $condition->type == WhereType::IN ? '1 <> 1' : '1 = 1';
 
                 return;
             }
 
             $query .= sprintf(
-                '(%s %s (%s))',
+                '%s %s (%s)',
                 $this->escapeIdentifier($condition->expression),
                 $condition->type->value,
                 implode(', ', array_fill(0, count($condition->value), '?'))
@@ -514,7 +514,7 @@ class Sql implements DialectInterface
 
         if (in_array($condition->type, [WhereType::REGEX, WhereType::NOT_REGEX])) {
             $query .= sprintf(
-                '(%s %s ?)',
+                '%s %s ?',
                 $this->escapeIdentifier($condition->expression),
                 $condition->type == WhereType::REGEX ? $this::REGEX_FUNCTION : $this::NOT_REGEX_FUNCTION
             );
@@ -525,7 +525,7 @@ class Sql implements DialectInterface
         }
 
         $query .= sprintf(
-            '(%s %s ?)',
+            '%s %s ?',
             $this->escapeIdentifier($condition->expression),
             $condition->type->value
         );
