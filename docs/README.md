@@ -10,7 +10,7 @@
  By UniForceMusic                                             
 ```
 
-Individual documentation of modules can be found in the `documents` folder.
+Individual documentation of modules can be found in the `docs` folder.
 
 Examples and starting points can be found in the `examples` folder.
 
