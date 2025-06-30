@@ -95,6 +95,10 @@ class Sentience
 
         set_error_handler(
             function (int $s, string $m, string $f, int $l): bool {
+                if (!env('ERRORS_CATCH_NON_FATAL', true)) {
+                    return true;
+                }
+
                 return match ($s) {
                     E_NOTICE,
                     E_USER_NOTICE => throw new NoticeException($m, 0, $s, $f, $l),
@@ -295,12 +299,13 @@ class Sentience
             str_repeat('=', floor($equalSigns))
         );
 
-        Stdio::errorFLn('- Text  : %s', $exception->getMessage());
-        Stdio::errorFLn('- Type  : %s', Reflector::getShortName($exception));
-        Stdio::errorFLn('- File  : %s', $exception->getFile());
-        Stdio::errorFLn('- Line  : %d', $exception->getLine());
+        Stdio::errorFLn('- Type    : %s', Reflector::getShortName($exception));
+        Stdio::errorFLn('- Message : %s', $exception->getMessage());
 
-        if (env('APP_STACK_TRACE', false)) {
+        if (env('ERRORS_STACK_TRACE', false)) {
+            Stdio::errorFLn('- File    : %s', $exception->getFile());
+            Stdio::errorFLn('- Line    : %d', $exception->getLine());
+
             $stackTrace = array_values(
                 array_filter(
                     $exception->getTrace(),
@@ -311,7 +316,7 @@ class Sentience
             );
 
             if (count($stackTrace) > 0) {
-                Stdio::errorLn('- Trace :');
+                Stdio::errorLn('- Trace   :');
 
                 foreach ($stackTrace as $index => $frame) {
                     $file = $frame['file'];
@@ -332,7 +337,7 @@ class Sentience
                     );
 
                     Stdio::errorFLn(
-                        '      %d : %s:%d %s(%s)',
+                        '        %d : %s:%d %s(%s)',
                         $index + 1,
                         $file,
                         $line,
@@ -357,7 +362,7 @@ class Sentience
             ]
         ];
 
-        if (env('APP_STACK_TRACE', false)) {
+        if (env('ERRORS_STACK_TRACE', false)) {
             $response['error']['file'] = $exception->getFile();
             $response['error']['line'] = $exception->getLine();
 
