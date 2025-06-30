@@ -356,7 +356,7 @@ class Response
     {
         http_response_code($statusCode);
 
-        header('Content-Type: ' . $contentType, true);
+        header('Content-Type: ' . $contentType);
 
         echo $content;
 
@@ -377,7 +377,7 @@ class Response
         http_response_code($statusCode);
 
         if (is_null($content)) {
-            header('Content-Type: ', false);
+            header('Content-Type: ');
 
             echo '';
 
@@ -385,7 +385,7 @@ class Response
         }
 
         if (is_scalar($content)) {
-            header('Content-Type: text/plain', true);
+            header('Content-Type: text/plain');
 
             echo strval($content);
 
@@ -397,7 +397,7 @@ class Response
             : $encoding;
 
         if ($encoding == 'json') {
-            header('Content-Type: application/json', true);
+            header('Content-Type: application/json');
 
             echo Json::encode($content);
 
@@ -405,7 +405,7 @@ class Response
         }
 
         if ($encoding == 'xml') {
-            header('Content-Type: text/xml', true);
+            header('Content-Type: text/xml');
 
             echo Xml::encode(
                 $content,
@@ -442,7 +442,7 @@ class Response
         }
 
         if ($encoding == 'url') {
-            header('Content-Type: application/x-www-form-urlencoded', false);
+            header('Content-Type: application/x-www-form-urlencoded');
 
             echo UrlEncoding::encode($content);
 
