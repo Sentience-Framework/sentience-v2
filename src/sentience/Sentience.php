@@ -12,6 +12,7 @@ use src\exceptions\CallbackException;
 use src\exceptions\DeprecatedException;
 use src\exceptions\FatalErrorException;
 use src\exceptions\NoticeException;
+use src\exceptions\ParseException;
 use src\exceptions\WarningException;
 use src\middleware\Middleware;
 use src\routers\CliRouter;
@@ -98,11 +99,12 @@ class Sentience
                     E_NOTICE,
                     E_USER_NOTICE => throw new NoticeException($m, 0, $s, $f, $l),
                     E_WARNING,
-                    E_USER_WARNING,
+                    E_CORE_WARNING,
                     E_COMPILE_WARNING,
-                    E_CORE_WARNING => throw new WarningException($m, 0, $s, $f, $l),
+                    E_USER_WARNING => throw new WarningException($m, 0, $s, $f, $l),
                     E_DEPRECATED,
                     E_USER_DEPRECATED => throw new DeprecatedException($m, 0, $s, $f, $l),
+                    E_PARSE => throw new ParseException($m, 0, $s, $f, $l),
                     default => false
                 };
             }
