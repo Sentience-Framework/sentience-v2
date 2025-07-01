@@ -55,8 +55,12 @@ class DotEnv
 
     protected static function parseDotEnvString(string $string): array
     {
+        if (preg_match('/^\s*$/', $string)) {
+            return [];
+        }
+
         $isMatch = preg_match_all(
-            '/^(?!\#)\s*([a-zA-Z0-9_]+)\s*=\s*(?|(\'.*?\')|(\".*?\")|(\`{3}[\s\S]*?\`{3})|([^#\r\n]*))\s*(?=[\r\n]|$|\#)/m',
+            '/^(?!\#)\s*([a-zA-Z0-9\-\_]+)\s*\=\s*(?|(\'(?:\'|[^\'])*?\'|\"[^\"]*?\"|\`{3}[\s\S]*?\`{3}|[^\#\r\n]*?))\s*(?=\#|$|\r?\n)/m',
             $string,
             $matches
         );
@@ -86,7 +90,7 @@ class DotEnv
             return static::parseFloatValue($value);
         }
 
-        if (preg_match('/^false|true$/', $value)) {
+        if (preg_match('/^(false|true)$/', $value)) {
             return static::parseBoolValue($value);
         }
 
@@ -94,7 +98,7 @@ class DotEnv
             return static::parseNullValue($value);
         }
 
-        return rtrim($value);
+        return $value;
     }
 
     protected static function parseArrayValue(string $value, array $parsedVariables): array
@@ -169,14 +173,14 @@ class DotEnv
         );
     }
 
-    protected static function parseFloatValue(string $value): float
-    {
-        return (float) $value;
-    }
-
     protected static function parseIntValue(string $value): int
     {
         return (int) $value;
+    }
+
+    protected static function parseFloatValue(string $value): float
+    {
+        return (float) $value;
     }
 
     protected static function parseBoolValue(string $value): bool
