@@ -557,8 +557,9 @@ class SentienceController extends Controller
         }
 
         $lines[] = sprintf(
-            '# imported %s variables from on %s',
+            '# imported %s variables from %s on %s',
             count($missingVariables),
+            $dotEnvExample,
             date('Y-m-d H:i:s')
         );
 
@@ -576,6 +577,6 @@ class SentienceController extends Controller
 
         file_put_contents($dotEnvFilepath, $modifiedDotEnvFileContents);
 
-        Stdio::printFLn('Added %s variables to %s', count($missingVariables), $dotEnv);
+        Stdio::printFLn('Added %d variables to %s', count($missingVariables), $dotEnv);
     }
 }

@@ -19,10 +19,6 @@ class Filesystem
 
         $chars = static::WINDOWS_DIRECTORY_SEPARATOR . static::UNIX_DIRECTORY_SEPARATOR;
 
-        $dir = preg_match('/^\/|\\\\\\\\$/', $dir)
-            ? rtrim($dir, $chars)
-            : $dir;
-
         $components = array_filter(
             array_map(
                 function (?string $component) use ($chars): ?string {
