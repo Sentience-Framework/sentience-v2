@@ -31,13 +31,13 @@ class HttpRouter
                 continue;
             }
 
-            if (key_exists('*', $methods)) {
-                $route = $methods['*'];
-
-                return [$route, $pathVars, null];
-            }
-
             if (!key_exists($method, $methods)) {
+                if (key_exists('*', $methods)) {
+                    $route = $methods['*'];
+
+                    return [$route, $pathVars, null];
+                }
+
                 return [null, null, 405];
             }
 
@@ -58,6 +58,10 @@ class HttpRouter
             return [true, null];
         }
 
+        if (!$this->doComponentsMatch($path, $route)) {
+            return [false, null];
+        }
+
         $keys = [];
 
         $pattern = preg_replace_callback(
@@ -72,7 +76,7 @@ class HttpRouter
             },
             sprintf(
                 '/^%s$/',
-                escape_chars($route, ['.', '/', '+', '*', '?', '^', '[', ']', '$', '(', ')', '=', '!', '<', '>', '|', '-'])
+                escape_chars($route, ['-', '+', '*', '/', '^', '=', '!', '?', '$', '.', '|', '<', '>', '[', ']', '(', ')'])
             )
         );
 
@@ -97,6 +101,28 @@ class HttpRouter
         }
 
         return [true, $pathVars];
+    }
+
+    protected function doComponentsMatch(string $path, string $route): bool
+    {
+        $pathComponents = explode('/', $path);
+        $routeComponents = explode('/', $route);
+
+        if (count($pathComponents) != count($routeComponents)) {
+            return false;
+        }
+
+        foreach ($routeComponents as $index => $routeComponent) {
+            if (str_contains($routeComponent, '{')) {
+                continue;
+            }
+
+            if ($routeComponent != $pathComponents[$index]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     protected function mapRoutes(): array
