@@ -140,14 +140,14 @@ class HttpRouter
             );
 
             $route instanceof Route
-                ? $this->addToMap($mappedRoutes, $route, $middleware, $routeWithPrefixes)
+                ? $this->addToMap($mappedRoutes, $route, $routeWithPrefixes, $middleware)
                 : $this->mapRouteGroup($mappedRoutes, $route, $prefixes, $middleware);
         }
 
         return $mappedRoutes;
     }
 
-    protected function addToMap(array &$mappedRoutes, Route $route, array $middleware = [], ?string $routeWithPrefixes = null): void
+    protected function addToMap(array &$mappedRoutes, Route $route, ?string $routeWithPrefixes = null, array $middleware = []): void
     {
         $key = $routeWithPrefixes ?? $route->route;
 

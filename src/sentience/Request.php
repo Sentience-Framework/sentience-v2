@@ -87,18 +87,19 @@ class Request
     public function getIPAddress(): ?string
     {
         $keys = [
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_CLUSTER_CLIENT_IP',
-            'HTTP_CLIENT_IP',
             'REMOTE_ADDR',
-            'HTTP_X_FORWARDED',
-            'HTTP_FORWARDED_FOR',
-            'HTTP_FORWARDED'
+            'HTTP_X_FORWARDED_FOR',
+            'HTTP_CLIENT_IP',
+            'HTTP_X_REAL_IP',
+            'HTTP_CF_CONNECTING_IP',
+            'HTTP_X_CLUSTER_CLIENT_IP',
+            'HTTP_FORWARDED',
+            'HTTP_FORWARDED_FOR'
         ];
 
         foreach ($keys as $key) {
-            if (key_exists($key, $_SERVER)) {
-                return $_SERVER[$key];
+            if (!empty($_SERVER[$key] ?? null)) {
+                return (string) strtok($_SERVER[$key], ',');
             }
         }
 
