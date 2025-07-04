@@ -110,7 +110,7 @@ class Mysql extends Sql implements DialectInterface
         return substr_replace($stringifiedDropConstraint, 'INDEX', 5, 10);
     }
 
-    public function phpTypeToColumnType(string $type, bool $isAutoIncrement, bool $isPrimaryKey, bool $inConstraint): string
+    public function phpTypeToColumnType(string $type, bool $autoIncrement, bool $isPrimaryKey, bool $inConstraint): string
     {
         if ($isPrimaryKey && $type == 'string') {
             return 'VARCHAR(64)';

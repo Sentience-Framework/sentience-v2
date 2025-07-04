@@ -63,6 +63,7 @@ Response::insufficientStorage();
 Response::loopDetected();
 Response::notExtended();
 Response::networkAuthenticationRequired();
+Response::custom();
 ```
 
 ## 2. Encoding responses

@@ -94,7 +94,7 @@ class Sqlite extends Sql implements DialectInterface
         throw new QueryException('SQLite does not support dropping constraints by altering the table');
     }
 
-    public function phpTypeToColumnType(string $type, bool $isAutoIncrement, bool $isPrimaryKey, bool $inConstraint): string
+    public function phpTypeToColumnType(string $type, bool $autoIncrement, bool $isPrimaryKey, bool $inConstraint): string
     {
         return match ($type) {
             'bool' => 'BOOLEAN',
