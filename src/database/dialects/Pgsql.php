@@ -93,9 +93,9 @@ class Pgsql extends Sql implements DialectInterface
         return parent::parseDateTime($dateTimeString);
     }
 
-    public function phpTypeToColumnType(string $type, bool $isAutoIncrement, bool $isPrimaryKey, bool $inConstraint): string
+    public function phpTypeToColumnType(string $type, bool $autoIncrement, bool $isPrimaryKey, bool $inConstraint): string
     {
-        if ($isAutoIncrement && $type == 'int') {
+        if ($autoIncrement && $type == 'int') {
             return 'SERIAL';
         }
 

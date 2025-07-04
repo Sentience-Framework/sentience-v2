@@ -922,7 +922,7 @@ class Sql implements DialectInterface
         return $dateTime->setTimestamp($timestamp)->setMicrosecond($microseconds);
     }
 
-    public function phpTypeToColumnType(string $type, bool $isAutoIncrement, bool $isPrimaryKey, bool $inConstraint): string
+    public function phpTypeToColumnType(string $type, bool $autoIncrement, bool $isPrimaryKey, bool $inConstraint): string
     {
         return match ($type) {
             'bool' => 'INT',

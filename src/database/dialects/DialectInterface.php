@@ -23,5 +23,5 @@ interface DialectInterface
     public function castDateTime(DateTime $dateTime): mixed;
     public function parseBool(mixed $bool): bool;
     public function parseDateTime(string $dateTimeString): ?DateTime;
-    public function phpTypeToColumnType(string $type, bool $isAutoIncrement, bool $isPrimaryKey, bool $inConstraint): string;
+    public function phpTypeToColumnType(string $type, bool $autoIncrement, bool $isPrimaryKey, bool $inConstraint): string;
 }
