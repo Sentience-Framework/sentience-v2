@@ -2,7 +2,7 @@
 
 function env(string $key, mixed $default = null): mixed
 {
-    if (!key_exists($key, $_ENV)) {
+    if (!array_key_exists($key, $_ENV)) {
         return $default;
     }
 

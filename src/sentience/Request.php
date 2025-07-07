@@ -21,7 +21,7 @@ class Request
 
     public function __construct()
     {
-        $url = (key_exists('HTTPS', $_SERVER) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $url = (array_key_exists('HTTPS', $_SERVER) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
         $this->url = $url;
         $this->path = (string) strtok($_SERVER['REQUEST_URI'], '?');
@@ -35,7 +35,7 @@ class Request
 
     public function getHeader(string $key, ?string $default = null): ?string
     {
-        if (!key_exists($key, $this->headers)) {
+        if (!array_key_exists($key, $this->headers)) {
             return $default;
         }
 
@@ -44,7 +44,7 @@ class Request
 
     public function getQueryParam(string $key, null|string|array $default = null): mixed
     {
-        if (!key_exists($key, $this->queryParams)) {
+        if (!array_key_exists($key, $this->queryParams)) {
             return $default;
         }
 
@@ -53,7 +53,7 @@ class Request
 
     public function getCookie(string $key, ?string $default = null): ?string
     {
-        if (!key_exists($key, $this->cookies)) {
+        if (!array_key_exists($key, $this->cookies)) {
             return $default;
         }
 
@@ -62,7 +62,7 @@ class Request
 
     public function getPathVar(string $key, ?string $default = null): mixed
     {
-        if (!key_exists($key, $this->pathVars)) {
+        if (!array_key_exists($key, $this->pathVars)) {
             return $default;
         }
 

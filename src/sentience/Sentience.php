@@ -310,7 +310,7 @@ class Sentience
                 array_filter(
                     $exception->getTrace(),
                     function (array $frame): bool {
-                        return key_exists('file', $frame);
+                        return array_key_exists('file', $frame);
                     }
                 )
             );
@@ -322,7 +322,7 @@ class Sentience
                     $file = $frame['file'];
                     $line = $frame['line'];
 
-                    $function = key_exists('class', $frame)
+                    $function = array_key_exists('class', $frame)
                         ? $frame['class'] . $frame['type'] . $frame['function']
                         : $frame['function'];
 
@@ -370,14 +370,14 @@ class Sentience
                 array_filter(
                     array_map(
                         function (array $frame): ?array {
-                            if (!key_exists('file', $frame)) {
+                            if (!array_key_exists('file', $frame)) {
                                 return null;
                             }
 
                             $file = $frame['file'];
                             $line = $frame['line'];
 
-                            $function = key_exists('class', $frame)
+                            $function = array_key_exists('class', $frame)
                                 ? $frame['class'] . $frame['type'] . $frame['function']
                                 : $frame['function'];
 

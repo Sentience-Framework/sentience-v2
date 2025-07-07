@@ -532,7 +532,7 @@ class SentienceController extends Controller
         $missingVariables = [];
 
         foreach ($dotEnvExampleVariables as $key => $value) {
-            if (key_exists($key, $dotEnvVariables)) {
+            if (array_key_exists($key, $dotEnvVariables)) {
                 continue;
             }
 

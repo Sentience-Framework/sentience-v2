@@ -120,7 +120,7 @@ abstract class Model
 
     public function selectRelation(string $property, ?callable $modifyQuery = null): static
     {
-        if (!key_exists($property, $this->relations)) {
+        if (!array_key_exists($property, $this->relations)) {
             throw new RelationException('relation %s not defined in model', $property);
         }
 
@@ -348,7 +348,7 @@ abstract class Model
         }
 
         foreach ($columnsInDatabase as $column) {
-            if (key_exists($column, $columnsInModel)) {
+            if (array_key_exists($column, $columnsInModel)) {
                 continue;
             }
 

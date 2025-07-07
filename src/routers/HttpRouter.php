@@ -31,14 +31,14 @@ class HttpRouter
                 continue;
             }
 
-            if (!key_exists($method, $methods)) {
-                if (key_exists('*', $methods)) {
-                    $route = $methods['*'];
-
-                    return [$route, $pathVars, null];
+            if (!array_key_exists($method, $methods)) {
+                if (!array_key_exists('*', $methods)) {
+                    return [null, null, 405];
                 }
 
-                return [null, null, 405];
+                $route = $methods['*'];
+
+                return [$route, $pathVars, null];
             }
 
             $route = $methods[$method];
@@ -177,7 +177,7 @@ class HttpRouter
     {
         $key = $routeWithPrefixes ?? $route->route;
 
-        if (!key_exists($key, $mappedRoutes)) {
+        if (!array_key_exists($key, $mappedRoutes)) {
             $mappedRoutes[$key] = [];
         }
 

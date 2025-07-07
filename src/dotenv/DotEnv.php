@@ -141,7 +141,7 @@ class DotEnv
             function (array $matches) use ($parsedVariables): mixed {
                 [$original, $key] = $matches;
 
-                if (key_exists($key, $parsedVariables)) {
+                if (array_key_exists($key, $parsedVariables)) {
                     return $parsedVariables[$key];
                 }
 

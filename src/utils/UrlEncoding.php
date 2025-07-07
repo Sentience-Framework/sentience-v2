@@ -63,7 +63,7 @@ class UrlEncoding
             $key = urldecode($urlEncodedKey);
             $value = urldecode($urlEncodedValue);
 
-            if (!key_exists($key, $decoded)) {
+            if (!array_key_exists($key, $decoded)) {
                 $decoded[$key] = [];
             }
 
