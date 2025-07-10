@@ -32,13 +32,9 @@ class HttpRouter
             }
 
             if (!array_key_exists($method, $methods)) {
-                if (!array_key_exists('*', $methods)) {
-                    return [null, null, 405];
-                }
-
-                $route = $methods['*'];
-
-                return [$route, $pathVars, null];
+                return array_key_exists('*', $methods)
+                    ? [$methods['*'], $pathVars, null]
+                    : [null, null, 405];
             }
 
             $route = $methods[$method];
