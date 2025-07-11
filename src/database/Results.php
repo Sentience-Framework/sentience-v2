@@ -67,7 +67,7 @@ class Results
         return $this->pdoStatement->fetchAll(PDO::FETCH_CLASS, $class);
     }
 
-    public function fetchAssociative(): ?object
+    public function fetchAssociative(): ?array
     {
         $associative = $this->pdoStatement->fetch(PDO::FETCH_ASSOC);
 
