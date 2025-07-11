@@ -6,9 +6,9 @@ class Column
 {
     public string $name;
     public string $type;
-    public bool $notNull = false;
-    public ?string $defaultValue = null;
-    public bool $autoIncrement = false;
+    public bool $notNull;
+    public mixed $defaultValue;
+    public bool $autoIncrement;
 
     public function __construct(string $name, string $type, bool $notNull = false, mixed $defaultValue = null, bool $autoIncrement = false)
     {

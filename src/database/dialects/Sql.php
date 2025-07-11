@@ -672,9 +672,9 @@ class Sql implements DialectInterface
         }
 
         if (!is_null($column->defaultValue) && !$column->autoIncrement) {
-            $defaultValue = preg_match('/^.*\(.*\)$/', $column->defaultValue)
-                ? $column->defaultValue
-                : $this->escapeString($column->defaultValue);
+            $defaultValue = preg_match('/^.*\(.*\)$/', (string) $column->defaultValue)
+                ? (string) $column->defaultValue
+                : $this->castToQuery($column->defaultValue);
 
             $stringifiedColumn .= ' DEFAULT ' . $defaultValue;
         }
