@@ -9,3 +9,5 @@
 
  By UniForceMusic                                             
 ```
+
+STATUS: Stable release. Active development in sentience-v3
