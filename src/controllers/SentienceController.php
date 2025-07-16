@@ -177,13 +177,13 @@ class SentienceController extends Controller
                 $migration->apply($database);
             });
 
-            Stdio::printFLn('Migration %s applied', $filename);
-
             $migrationModel = new Migration($database);
             $migrationModel->batch = $nextBatch;
             $migrationModel->filename = $filename;
             $migrationModel->appliedAt = Query::now();
             $migrationModel->insert();
+
+            Stdio::printFLn('Migration %s applied', $filename);
         }
     }
 
@@ -251,12 +251,12 @@ class SentienceController extends Controller
                 $migration->rollback($database);
             });
 
-            Stdio::printFLn('Migration %s rolled back', $filename);
-
             $database->delete()
                 ->table(Migration::getTable())
                 ->whereEquals('id', $migrationToRevert->id)
                 ->execute();
+
+            Stdio::printFLn('Migration %s rolled back', $filename);
         }
     }
 
