@@ -6,14 +6,13 @@ use src\sentience\Stdio;
 use src\utils\Terminal;
 
 /**
- * An anonymous class to define your global variables
- * These variables will be injected as arguments in callbacks
+ * An anonymous class to define your global variables.
+ * These variables will be injected as arguments in callbacks.
  *
- * When a method or function calls for $database, the public function database()
- * Will be executed
+ * When a method or function calls for $database, the public function database() Will be executed.
  *
- * Only the variables that are listed as arguments will be injected
- * A good use case would be putting the database connection variable here
+ * Only the variables that are listed as arguments will be injected.
+ * A good use case would be putting the database connection variable here.
  */
 
 return new class () {

@@ -5,6 +5,7 @@ use src\sentience\Sentience;
 use src\utils\Filesystem;
 
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/ini.php';
 
 define('SENTIENCE_DIR', __DIR__);
 
