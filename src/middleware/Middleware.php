@@ -6,7 +6,7 @@ abstract class Middleware
 {
     /**
      * When creating a middleware method, the return type can be a void or an array
-     * All the entires in the array returned, can be used in the following middleware or callable
+     * All the entries in the array returned, can be used in the following middleware or callable
      *
      * For example:
      *
