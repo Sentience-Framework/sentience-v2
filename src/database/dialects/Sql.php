@@ -516,7 +516,7 @@ class Sql implements DialectInterface
             $query .= sprintf(
                 '%s %s ?',
                 $this->escapeIdentifier($condition->expression),
-                $condition->type == WhereType::REGEX ? $this::REGEX_FUNCTION : $this::NOT_REGEX_FUNCTION
+                $condition->type == WhereType::REGEX ? static::REGEX_FUNCTION : static::NOT_REGEX_FUNCTION
             );
 
             array_push($params, $condition->value);
@@ -829,17 +829,17 @@ class Sql implements DialectInterface
                     $identifier
                 )
             )
-            : $this->escape($identifier, $this::IDENTIFIER_ESCAPE);
+            : $this->escape($identifier, static::IDENTIFIER_ESCAPE);
     }
 
     public function escapeString(string $string): string
     {
-        return $this->escape($string, $this::STRING_ESCAPE);
+        return $this->escape($string, static::STRING_ESCAPE);
     }
 
     protected function escape(string $string, string $char): string
     {
-        $escapedString = $this::ANSI_ESCAPE
+        $escapedString = static::ANSI_ESCAPE
             ? escape_chars($string, [$char], '$0$0', '/%s/')
             : escape_chars($string, ['\\', $char]);
 
@@ -891,7 +891,7 @@ class Sql implements DialectInterface
 
     public function castDateTime(DateTime $dateTime): mixed
     {
-        return $dateTime->format($this::DATETIME_FORMAT);
+        return $dateTime->format(static::DATETIME_FORMAT);
     }
 
     public function parseBool(mixed $value): bool
@@ -901,7 +901,7 @@ class Sql implements DialectInterface
 
     public function parseDateTime(string $dateTimeString): ?DateTime
     {
-        $dateTime = DateTime::createFromFormat($this::DATETIME_FORMAT, $dateTimeString);
+        $dateTime = DateTime::createFromFormat(static::DATETIME_FORMAT, $dateTimeString);
 
         if ($dateTime) {
             return $dateTime;
