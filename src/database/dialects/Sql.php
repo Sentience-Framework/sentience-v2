@@ -577,7 +577,7 @@ class Sql implements DialectInterface
             return;
         }
 
-        $query .= ' HAVING ' . $having->expression;
+        $query .= ' HAVING ' . $having->query;
 
         array_push($params, ...$having->params);
     }

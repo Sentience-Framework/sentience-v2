@@ -7,19 +7,19 @@ use src\exceptions\QueryException;
 
 class QueryWithParams
 {
-    public string $expression;
+    public string $query;
     public array $params;
 
-    public function __construct(string $expression, array $params = [])
+    public function __construct(string $query, array $params = [])
     {
-        $this->expression = $expression;
+        $this->query = $query;
         $this->params = $params;
     }
 
     public function toRawQuery(DialectInterface $dialect): string
     {
         if (count($this->params) == 0) {
-            return $this->expression;
+            return $this->query;
         }
 
         $params = array_map(
@@ -44,7 +44,7 @@ class QueryWithParams
 
                 return $param;
             },
-            $this->expression
+            $this->query
         );
     }
 }

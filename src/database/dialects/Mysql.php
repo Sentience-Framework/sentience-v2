@@ -19,8 +19,8 @@ class Mysql extends Sql implements DialectInterface
     {
         $queryWithParams = parent::createTable($config);
 
-        $queryWithParams->expression = substr_replace(
-            $queryWithParams->expression,
+        $queryWithParams->query = substr_replace(
+            $queryWithParams->query,
             ' ENGINE=InnoDB;',
             -1
         );

@@ -27,14 +27,14 @@ abstract class Query implements QueryInterface
     {
         $queryWithParams = $this->build();
 
-        if (preg_match('/^CREATE|ALTER|DROP/', $queryWithParams->expression)) {
-            $this->database->unsafe($queryWithParams->expression);
+        if (preg_match('/^CREATE|ALTER|DROP/', $queryWithParams->query)) {
+            $this->database->unsafe($queryWithParams->query);
 
             return null;
         }
 
         return $this->database->safe(
-            $queryWithParams->expression,
+            $queryWithParams->query,
             $queryWithParams->params
         );
     }
