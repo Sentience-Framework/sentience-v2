@@ -189,7 +189,6 @@ Update::orWhereRegex();
 Update::orWhereNotRegex();
 Update::orWhereGroup();
 Update::orWhere();
-Update::limit();
 Update::returning();
 ```
 
@@ -248,7 +247,6 @@ Delete::orWhereRegex();
 Delete::orWhereNotRegex();
 Delete::orWhereGroup();
 Delete::orWhere();
-Delete::limit();
 Delete::returning();
 ```
 

@@ -200,7 +200,6 @@ class Sql implements DialectInterface
         );
 
         $this->addWhere($query, $params, $config['where']);
-        $this->addLimit($query, $config['limit']);
         $this->addReturning($query, $config['returning']);
 
         $query .= ';';
