@@ -410,28 +410,21 @@ class Response
             echo Xml::encode(
                 $content,
                 function (string $parent, string $key) use ($statusCode): string {
-                    $lowercaseParent = strtolower($parent);
-
-                    if (preg_match('/^.{1}ies$/', $lowercaseParent)) {
-                        return substr($parent, 0, -1);
-                    }
-
-                    if (preg_match('/ies$/', $lowercaseParent)) {
-                        $singular = substr($parent, 0, -3);
-
-                        return $singular . (preg_match('/[A-Z]{1}$/', $singular) ? 'Y' : 'y');
-                    }
-
-                    if (preg_match('/[^aeiouy]es$/', $lowercaseParent)) {
-                        return substr($parent, 0, -2);
-                    }
-
-                    if (preg_match('/s{1}$/', $lowercaseParent)) {
-                        return substr($parent, 0, -1);
-                    }
-
-                    if ($lowercaseParent == 'trace' && $statusCode == 500) {
+                    if ($parent == 'trace' && $statusCode == 500) {
                         return 'frame';
+                    }
+
+                    $rules = [
+                        '/^.{1}ies$/i' => fn (): string => substr($parent, 0, -1),
+                        '/ies$/i' => fn (): string => substr_replace($parent, (preg_match('/[A-Z]{1}.{2}$/', $parent) ? 'Y' : 'y'), -3),
+                        '/[a-z]es$/i' => fn (): string => substr($parent, 0, -2),
+                        '/s{1}$/i' => fn (): string => substr($parent, 0, -1)
+                    ];
+
+                    foreach ($rules as $pattern => $callback) {
+                        if (preg_match($pattern, $parent)) {
+                            return $callback();
+                        }
                     }
 
                     return $parent;
